@@ -46,7 +46,7 @@ public class ItemListener implements Listener {
         if (playerInteractEvent.getItem() == null) {
             return;
         }
-        if ((playerInteractEvent.getAction() != Action.RIGHT_CLICK_BLOCK) && (playerInteractEvent.getAction() != Action.RIGHT_CLICK_BLOCK)) {
+        if ((playerInteractEvent.getAction() != Action.RIGHT_CLICK_AIR) && (playerInteractEvent.getAction() != Action.RIGHT_CLICK_BLOCK)) {
             return;
         }
         final Player player = playerInteractEvent.getPlayer();

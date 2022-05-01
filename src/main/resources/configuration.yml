@@ -381,7 +381,7 @@ components:
             # - %withdrawer% ~ The withdrawer.
             # - %amount% ~ The amount that was withdrawn.
             # - %currency% ~ The currency that was withdrawn.
-            name: "&6&l%currency% Note &7(✦%amount%)"
+            name: "&6&l%currency% Note &7(%amount%)"
 
             #The lore of the item.
             #Variables:
