@@ -65,8 +65,8 @@ public class BalanceCommand extends CommandHandler {
             player.playSound(player.getLocation(), Sound.valueOf(this.plugin.getComponentManager().getFileComponent().getConfiguration().getString("components.currency.commands.balance.sounds.error.sound")), (float) this.plugin.getComponentManager().getFileComponent().getConfiguration().getDouble("components.currency.commands.balance.sounds.error.volume"), (float) this.plugin.getComponentManager().getFileComponent().getConfiguration().getDouble("components.currency.commands.balance.sounds.error.pitch"));
             return false;
         }
-        if (arguments.length == 1) {
-            PlayerData.get(player.getUniqueId()).whenComplete((playerData, playerDataThrowable) -> {
+        switch (arguments.length) {
+            case 1 -> PlayerData.get(player.getUniqueId()).whenComplete((playerData, playerDataThrowable) -> {
                 long amount = 0L;
                 switch (currency) {
                     case "gems" -> amount = playerData.getGems();
@@ -76,8 +76,7 @@ public class BalanceCommand extends CommandHandler {
                 this.plugin.getComponentManager().getFileComponent().getConfiguration().getStringList("components.currency.commands.balance.messages.success.player").forEach(string -> player.sendMessage(StringUtilities.colorize(string.replace("%currency%", currency).replace("%amount%", formattedAmount))));
                 player.playSound(player.getLocation(), Sound.valueOf(this.plugin.getComponentManager().getFileComponent().getConfiguration().getString("components.currency.commands.balance.sounds.success.sound")), (float) this.plugin.getComponentManager().getFileComponent().getConfiguration().getDouble("components.currency.commands.balance.sounds.success.volume"), (float) this.plugin.getComponentManager().getFileComponent().getConfiguration().getDouble("components.currency.commands.balance.sounds.success.pitch"));
             });
-        } else {
-            MojangUtilities.getUUID(arguments[1]).whenComplete((optionalTargetUUID, uuidThrowable) -> {
+            case 2 -> MojangUtilities.getUUID(arguments[1]).whenComplete((optionalTargetUUID, uuidThrowable) -> {
                 if (optionalTargetUUID.isEmpty()) {
                     this.plugin.getComponentManager().getFileComponent().getConfiguration().getStringList("components.currency.commands.balance.messages.invalid-player").forEach(string -> player.sendMessage(StringUtilities.colorize(string.replace("%player%", arguments[1]))));
                     player.playSound(player.getLocation(), Sound.valueOf(this.plugin.getComponentManager().getFileComponent().getConfiguration().getString("components.data.commands.data.sub-commands.modify.sounds.error.sound")), (float) this.plugin.getComponentManager().getFileComponent().getConfiguration().getDouble("components.data.commands.data.sub-commands.modify.sounds.error.volume"), (float) this.plugin.getComponentManager().getFileComponent().getConfiguration().getDouble("components.data.commands.data.sub-commands.modify.sounds.error.pitch"));

@@ -14,6 +14,7 @@ repositories {
 
 dependencies {
     paperDevBundle("1.18.2-R0.1-SNAPSHOT")
+    compileOnly(files("R:\\Evil Kingdom\\sources\\Basics (Server)\\build\\libs\\Basics (Server)-unspecified.jar"))
     compileOnly(files("R:\\Evil Kingdom\\sources\\Commons (Server)\\build\\libs\\Commons (Server)-unspecified.jar"))
 }
 

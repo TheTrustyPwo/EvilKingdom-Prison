@@ -41,6 +41,7 @@ components:
     database:
 
       #The name of the database.
+      #This should probably be the name of the server this is for.
       name: "prison"
 
       #The connection string of the database.
