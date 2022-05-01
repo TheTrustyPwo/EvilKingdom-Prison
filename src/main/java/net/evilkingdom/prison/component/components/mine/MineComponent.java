@@ -212,14 +212,12 @@ public class MineComponent {
         this.minesDoingTask.add(uuid);
         this.playersWaitingForMineCreation.add(player.getUniqueId());
         return SelfData.get().thenApply(selfData -> {
-            final ArrayList<MineLocation> previousMineLocations = selfData.getMineLocations();
             final MineLocation mineLocation = selfData.getMineLocations().stream().filter(dataMineLocation -> !dataMineLocation.isUsed()).findFirst().get();
-            previousMineLocations.remove(mineLocation);
+            selfData.getMineLocations().remove(mineLocation);
             final MineLocation replacementMineLocation = new MineLocation(mineLocation.getX(), mineLocation.getZ(), true);
-            previousMineLocations.add(replacementMineLocation);
+            selfData.getMineLocations().add(replacementMineLocation);
             this.plugin.getComponentManager().getMineComponent().generateMineLocations(replacementMineLocation.getX(), replacementMineLocation.getZ(), 1).whenComplete((generatedMineLocations, generatedMineLocationsThrowable) -> {
-                previousMineLocations.addAll(generatedMineLocations);
-                selfData.setMineLocations(previousMineLocations);
+                selfData.getMineLocations().addAll(generatedMineLocations);
             });
             return mineLocation;
         }).thenCompose(mineLocation -> {

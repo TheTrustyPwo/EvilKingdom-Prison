@@ -128,17 +128,15 @@ public class DataComponent {
             SelfData.get().whenComplete((selfData, selfDataThrowable) -> {
                 selfData.cache();
                 selfData.getRanks().clear();
-                this.plugin.getComponentManager().getRankComponent().generateRanks(0, rankGenerationAmount).whenComplete((generatedRanks, generatedRanksThrowable) -> selfData.setRanks(generatedRanks));
+                this.plugin.getComponentManager().getRankComponent().generateRanks(0, rankGenerationAmount).whenComplete((generatedRanks, generatedRanksThrowable) -> selfData.getRanks().addAll(generatedRanks));
                 if (selfData.getMineLocations().isEmpty()) {
                     this.plugin.getComponentManager().getMineComponent().generateMineLocations(0, 0, 100).whenComplete((generatedMineLocations, generatedMineLocationsThrowable) -> {
-                        selfData.setMineLocations(generatedMineLocations);
+                        selfData.getMineLocations().addAll(generatedMineLocations);
                     });
                 } else {
                     final MineLocation latestMineLocation = selfData.getMineLocations().get((selfData.getMineLocations().size() - 1));
                     this.plugin.getComponentManager().getMineComponent().generateMineLocations(latestMineLocation.getX(), latestMineLocation.getZ(), 1).whenComplete((generatedMineLocations, generatedMineLocationsThrowable) -> {
-                        final ArrayList<MineLocation> previousMineLocations = selfData.getMineLocations();
-                        previousMineLocations.addAll(generatedMineLocations);
-                        selfData.setMineLocations(previousMineLocations);
+                        selfData.getMineLocations().addAll(generatedMineLocations);
                     });
                 }
             });

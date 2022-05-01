@@ -36,7 +36,7 @@ public class MineData {
     private ArrayList<Cooldown> cooldowns;
     private ArrayList<UUID> banned, whitelisted;
 
-    private static HashSet<MineData> cache = new HashSet<MineData>();
+    private static final HashSet<MineData> cache = new HashSet<MineData>();
 
     /**
      * Allows you to create a MineData.
@@ -404,9 +404,7 @@ public class MineData {
      * Allows you to cache the data.
      */
     public void cache() {
-        final HashSet<MineData> previousCache = cache;
-        previousCache.add(this);
-        cache = previousCache;
+        cache.add(this);
         this.cooldowns.forEach(cooldown -> cooldown.start());
     }
 
@@ -415,9 +413,7 @@ public class MineData {
      */
     public void uncache() {
         this.getCooldowns().forEach(cooldown -> cooldown.stop());
-        final HashSet<MineData> previousCache = cache;
-        previousCache.remove(this);
-        cache = previousCache;
+        cache.remove(this);
     }
 
     /**

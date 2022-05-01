@@ -30,7 +30,7 @@ public class SelfData {
     private ArrayList<Rank> ranks;
     private ArrayList<MineLocation> mineLocations;
 
-    private static HashSet<SelfData> cache = new HashSet<SelfData>();
+    private static final HashSet<SelfData> cache = new HashSet<SelfData>();
 
     /**
      * Allows you to create a SelfData.
@@ -134,30 +134,12 @@ public class SelfData {
     }
 
     /**
-     * Allows you to set the data's ranks.
-     *
-     * @param ranks ~ The data's ranks to set.
-     */
-    public void setRanks(final ArrayList<Rank> ranks) {
-        this.ranks = ranks;
-    }
-
-    /**
      * Allows you to retrieve the data's ranks.
      *
      * @return The data's ranks.
      */
     public ArrayList<Rank> getRanks() {
         return this.ranks;
-    }
-
-    /**
-     * Allows you to set the data's mine locations.
-     *
-     * @param mineLocations ~ The data's mine locations to set.
-     */
-    public void setMineLocations(final ArrayList<MineLocation> mineLocations) {
-        this.mineLocations = mineLocations;
     }
 
     /**
@@ -173,18 +155,14 @@ public class SelfData {
      * Allows you to cache the data.
      */
     public void cache() {
-        final HashSet<SelfData> previousCache = cache;
-        previousCache.add(this);
-        cache = previousCache;
+        cache.add(this);
     }
 
     /**
      * Allows you to uncache the data.
      */
     public void uncache() {
-        final HashSet<SelfData> previousCache = cache;
-        previousCache.remove(this);
-        cache = previousCache;
+        cache.remove(this);
     }
 
     /**

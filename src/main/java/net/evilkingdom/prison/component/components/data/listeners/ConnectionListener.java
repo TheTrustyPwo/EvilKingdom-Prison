@@ -56,6 +56,9 @@ public class ConnectionListener implements Listener {
     public void onPlayerQuit(final PlayerQuitEvent playerQuitEvent) {
         final Player player = playerQuitEvent.getPlayer();
         PlayerData.get(player.getUniqueId()).whenComplete((playerData, playerDataThrowable) -> {
+            if (playerDataThrowable != null) {
+                playerDataThrowable.printStackTrace();
+            }
             if (!playerData.isCached()) {
                 return;
             }

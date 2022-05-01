@@ -30,7 +30,7 @@ public class PlayerData {
     private double multiplier;
     private long rank, tokens, gems, blocksMined;
 
-    private static HashSet<PlayerData> cache = new HashSet<PlayerData>();
+    private static final HashSet<PlayerData> cache = new HashSet<PlayerData>();
 
     /**
      * Allows you to create a PlayerData.
@@ -115,7 +115,7 @@ public class PlayerData {
      */
     public void save(final boolean asynchronous) {
         final DatapointModel datapointModel = new DatapointModel(this.uuid.toString());
-        datapointModel.getObjects().put("mine", new DatapointObject(this.mine.get().toString()));
+        datapointModel.getObjects().put("mine", new DatapointObject(Optional.ofNullable(this.mine.toString()).orElse(null)));
         datapointModel.getObjects().put("tokens", new DatapointObject(this.tokens));
         datapointModel.getObjects().put("gems", new DatapointObject(this.gems));
         datapointModel.getObjects().put("rank", new DatapointObject(this.rank));
@@ -124,7 +124,6 @@ public class PlayerData {
         final DataImplementor dataImplementor = DataImplementor.get(this.plugin);
         final Datasite datasite = dataImplementor.getDatasites().stream().filter(innerDatasite -> innerDatasite.getPlugin() == this.plugin).findFirst().get();
         final Datapoint datapoint = datasite.getDatapoints().stream().filter(innerDatapoint -> innerDatapoint.getName().equals("prison_players")).findFirst().get();
-        System.out.println("datapoint - " + datapoint.getName() + "-" + datapoint.getDatasite().getName() + "-" + datapoint.getDatasite().getPlugin());
         datapoint.save(datapointModel, asynchronous);
     }
 
@@ -249,18 +248,14 @@ public class PlayerData {
      * Allows you to cache the data.
      */
     public void cache() {
-        final HashSet<PlayerData> previousCache = cache;
-        previousCache.add(this);
-        cache = previousCache;
+        cache.add(this);
     }
 
     /**
      * Allows you to uncache the data.
      */
     public void uncache() {
-        final HashSet<PlayerData> previousCache = cache;
-        previousCache.remove(this);
-        cache = previousCache;
+        cache.remove(this);
     }
 
     /**
