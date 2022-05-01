@@ -1,0 +1,1506 @@
+#Configuration for the components.
+components:
+
+  #Configuration for the Scoreboard component.
+  scoreboard:
+
+    #The scoreboard's title.
+    title: "&6&lPRISON &7| &61.0"
+
+    #The scoreboard's lines.
+    #I suggest using some type of random color code for spacer lines (not entirely sure if it works without).
+    #Variables:
+    # - %gems% ~ The player.
+    # - %tokens% ~ The player's tokens.
+    # - %multiplier% ~ The player's multiplier.
+    # - %blocks_mined% ~ The player's blocks mined.
+    # - %rank% ~ The player's rank.
+    # - %next_rank% ~ The player's next rank.
+    # - %next_rank_price% ~ The player's next rank price.
+    # - %next_rank_progress% ~ The player's next rank progress.
+    # - %next_rank_progress_percentage% ~ The player's next rank progress percentage.
+    lines:
+      - "&0"
+      - "&6%player%"
+      - " &6» &eGems:&f %gems%"
+      - " &6» &eTokens:&f %tokens%"
+      - " &6» &eMultiplier:&f %multiplier%&fx"
+      - " &6» &eBlocks Mined:&f %blocks_mined%"
+      - "&3"
+      - "&6Rank #%next_rank%"
+      - " &6» &ePrice:&f %next_rank_price%"
+      - " &6» &eProgress:&f %next_rank_progress% &7(%next_rank_progress_percentage%&7%)"
+      - "&9"
+      - "&7evilkingdom.net            "
+
+  #Configuration for the Data component.
+  data:
+
+    #The Mongo database connection string.
+    #All of the data for this plugin is stored via MongoDB and if this is wrong, the plugin will disable itself.
+    mongo-database-connection-string: "mongodb://root:BCwjJV8YQ6Qg5PveKuAWf5Gy@174.138.184.86:27017"
+
+    #The component's commands.
+    commands:
+
+      #Configuration for the "/data" command.
+      #It will root to the "/data help" sub-command.
+      #The permission for this entire command (sub-commands don't matter) is "prison.data.commands.data".
+      data:
+
+        #The command's sub-commands.
+        sub-commands:
+
+          #The "/data help" sub-command.
+          help:
+
+            #The sub-command's messages.
+            messages:
+
+              #The message sent when the executor is not a player.
+              invalid-executor:
+                - "&6&lPrison &7» &eInvalid executor, &eyou must be a &6player&e."
+
+              #The message sent when the player enters an invalid usage.
+              invalid-usage:
+                - "&6&lPrison &7» &eInvalid usage, &etry &6/data help&e."
+
+              #The message sent when the player's permissions are invalid (doesn't have the command's permission).
+              invalid-permissions:
+                - "&6&lPrison &7» &eInvalid permissions, you do not have the &6authority&e to execute this command."
+
+              #The message sent when the help is a success.
+              success:
+                - ""
+                - "&6&lData &7| &6Commands"
+                - "&6 » &e/data help &7| &fAllows you to view this beautiful message."
+                - "&6 » &e/data modify <player> <data_type> <set/add/subtract> <amount> &7| &fAllows you to modify a player's data."
+                - ""
+
+            #The sub-command's sounds.
+            sounds:
+
+              #The sound sent when there is an error.
+              error:
+
+                #The sound.
+                #Use the SpigotMC 1.18.2's API's sound list, which can be found at https://hub.spigotmc.org/javadocs/spigot/org/bukkit/Sound.html.
+                sound: "BLOCK_NOTE_BLOCK_BIT"
+
+                #The sound's pitch.
+                pitch: 0.5
+
+                #The sound's volume.
+                volume: 1.0
+
+              #The sound sent when the help is a success.
+              success:
+
+                #The sound.
+                #Use the SpigotMC 1.18.2's API's sound list, which can be found at https://hub.spigotmc.org/javadocs/spigot/org/bukkit/Sound.html.
+                sound: "BLOCK_NOTE_BLOCK_BIT"
+
+                #The sound's pitch.
+                pitch: 1.5
+
+                #The sound's volume.
+                volume: 1.0
+
+          #The "/data modify" sub-command.
+          modify:
+
+            #The sub-command's sounds.
+            sounds:
+
+              #The sound sent when there is an error.
+              error:
+
+                #The sound.
+                #Use the SpigotMC 1.18.2's API's sound list, which can be found at https://hub.spigotmc.org/javadocs/spigot/org/bukkit/Sound.html.
+                sound: "BLOCK_NOTE_BLOCK_BIT"
+
+                #The sound's pitch.
+                pitch: 0.5
+
+                #The sound's volume.
+                volume: 1.0
+
+              #The sound sent when the data modification is a success.
+              success:
+
+                #The sound sent to the player.
+                player:
+
+                  #The sound.
+                  #Use the SpigotMC 1.18.2's API's sound list, which can be found at https://hub.spigotmc.org/javadocs/spigot/org/bukkit/Sound.html.
+                  sound: "BLOCK_NOTE_BLOCK_BIT"
+
+                  #The sound's pitch.
+                  pitch: 2
+
+                  #The sound's volume.
+                  volume: 1.0
+
+                #The sound sent to the target.
+                target:
+
+                  #The sound.
+                  #Use the SpigotMC 1.18.2's API's sound list, which can be found at https://hub.spigotmc.org/javadocs/spigot/org/bukkit/Sound.html.
+                  sound: "BLOCK_NOTE_BLOCK_BIT"
+
+                  #The sound's pitch.
+                  pitch: 1.5
+
+                  #The sound's volume.
+                  volume: 1.0
+
+            #The sub-command's messages.
+            messages:
+
+              #The message sent when the executor is not a player.
+              invalid-executor:
+                - "&6&lPrison &7» &eInvalid executor, &eyou must be a &6player&e."
+
+              #The message sent when the player's permissions are invalid (doesn't have the command's permission).
+              invalid-permissions:
+                - "&6&lPrison &7» &eInvalid permissions, you do not have the &6authority&e to execute this command."
+
+              #The message sent when the player enters an invalid usage.
+              invalid-usage:
+                - "&6&lPrison &7» &eInvalid usage, &etry &6/data modify <player> <data_type> <set/add/subtract> <amount>&e."
+
+              #The message sent when the targeted player is invalid (not in the database).
+              #Variables:
+              # - %player% ~ The targeted player.
+              invalid-player:
+                - "&6&lPrison &7» &eInvalid player, &6%player%&e does not exist in the database."
+
+              #The message sent when the data type is invalid (not rank, tokens, gems, blocks_mined, or multiplier).
+              invalid-data-type:
+                - "&6&lPrison &7» &eInvalid data type, there is only &6rank&e, &6tokens&e, &6gems&e, &6blocks_mined&e, or &6multiplier&e."
+
+              #The message sent when the action is invalid (not set, add, or subtract).
+              invalid-action:
+                - "&6&lPrison &7» &eInvalid action, there is only &6set&e, &6add&e, or &6subtract&e."
+
+              #The message sent when the amount is invalid.
+              invalid-amount:
+
+                #The message sent when the amount is not a long.
+                not-a-long:
+                  - "&6&lPrison &7» &eInvalid amount, you must use a &6long&e amount."
+
+                #The message sent when the amount is not a double.
+                not-a-double:
+                  - "&6&lPrison &7» &eInvalid amount, you must use a &6double&e amount."
+
+                #The message sent when the amount is too little.
+                amount-to-little:
+                  - "&6&lPrison &7» &eInvalid amount, that amount is too &6little&e."
+
+              #The message sent when modifying a player's data.
+              success:
+
+                #The message sent when setting a player's data.
+                #Variables:
+                # - %player% ~ The targeted player.
+                # - %amount% ~ The amount that was modified.
+                # - %data_type% ~ The data type that was modified.
+                set:
+
+                  #The message sent to the player.
+                  player:
+                    - "&6&lPrison &7» &eYou have set &6%player%&e's &6%data_type%&e amount to &6%amount%&e."
+
+                  #The message sent to the target.
+                  target:
+                    - "&6&lPrison &7» &eYour &6%data_type%&e amount has been set to &6%amount%&e by &6%player%&e."
+
+                #The message sent when adding a player's data.
+                #Variables:
+                # - %player% ~ The targeted player.
+                # - %amount% ~ The amount that was modified.
+                # - %data_type% ~ The data type that was modified.
+                add:
+
+                  #The message sent to the player.
+                  player:
+                    - "&6&lPrison &7» &eYou have added &6%amount%&e to &6%player%&e's &6%data_type%&e amount."
+
+                  #The message sent to the target.
+                  target:
+                    - "&6&lPrison &7» &eYour &6%data_type%&e amount has had &6%amount%&e added to it by &6%player%&e."
+
+                #The message sent when subtracting a player's data.
+                #Variables:
+                # - %player% ~ The targeted player.
+                # - %amount% ~ The amount that was modified.
+                # - %data_type% ~ The data type that was modified.
+                subtract:
+
+                  #The message sent to the player.
+                  player:
+                    - "&6&lPrison &7» &eYou have subtracted &6%amount%&e from &6%player%&e's &6%data_type%&e amount."
+
+                  #The message sent to the target.
+                  target:
+                    - "&6&lPrison &7» &eYour &6%data_type%&e amount has had &6%amount%&e subtracted from it by &6%player%&e."
+
+  #Configuration for the Currency component.
+  currency:
+
+    #The currency's symbols.
+    symbols:
+
+      #The gem currency's symbol.
+      gems: "✦"
+
+      #The token currency's symbol.
+      tokens: "✪"
+
+    #The component's commands.
+    commands:
+
+      #The "/balance" command.
+      balance:
+
+        #The command's sounds.
+        sounds:
+
+          #The sound sent when there is an error.
+          error:
+
+            #The sound.
+            #Use the SpigotMC 1.18.2's API's sound list, which can be found at https://hub.spigotmc.org/javadocs/spigot/org/bukkit/Sound.html.
+            sound: "BLOCK_NOTE_BLOCK_BIT"
+
+            #The sound's pitch.
+            pitch: 0.5
+
+            #The sound's volume.
+            volume: 1.0
+
+          #The sound sent when the withdrawal is a success.
+          success:
+
+            #The sound.
+            #Use the SpigotMC 1.18.2's API's sound list, which can be found at https://hub.spigotmc.org/javadocs/spigot/org/bukkit/Sound.html.
+            sound: "BLOCK_NOTE_BLOCK_BIT"
+
+            #The sound's pitch.
+            pitch: 1.5
+
+            #The sound's volume.
+            volume: 1.0
+
+        #The command's messages.
+        messages:
+
+          #The message sent when the executor is not a player.
+          invalid-executor:
+            - "&6&lPrison &7» &eInvalid executor, &eyou must be a &6player&e."
+
+          #The message sent when the player enters an invalid usage.
+          invalid-usage:
+            - "&6&lPrison &7» &eInvalid usage, &etry &6/balance <gems/tokens> [player]&e."
+
+          #The message sent when the currency is invalid (not gems or tokens).
+          invalid-currency:
+            - "&6&lPrison &7» &eInvalid currency, there is only &6gems &eor &6tokens&e."
+
+          #The message sent when the targeted player is invalid (not in the database).
+          #Variables:
+          # - %player% ~ The targeted player.
+          invalid-player:
+            - "&6&lPrison &7» &eInvalid player, &6%player%&e does not exist in the database."
+
+          #The message sent when the balance is a success.
+          #Variables:
+          # - %player% ~ The targeted player.
+          # - %amount% ~ The amount that was paid.
+          # - %currency% ~ The currency that was paid.
+          success:
+
+            #The message sent to the player.
+            player:
+              - "&6&lPrison &7» &eYou have &6%amount%&e of &6%currency%&e."
+
+            #The message sent to the player if a target is set.
+            player-with-target:
+              - "&6&lPrison &7» &6%player&e has &6%amount%&e of &6%currency%&e."
+
+      #The "/withdraw" command.
+      withdraw:
+
+        #The note.
+        note:
+
+          #The note's messages.
+          messages:
+
+            #The message sent when the deposit is a success.
+            #Variables:
+            # - %withdrawer% ~ The withdrawer.
+            # - %amount% ~ The amount that was deposited.
+            # - %currency% ~ The currency that was deposited.
+            success:
+              - "&6&lPrison &7» &eYou have withdrawn &6%amount%&e of &6%currency%&e."
+
+          #The note's sounds.
+          sounds:
+
+            #The sound sent when the deposit is a success.
+            success:
+
+              #The sound.
+              #Use the SpigotMC 1.18.2's API's sound list, which can be found at https://hub.spigotmc.org/javadocs/spigot/org/bukkit/Sound.html.
+              sound: "BLOCK_NOTE_BLOCK_BIT"
+
+              #The sound's pitch.
+              pitch: 2.0
+
+              #The sound's volume.
+              volume: 1.0
+
+          #The note's item.
+          item:
+
+            #The material of the item.
+            #Use the SpigotMC 1.18.2's API's material list, which can be found at https://hub.spigotmc.org/javadocs/spigot/org/bukkit/Material.html.
+            material: "PAPER"
+
+            #The name of the item.
+            #Variables:
+            # - %withdrawer% ~ The withdrawer.
+            # - %amount% ~ The amount that was withdrawn.
+            # - %currency% ~ The currency that was withdrawn.
+            name: "&6&l%currency% Note &7(✦%amount%)"
+
+            #The lore of the item.
+            #Variables:
+            # - %withdrawer% ~ The withdrawer.
+            # - %amount% ~ The amount that was withdrawn.
+            # - %currency% ~ The currency that was withdrawn.
+            lore:
+              - ""
+              - "&6&lAmount"
+              - " &6» &e%amount%"
+              - ""
+              - "&6&lWithdrawer"
+              - " &6» &e%withdrawer%"
+              - ""
+              - "&7Redeem this note by using &nRight Click&7."
+
+            #The item's glowing state.
+            glowing: true
+
+            #The item's unbreakable state.
+            unbreakable: true
+
+        #The command's sounds.
+        sounds:
+
+          #The sound sent when there is an error.
+          error:
+
+            #The sound.
+            #Use the SpigotMC 1.18.2's API's sound list, which can be found at https://hub.spigotmc.org/javadocs/spigot/org/bukkit/Sound.html.
+            sound: "BLOCK_NOTE_BLOCK_BIT"
+
+            #The sound's pitch.
+            pitch: 0.5
+
+            #The sound's volume.
+            volume: 1.0
+
+          #The sound sent when the withdrawal is a success.
+          success:
+
+            #The sound.
+            #Use the SpigotMC 1.18.2's API's sound list, which can be found at https://hub.spigotmc.org/javadocs/spigot/org/bukkit/Sound.html.
+            sound: "BLOCK_NOTE_BLOCK_BIT"
+
+            #The sound's pitch.
+            pitch: 1.5
+
+            #The sound's volume.
+            volume: 1.0
+
+        #The command's messages.
+        messages:
+
+          #The message sent when the executor is not a player.
+          invalid-executor:
+            - "&6&lPrison &7» &eInvalid executor, &eyou must be a &6player&e."
+
+          #The message sent when the player enters an invalid usage.
+          invalid-usage:
+            - "&6&lPrison &7» &eInvalid usage, &etry &6/withdraw <gems/tokens> <amount>&e."
+
+          #The message sent when the currency is invalid (not gems or tokens).
+          invalid-currency:
+            - "&6&lPrison &7» &eInvalid currency, there is only &6gems &eor &6tokens&e."
+
+          #The message sent when the amount is invalid.
+          invalid-amount:
+
+            #The message sent when the amount is not a long.
+            not-a-long:
+              - "&6&lPrison &7» &eInvalid amount, you must use a &6long&e amount."
+
+            #The message sent when the amount is too little.
+            amount-to-little:
+              - "&6&lPrison &7» &eInvalid amount, you must use an amount greater than &6zero&e."
+
+            #The message sent when the player doesn't have enough of the desired currency to pay.
+            #Variables:
+            # - %currency% ~ The currency.
+            not-enough:
+              - "&6&lPrison &7» &eInvalid amount, &eyou do not have enough &6%currency% &ecurrency."
+
+          #The message sent when the player's inventory is invalid (cannot fit a note).
+          invalid-inventory:
+            - "&6&lPrison &7» &eInvalid inventory, you do not have enough &6room&e for a note."
+
+          #The message sent when the withdrawal is a success.
+          #Variables:
+          # - %player% ~ The targeted player.
+          # - %amount% ~ The amount that was withdrawn.
+          # - %currency% ~ The currency that was withdrawn.
+          success:
+            - "&6&lPrison &7» &eYou have withdrawn &6%amount%&e of &6%currency%&e."
+
+      #The "/pay" command.
+      pay:
+
+        #The command's sounds.
+        sounds:
+
+          #The sound sent when there is an error.
+          error:
+
+            #The sound.
+            #Use the SpigotMC 1.18.2's API's sound list, which can be found at https://hub.spigotmc.org/javadocs/spigot/org/bukkit/Sound.html.
+            sound: "BLOCK_NOTE_BLOCK_BIT"
+
+            #The sound's pitch.
+            pitch: 0.5
+
+            #The sound's volume.
+            volume: 1.0
+
+          #The sound sent when the payment is a success.
+          success:
+
+            #The sound sent to the player.
+            player:
+
+              #The sound.
+              #Use the SpigotMC 1.18.2's API's sound list, which can be found at https://hub.spigotmc.org/javadocs/spigot/org/bukkit/Sound.html.
+              sound: "BLOCK_NOTE_BLOCK_BIT"
+
+              #The sound's pitch.
+              pitch: 1.5
+
+              #The sound's volume.
+              volume: 1.0
+
+            #The sound sent to the target.
+            target:
+
+              #The sound.
+              #Use the SpigotMC 1.18.2's API's sound list, which can be found at https://hub.spigotmc.org/javadocs/spigot/org/bukkit/Sound.html.
+              sound: "BLOCK_NOTE_BLOCK_BIT"
+
+              #The sound's pitch.
+              pitch: 2
+
+              #The sound's volume.
+              volume: 1.0
+
+        #The command's messages.
+        messages:
+
+          #The message sent when the executor is not a player.
+          invalid-executor:
+            - "&6&lPrison &7» &eInvalid executor, &eyou must be a &6player&e."
+
+          #The message sent when the player enters an invalid usage.
+          invalid-usage:
+            - "&6&lPrison &7» &eInvalid usage, &etry &6/pay <player> <gems/tokens> <amount>&e."
+
+          #The message sent when the targeted player is invalid (not online).
+          #Variables:
+          # - %player% ~ The targeted player.
+          invalid-player:
+            - "&6&lPrison &7» &eInvalid player, &6%player%&e is not online."
+
+          #The message sent when the currency is invalid (not gems or tokens).
+          invalid-currency:
+            - "&6&lPrison &7» &eInvalid currency, there is only &6gems &eor &6tokens&e."
+
+          #The message sent when the amount is invalid.
+          invalid-amount:
+
+            #The message sent when the amount is not a long.
+            not-a-long:
+              - "&6&lPrison &7» &eInvalid amount, you must use a &6long&e amount."
+
+            #The message sent when the amount is too little.
+            amount-to-little:
+              - "&6&lPrison &7» &eInvalid amount, you must use an amount greater than &6zero&e."
+
+            #The message sent when the player doesn't have enough of the desired currency to pay.
+            #Variables:
+            # - %currency% ~ The currency.
+            not-enough:
+              - "&6&lPrison &7» &eInvalid amount, &eyou do not have enough &6%currency% &ecurrency."
+
+          #The message sent when the pay is a success.
+          #Variables:
+          # - %player% ~ The targeted player.
+          # - %amount% ~ The amount that was paid.
+          # - %currency% ~ The currency that was paid.
+          success:
+
+            #The message sent to the player.
+            player:
+              - "&6&lPrison &7» &eYou have paid &6%amount%&e of &6%currency% &eto &6%player%&e."
+
+            #The message sent to the target.
+            target:
+               - "&6&lPrison &7» &eYou have been paid &6%amount%&e of &6%currency% &eby &6%player%&e."
+
+  #Configuration of the Rank component.
+  rank:
+
+    #The price of (1 -> 2) rankup, it will then multiply it with the multiplier below for the rest of the ranks.
+    1-2-price: 25000
+
+    #This is used for the pricing of ranks after the (1 -> 2), it'll take the current ranks price and multiply it with the number for the next rank's pricing.
+    multiplier: 1.15
+
+  #Configuration for the Mine component.
+  mine:
+
+    #The mines' world.
+    #It will automatically generate with the custom void generation if it doesn't exist.
+    world: "mines"
+
+    #The percentages required for mine resets.
+    reset-percentages:
+
+      #The percentage required for mines to be manually reset (out of 100).
+      manual: 75
+
+      #The percentage required for mines to be automatically reset (out of 100).
+      automatic: 50
+
+    #The mines' blocks.
+    #These must be placed in order from worst block to the best so my genius system generates block pallets for ranks and stores them.
+    #Use the SpigotMC 1.18.2's API's material list, which can be found at https://hub.spigotmc.org/javadocs/spigot/org/bukkit/Material.html (make sure they are blocks though).
+    blocks:
+      - "COBBLESTONE"
+      - "STONE"
+      - "COAL_ORE"
+      - "COAL_BLOCK"
+      - "IRON_ORE"
+      - "IRON_BLOCK"
+      - "GOLD_ORE"
+      - "GOLD_BLOCK"
+      - "LAPIS_ORE"
+      - "LAPIS_BLOCK"
+      - "REDSTONE_ORE"
+      - "REDSTONE_BLOCK"
+      - "DIAMOND_ORE"
+      - "DIAMOND_BLOCK"
+      - "EMERALD_ORE"
+      - "EMERALD_BLOCK"
+
+    #The component's commands.
+    commands:
+
+      #The "/mine" command.
+      #If the player does not have a mine, it will root to the "/mine create" sub-command- if they do have a mine, it will root to the "/mine go" sub-command.
+      mine:
+
+        #The command's sub-commands.
+        sub-commands:
+
+          #The "/mine help" sub-command.
+          help:
+
+            #The sub-command's messages.
+            messages:
+
+              #The message sent when the executor is not a player.
+              invalid-executor:
+                - "&6&lPrison &7» &eInvalid executor, &eyou must be a &6player&e."
+
+              #The message sent when the player enters an invalid usage.
+              invalid-usage:
+                - "&6&lPrison &7» &eInvalid usage, &etry &6/mine help&e."
+
+              #The message sent when the help is a success.
+              success:
+                - ""
+                - "&6&lMine &7| &6Commands"
+                - "&6 » &e/mine help &7| &fAllows you to view this beautiful message."
+                - "&6 » &e/mine create &7| &fAllows you to create a mine."
+                - "&6 » &e/mine reset &7| &fAllows you to reset your mine."
+                - "&6 » &e/mine go &7| &fAllows you to go to your mine."
+                - "&6 » &e/mine ban <player> &7| &fAllows you to ban a player from your mine."
+                - ""
+
+            #The sub-command's sounds.
+            sounds:
+
+              #The sound sent when there is an error.
+              error:
+
+                #The sound.
+                #Use the SpigotMC 1.18.2's API's sound list, which can be found at https://hub.spigotmc.org/javadocs/spigot/org/bukkit/Sound.html.
+                sound: "BLOCK_NOTE_BLOCK_BIT"
+
+                #The sound's pitch.
+                pitch: 0.5
+
+                #The sound's volume.
+                volume: 1.0
+
+              #The sound sent when the help is a success.
+              success:
+
+                #The sound.
+                #Use the SpigotMC 1.18.2's API's sound list, which can be found at https://hub.spigotmc.org/javadocs/spigot/org/bukkit/Sound.html.
+                sound: "BLOCK_NOTE_BLOCK_BIT"
+
+                #The sound's pitch.
+                pitch: 1.5
+
+                #The sound's volume.
+                volume: 1.0
+
+          #The "/mine go" sub-command.
+          go:
+
+            #The sub-command's messages.
+            messages:
+
+              #The message sent when the executor is not a player.
+              invalid-executor:
+                - "&6&lPrison &7» &eInvalid executor, &eyou must be a &6player&e."
+
+              #The message sent when the player enters an invalid usage.
+              invalid-usage:
+                - "&6&lPrison &7» &eInvalid usage, &etry &6/mine go&e."
+
+              #The message sent when the go is invalid (player doesn't have a mine).
+              invalid-go:
+                - "&6&lPrison &7» &eInvalid go, &eyou &6do not&e have a mine."
+
+              #The message sent when the go is a success.
+              success:
+                - "&6&lPrison &7» &eYou have been &6teleported&e to your mine."
+
+            #The sub-command's sounds.
+            sounds:
+
+              #The sound sent when there is an error.
+              error:
+
+                #The sound.
+                #Use the SpigotMC 1.18.2's API's sound list, which can be found at https://hub.spigotmc.org/javadocs/spigot/org/bukkit/Sound.html.
+                sound: "BLOCK_NOTE_BLOCK_BIT"
+
+                #The sound's pitch.
+                pitch: 0.5
+
+                #The sound's volume.
+                volume: 1.0
+
+              #The sound sent when the payment is a success.
+              success:
+
+                #The sound.
+                #Use the SpigotMC 1.18.2's API's sound list, which can be found at https://hub.spigotmc.org/javadocs/spigot/org/bukkit/Sound.html.
+                sound: "BLOCK_NOTE_BLOCK_BIT"
+
+                #The sound's pitch.
+                pitch: 1.5
+
+                #The sound's volume.
+                volume: 1.0
+
+          #The "/mine reset" sub-command.
+          reset:
+
+            #The default mine reset cooldown (in ticks).
+            #This will be used unless they have a permission like "prison.mine.commands.mine.sub-commands.reset.cooldown.(duration)".
+            default-cooldown: 6000
+
+            #The sub-command's messages.
+            messages:
+
+              #The message sent when the executor is not a player.
+              invalid-executor:
+                - "&6&lPrison &7» &eInvalid executor, &eyou must be a &6player&e."
+
+              #The message sent when the player enters an invalid usage.
+              invalid-usage:
+                - "&6&lPrison &7» &eInvalid usage, &etry &6/mine reset&e."
+
+              #The message sent when the reset is invalid.
+              invalid-reset:
+
+                #The message sent when the player does not have a mine.
+                has-no-mine:
+                  - "&6&lPrison &7» &eInvalid reset, &eyou &6do not&e have a mine."
+
+                #The message sent when the player is on cooldown.
+                #Variables:
+                # - %time_left% ~ The cooldown's time left.
+                on-cooldown:
+                  - "&6&lPrison &7» &eInvalid reset, &eyou are on &6cooldown &efor another &6%time_left%&e."
+
+                #The message sent when the player is already resetting their mine.
+                already-resetting:
+                  - "&6&lPrison &7» &eInvalid reset, &eyour mine is &6already&e being &6reset&e."
+
+                #The message sent when the player's mine is too full.
+                mine-too-full:
+                  - "&6&lPrison &7» &eInvalid reset, &eyour mine is &6too full&e."
+
+              #The message sent when the reset is a success.
+              success:
+
+                #The message sent when the mine is being reset.
+                resetting:
+                  - "&6&lPrison &7» &eYour mine is being &6reset&e..."
+                  - "&7&o(Please be patient, this could take a moment!)"
+
+                #The message sent when the mine is done resetting.
+                reset:
+                  - "&6&lPrison &7» &eYour mine has been &6reset&e!"
+
+            #The sub-command's sounds.
+            sounds:
+
+              #The sound sent when there is an error.
+              error:
+
+                #The sound.
+                #Use the SpigotMC 1.18.2's API's sound list, which can be found at https://hub.spigotmc.org/javadocs/spigot/org/bukkit/Sound.html.
+                sound: "BLOCK_NOTE_BLOCK_BIT"
+
+                #The sound's pitch.
+                pitch: 0.5
+
+                #The sound's volume.
+                volume: 1.0
+
+              #The sound sent when the creation is a success.
+              success:
+
+                #The sound.
+                #Use the SpigotMC 1.18.2's API's sound list, which can be found at https://hub.spigotmc.org/javadocs/spigot/org/bukkit/Sound.html.
+                sound: "BLOCK_NOTE_BLOCK_BIT"
+
+                #The sound's pitch.
+                pitch: 1.5
+
+                #The sound's volume.
+                volume: 1.0
+
+          #The "/mine create" sub-command.
+          create:
+
+            #The sub-command's messages.
+            messages:
+
+              #The message sent when the executor is not a player.
+              invalid-executor:
+                - "&6&lPrison &7» &eInvalid executor, &eyou must be a &6player&e."
+
+              #The message sent when the player enters an invalid usage.
+              invalid-usage:
+                - "&6&lPrison &7» &eInvalid usage, &etry &6/mine create&e."
+
+              #The message sent when the creation is invalid.
+              invalid-creation:
+
+                #The message sent when the player already has a mine.
+                already-has-a-mine:
+                  - "&6&lPrison &7» &eInvalid creation, &eyou &6already&e have a mine."
+
+                #The message sent when the player is already creating a mine.
+                already-creating:
+                  - "&6&lPrison &7» &eInvalid creation, &eyour mine is &6already&e being created."
+
+              #The message sent when the creation is a success.
+              success:
+
+                #The message sent when the mine is being created.
+                creating:
+                  - "&6&lPrison &7» &eYour mine is being &6created&e..."
+                  - "&7&o(Please be patient, this could take a while!)"
+
+                #The message sent when the mine is done creating.
+                created:
+                  - "&6&lPrison &7» &eYour mine has been &6created&e!"
+
+            #The sub-command's sounds.
+            sounds:
+
+              #The sound sent when there is an error.
+              error:
+
+                #The sound.
+                #Use the SpigotMC 1.18.2's API's sound list, which can be found at https://hub.spigotmc.org/javadocs/spigot/org/bukkit/Sound.html.
+                sound: "BLOCK_NOTE_BLOCK_BIT"
+
+                #The sound's pitch.
+                pitch: 0.5
+
+                #The sound's volume.
+                volume: 1.0
+
+              #The sound sent when the creation is a success.
+              success:
+
+                #The sound.
+                #Use the SpigotMC 1.18.2's API's sound list, which can be found at https://hub.spigotmc.org/javadocs/spigot/org/bukkit/Sound.html.
+                sound: "BLOCK_NOTE_BLOCK_BIT"
+
+                #The sound's pitch.
+                pitch: 1.5
+
+                #The sound's volume.
+                volume: 1.0
+
+            #The sub-command's menus.
+            menus:
+
+              #The theme selector menu.
+              theme-selector:
+
+                #The menu's items.
+                items:
+
+                  #The theme item (used for selecting a theme).
+                  #It will automatically fill empty slots using it.
+                  theme:
+
+                    #The material of the item.
+                    #It is suggested you use set this to the "%related_material%" variable which retrieves the theme's related material.
+                    #Use the SpigotMC 1.18.2's API's material list, which can be found at https://hub.spigotmc.org/javadocs/spigot/org/bukkit/Material.html.
+                    #Variables:
+                    # - %related_material% ~ The theme's related material.
+                    material: "%related_material%"
+
+                    #The name of the item.
+                    #Variables:
+                    # - %name% ~ The name of the theme.
+                    name: "&6&l%name%"
+
+                    #The lore of the item.
+                    #Variables:
+                    # - %name% ~ The name of the theme.
+                    # - %description% ~ The description of the theme.
+                    lore:
+                      - ""
+                      - "&6&lDescription"
+                      - " &6» &e%description%"
+                      - ""
+                      - "&7Select this theme by using &nLeft Click&7."
+
+                    #The item's glowing state.
+                    glowing: true
+
+                    #The item's unbreakable state.
+                    unbreakable: true
+
+                #The menu's inventory.
+                inventory:
+
+                  #The menu's type.
+                  #Use the SpigotMC 1.18.2's API's inventory type list, which can be found at https://hub.spigotmc.org/javadocs/spigot/org/bukkit/event/inventory/InventoryType.html.
+                  type: "CHEST"
+
+                  #The menu's rows.
+                  #This should only be used if the menu's type is CHEST.
+                  rows: 3
+
+                  #The menu's title
+                  title: "Mine | Theme Selector"
+
+                  #The inventory's items.
+                  items:
+
+                    #The item's slot.
+                    1:
+
+                      #The material of the item.
+                      #Use the SpigotMC 1.18.2's API's material list, which can be found at https://hub.spigotmc.org/javadocs/spigot/org/bukkit/Material.html.
+                      material: "BLACK_STAINED_GLASS_PANE"
+
+                      #The name of the item.
+                      name: "&0"
+
+                      #The item's glowing state.
+                      glowing: false
+
+                      #The item's unbreakable state.
+                      unbreakable: true
+
+                    #The item's slot.
+                    2:
+
+                      #The material of the item.
+                      #Use the SpigotMC 1.18.2's API's material list, which can be found at https://hub.spigotmc.org/javadocs/spigot/org/bukkit/Material.html.
+                      material: "BLACK_STAINED_GLASS_PANE"
+
+                      #The name of the item.
+                      name: "&0"
+
+                      #The item's glowing state.
+                      glowing: false
+
+                      #The item's unbreakable state.
+                      unbreakable: true
+
+                    #The item's slot.
+                    3:
+
+                      #The material of the item.
+                      #Use the SpigotMC 1.18.2's API's material list, which can be found at https://hub.spigotmc.org/javadocs/spigot/org/bukkit/Material.html.
+                      material: "BLACK_STAINED_GLASS_PANE"
+
+                      #The name of the item.
+                      name: "&0"
+
+                      #The item's glowing state.
+                      glowing: false
+
+                      #The item's unbreakable state.
+                      unbreakable: true
+
+                    #The item's slot.
+                    4:
+
+                      #The material of the item.
+                      #Use the SpigotMC 1.18.2's API's material list, which can be found at https://hub.spigotmc.org/javadocs/spigot/org/bukkit/Material.html.
+                      material: "BLACK_STAINED_GLASS_PANE"
+
+                      #The name of the item.
+                      name: "&0"
+
+                      #The item's glowing state.
+                      glowing: false
+
+                      #The item's unbreakable state.
+                      unbreakable: true
+
+                    #The item's slot.
+                    5:
+
+                      #The material of the item.
+                      #Use the SpigotMC 1.18.2's API's material list, which can be found at https://hub.spigotmc.org/javadocs/spigot/org/bukkit/Material.html.
+                      material: "BLACK_STAINED_GLASS_PANE"
+
+                      #The name of the item.
+                      name: "&0"
+
+                      #The item's glowing state.
+                      glowing: false
+
+                      #The item's unbreakable state.
+                      unbreakable: true
+
+                    #The item's slot.
+                    6:
+
+                      #The material of the item.
+                      #Use the SpigotMC 1.18.2's API's material list, which can be found at https://hub.spigotmc.org/javadocs/spigot/org/bukkit/Material.html.
+                      material: "BLACK_STAINED_GLASS_PANE"
+
+                      #The name of the item.
+                      name: "&0"
+
+                      #The item's glowing state.
+                      glowing: false
+
+                      #The item's unbreakable state.
+                      unbreakable: true
+
+                    #The item's slot.
+                    7:
+
+                      #The material of the item.
+                      #Use the SpigotMC 1.18.2's API's material list, which can be found at https://hub.spigotmc.org/javadocs/spigot/org/bukkit/Material.html.
+                      material: "BLACK_STAINED_GLASS_PANE"
+
+                      #The name of the item.
+                      name: "&0"
+
+                      #The item's glowing state.
+                      glowing: false
+
+                      #The item's unbreakable state.
+                      unbreakable: true
+
+                    #The item's slot.
+                    8:
+
+                      #The material of the item.
+                      #Use the SpigotMC 1.18.2's API's material list, which can be found at https://hub.spigotmc.org/javadocs/spigot/org/bukkit/Material.html.
+                      material: "BLACK_STAINED_GLASS_PANE"
+
+                      #The name of the item.
+                      name: "&0"
+
+                      #The item's glowing state.
+                      glowing: false
+
+                      #The item's unbreakable state.
+                      unbreakable: true
+
+                    #The item's slot.
+                    9:
+
+                      #The material of the item.
+                      #Use the SpigotMC 1.18.2's API's material list, which can be found at https://hub.spigotmc.org/javadocs/spigot/org/bukkit/Material.html.
+                      material: "BLACK_STAINED_GLASS_PANE"
+
+                      #The name of the item.
+                      name: "&0"
+
+                      #The item's glowing state.
+                      glowing: false
+
+                      #The item's unbreakable state.
+                      unbreakable: true
+
+                    #The item's slot.
+                    10:
+
+                      #The material of the item.
+                      #Use the SpigotMC 1.18.2's API's material list, which can be found at https://hub.spigotmc.org/javadocs/spigot/org/bukkit/Material.html.
+                      material: "BLACK_STAINED_GLASS_PANE"
+
+                      #The name of the item.
+                      name: "&0"
+
+                      #The item's glowing state.
+                      glowing: false
+
+                      #The item's unbreakable state.
+                      unbreakable: true
+
+                    #The item's slot.
+                    11:
+
+                      #The material of the item.
+                      #Use the SpigotMC 1.18.2's API's material list, which can be found at https://hub.spigotmc.org/javadocs/spigot/org/bukkit/Material.html.
+                      material: "BLACK_STAINED_GLASS_PANE"
+
+                      #The name of the item.
+                      name: "&0"
+
+                      #The item's glowing state.
+                      glowing: false
+
+                      #The item's unbreakable state.
+                      unbreakable: true
+
+                    #The item's slot.
+                    13:
+
+                      #The material of the item.
+                      #Use the SpigotMC 1.18.2's API's material list, which can be found at https://hub.spigotmc.org/javadocs/spigot/org/bukkit/Material.html.
+                      material: "BLACK_STAINED_GLASS_PANE"
+
+                      #The name of the item.
+                      name: "&0"
+
+                      #The item's glowing state.
+                      glowing: false
+
+                      #The item's unbreakable state.
+                      unbreakable: true
+
+                    #The item's slot.
+                    15:
+
+                      #The material of the item.
+                      #Use the SpigotMC 1.18.2's API's material list, which can be found at https://hub.spigotmc.org/javadocs/spigot/org/bukkit/Material.html.
+                      material: "BLACK_STAINED_GLASS_PANE"
+
+                      #The name of the item.
+                      name: "&0"
+
+                      #The item's glowing state.
+                      glowing: false
+
+                      #The item's unbreakable state.
+                      unbreakable: true
+
+                    #The item's slot.
+                    17:
+
+                      #The material of the item.
+                      #Use the SpigotMC 1.18.2's API's material list, which can be found at https://hub.spigotmc.org/javadocs/spigot/org/bukkit/Material.html.
+                      material: "BLACK_STAINED_GLASS_PANE"
+
+                      #The name of the item.
+                      name: "&0"
+
+                      #The item's glowing state.
+                      glowing: false
+
+                      #The item's unbreakable state.
+                      unbreakable: true
+
+                    #The item's slot.
+                    18:
+
+                      #The material of the item.
+                      #Use the SpigotMC 1.18.2's API's material list, which can be found at https://hub.spigotmc.org/javadocs/spigot/org/bukkit/Material.html.
+                      material: "BLACK_STAINED_GLASS_PANE"
+
+                      #The name of the item.
+                      name: "&0"
+
+                      #The item's glowing state.
+                      glowing: false
+
+                      #The item's unbreakable state.
+                      unbreakable: true
+
+                    #The item's slot.
+                    19:
+
+                      #The material of the item.
+                      #Use the SpigotMC 1.18.2's API's material list, which can be found at https://hub.spigotmc.org/javadocs/spigot/org/bukkit/Material.html.
+                      material: "BLACK_STAINED_GLASS_PANE"
+
+                      #The name of the item.
+                      name: "&0"
+
+                      #The item's glowing state.
+                      glowing: false
+
+                      #The item's unbreakable state.
+                      unbreakable: true
+
+                    #The item's slot.
+                    20:
+
+                      #The material of the item.
+                      #Use the SpigotMC 1.18.2's API's material list, which can be found at https://hub.spigotmc.org/javadocs/spigot/org/bukkit/Material.html.
+                      material: "BLACK_STAINED_GLASS_PANE"
+
+                      #The name of the item.
+                      name: "&0"
+
+                      #The item's glowing state.
+                      glowing: false
+
+                      #The item's unbreakable state.
+                      unbreakable: true
+
+                    #The item's slot.
+                    21:
+
+                      #The material of the item.
+                      #Use the SpigotMC 1.18.2's API's material list, which can be found at https://hub.spigotmc.org/javadocs/spigot/org/bukkit/Material.html.
+                      material: "BLACK_STAINED_GLASS_PANE"
+
+                      #The name of the item.
+                      name: "&0"
+
+                      #The item's glowing state.
+                      glowing: false
+
+                      #The item's unbreakable state.
+                      unbreakable: true
+
+                    #The item's slot.
+                    22:
+
+                      #The material of the item.
+                      #Use the SpigotMC 1.18.2's API's material list, which can be found at https://hub.spigotmc.org/javadocs/spigot/org/bukkit/Material.html.
+                      material: "BLACK_STAINED_GLASS_PANE"
+
+                      #The name of the item.
+                      name: "&0"
+
+                      #The item's glowing state.
+                      glowing: false
+
+                      #The item's unbreakable state.
+                      unbreakable: true
+
+                    #The item's slot.
+                    23:
+
+                      #The material of the item.
+                      #Use the SpigotMC 1.18.2's API's material list, which can be found at https://hub.spigotmc.org/javadocs/spigot/org/bukkit/Material.html.
+                      material: "BLACK_STAINED_GLASS_PANE"
+
+                      #The name of the item.
+                      name: "&0"
+
+                      #The item's glowing state.
+                      glowing: false
+
+                      #The item's unbreakable state.
+                      unbreakable: true
+
+                    #The item's slot.
+                    24:
+
+                      #The material of the item.
+                      #Use the SpigotMC 1.18.2's API's material list, which can be found at https://hub.spigotmc.org/javadocs/spigot/org/bukkit/Material.html.
+                      material: "BLACK_STAINED_GLASS_PANE"
+
+                      #The name of the item.
+                      name: "&0"
+
+                      #The item's glowing state.
+                      glowing: false
+
+                      #The item's unbreakable state.
+                      unbreakable: true
+
+                    #The item's slot.
+                    25:
+
+                      #The material of the item.
+                      #Use the SpigotMC 1.18.2's API's material list, which can be found at https://hub.spigotmc.org/javadocs/spigot/org/bukkit/Material.html.
+                      material: "BLACK_STAINED_GLASS_PANE"
+
+                      #The name of the item.
+                      name: "&0"
+
+                      #The item's glowing state.
+                      glowing: false
+
+                      #The item's unbreakable state.
+                      unbreakable: true
+
+                    #The item's slot.
+                    26:
+
+                      #The material of the item.
+                      #Use the SpigotMC 1.18.2's API's material list, which can be found at https://hub.spigotmc.org/javadocs/spigot/org/bukkit/Material.html.
+                      material: "BLACK_STAINED_GLASS_PANE"
+
+                      #The name of the item.
+                      name: "&0"
+
+                      #The item's glowing state.
+                      glowing: false
+
+                      #The item's unbreakable state.
+                      unbreakable: true
+
+                    #The item's slot.
+                    27:
+
+                      #The material of the item.
+                      #Use the SpigotMC 1.18.2's API's material list, which can be found at https://hub.spigotmc.org/javadocs/spigot/org/bukkit/Material.html.
+                      material: "BLACK_STAINED_GLASS_PANE"
+
+                      #The name of the item.
+                      name: "&0"
+
+                      #The item's glowing state.
+                      glowing: false
+
+                      #The item's unbreakable state.
+                      unbreakable: true
+
+          #The "/mine ban" sub-command.
+          ban:
+
+            #The sub-command's messages.
+            messages:
+
+              #The message sent when the executor is not a player.
+              invalid-executor:
+                - "&6&lPrison &7» &eInvalid executor, &eyou must be a &6player&e."
+
+              #The message sent when the player enters an invalid usage.
+              invalid-usage:
+                - "&6&lPrison &7» &eInvalid usage, &etry &6/mine ban <player>&e."
+
+              #The message sent when the targeted player is invalid.
+              #Variables:
+              # - %player% ~ The targeted player.
+              invalid-player:
+
+                #The message sent if the targeted player does not exist in the database.
+                does-not-exist:
+                  - "&6&lPrison &7» &eInvalid player, &6%player%&e does not exist in the database."
+
+                #The message sent if the targeted player is the player.
+                self-ban:
+                  - "&6&lPrison &7» &eInvalid player, you cannot ban &6yourself&e."
+
+              #The message sent when the reset is invalid.
+              invalid-ban:
+
+                #The message sent when the player does not have a mine.
+                has-no-mine:
+                  - "&6&lPrison &7» &eInvalid ban, &eyou &6do not&e have a mine."
+
+                #The message sent when the targeted player is already banned.
+                #Variables:
+                # - %player% ~ The targeted player.
+                already-banned:
+                  - "&6&lPrison &7» &eInvalid ban, &6%player% &eis already banned."
+
+              #The message sent when the ban is a success.
+              success:
+
+                #The message sent to the player.
+                #Variables:
+                # - %player% ~ The targeted player.
+                player:
+                  - "&6&lPrison &7» &eYou have banned &6%player%&e from your &6mine&e!"
+
+                #The message sent to the targeted player.
+                #This is only sent to the targeted player if they're inside the mine (if they are, it'll send this, and it'll teleport them to spawn).
+                target:
+                  - "&6&lPrison &7» &eYou have been &6banned&e from this &6mine&e!"
+
+            #The sub-command's sounds.
+            sounds:
+
+              #The sound sent when there is an error.
+              error:
+
+                #The sound.
+                #Use the SpigotMC 1.18.2's API's sound list, which can be found at https://hub.spigotmc.org/javadocs/spigot/org/bukkit/Sound.html.
+                sound: "BLOCK_NOTE_BLOCK_BIT"
+
+                #The sound's pitch.
+                pitch: 0.5
+
+                #The sound's volume.
+                volume: 1.0
+
+              #The sound sent when the ban is a success.
+              success:
+
+                #The sound sent to the player.
+                player:
+
+                  #The sound.
+                  #Use the SpigotMC 1.18.2's API's sound list, which can be found at https://hub.spigotmc.org/javadocs/spigot/org/bukkit/Sound.html.
+                  sound: "BLOCK_NOTE_BLOCK_BIT"
+
+                  #The sound's pitch.
+                  pitch: 1.5
+
+                  #The sound's volume.
+                  volume: 1.0
+
+                #The sound sent to the target.
+                target:
+
+                  #The sound.
+                  #Use the SpigotMC 1.18.2's API's sound list, which can be found at https://hub.spigotmc.org/javadocs/spigot/org/bukkit/Sound.html.
+                  sound: "BLOCK_NOTE_BLOCK_BIT"
+
+                  #The sound's pitch.
+                  pitch: 0.5
+
+                  #The sound's volume.
+                  volume: 1.0
+
+    #The mines' themes.
+    themes:
+
+      #The name of the theme.
+      kingdom-one:
+
+        #The related material of the theme.
+        #Use the SpigotMC 1.18.2's API's material list, which can be found at https://hub.spigotmc.org/javadocs/spigot/org/bukkit/Material.html.
+        related-material: "DARK_OAK_LOG"
+
+        #The prettified name of the theme.
+        prettified-name: "Kingdom One"
+
+        #The description of the theme.
+        description: "A beautiful grassy and hilly landscape with wooden medieval villages."
+
+        #The name of schematic file that is in the "/schematics/" folder (must be a .schem file).
+        #Note that the mine cannot be any larger 500x500 and the schematic must have been copied at Y level 150 in the center (a 1x1 square), therefore when it is pasted- it is at exact location requested.
+        schematic: "kingdom_one.schem"
+
+        #The offsets of the mine.
+        #These require you to do a bit of work like finding where the center of the mine is and how much offset it will take to get to certain spots.
+        offsets:
+
+          #The go of the mine.
+          go:
+
+            #The x offset.
+            x: 7
+
+            #The y offset.
+            y: 1
+
+            #The z offset.
+            z: 108
+
+
+          #The first corner of the mine.
+          corner-one:
+
+            #The x offset.
+            x: 180
+
+            #The y offset.
+            y: 145
+
+            #The z offset.
+            z: 185
+
+          #The second corner of the mine.
+          corner-two:
+
+            #The x offset.
+            x: -179
+
+            #The y offset.
+            y: -75
+
+            #The z offset.
+            z: -171
+
+          #The first corner of the actual mine.
+          mine-corner-one:
+
+            #The x offset.
+            x: 99
+
+            #The y offset.
+            y: -1
+
+            #The z offset.
+            z: 99
+
+          #The second corner of the actual mine.
+          mine-corner-two:
+
+            #The x offset.
+            x: -99
+
+            #The y offset.
+            y: -75
+
+            #The z offset.
+            z: -99

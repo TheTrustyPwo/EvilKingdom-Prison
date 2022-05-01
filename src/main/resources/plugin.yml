@@ -1,0 +1,12 @@
+name: Prison
+
+author: kodirati
+website: kodirati.com
+description: Used as the core for the prison server of Evil Kingdom.
+
+main: net.evilkingdom.prison.Prison
+version: 1.0
+api-version: 1.18
+depend: [Commons]
+
+commands:

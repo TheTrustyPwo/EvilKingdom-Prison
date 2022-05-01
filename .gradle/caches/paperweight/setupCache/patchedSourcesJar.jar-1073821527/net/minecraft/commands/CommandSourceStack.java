@@ -1,0 +1,279 @@
+package net.minecraft.commands;
+
+import com.google.common.collect.Lists;
+import com.mojang.brigadier.ResultConsumer;
+import com.mojang.brigadier.context.CommandContext;
+import com.mojang.brigadier.exceptions.CommandSyntaxException;
+import com.mojang.brigadier.exceptions.SimpleCommandExceptionType;
+import com.mojang.brigadier.suggestion.Suggestions;
+import com.mojang.brigadier.suggestion.SuggestionsBuilder;
+import java.util.Collection;
+import java.util.Objects;
+import java.util.Set;
+import java.util.concurrent.CompletableFuture;
+import java.util.function.BinaryOperator;
+import java.util.stream.Stream;
+import javax.annotation.Nullable;
+import net.minecraft.ChatFormatting;
+import net.minecraft.Util;
+import net.minecraft.commands.arguments.EntityAnchorArgument;
+import net.minecraft.core.Registry;
+import net.minecraft.core.RegistryAccess;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TextComponent;
+import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.MinecraftServer;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.util.Mth;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.level.GameRules;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.dimension.DimensionType;
+import net.minecraft.world.phys.Vec2;
+import net.minecraft.world.phys.Vec3;
+
+public class CommandSourceStack implements SharedSuggestionProvider {
+    public static final SimpleCommandExceptionType ERROR_NOT_PLAYER = new SimpleCommandExceptionType(new TranslatableComponent("permissions.requires.player"));
+    public static final SimpleCommandExceptionType ERROR_NOT_ENTITY = new SimpleCommandExceptionType(new TranslatableComponent("permissions.requires.entity"));
+    public final CommandSource source;
+    private final Vec3 worldPosition;
+    private final ServerLevel level;
+    private final int permissionLevel;
+    private final String textName;
+    private final Component displayName;
+    private final MinecraftServer server;
+    private final boolean silent;
+    @Nullable
+    private final Entity entity;
+    @Nullable
+    private final ResultConsumer<CommandSourceStack> consumer;
+    private final EntityAnchorArgument.Anchor anchor;
+    private final Vec2 rotation;
+
+    public CommandSourceStack(CommandSource output, Vec3 pos, Vec2 rot, ServerLevel world, int level, String name, Component displayName, MinecraftServer server, @Nullable Entity entity) {
+        this(output, pos, rot, world, level, name, displayName, server, entity, false, (context, success, result) -> {
+        }, EntityAnchorArgument.Anchor.FEET);
+    }
+
+    protected CommandSourceStack(CommandSource output, Vec3 pos, Vec2 rot, ServerLevel world, int level, String name, Component displayName, MinecraftServer server, @Nullable Entity entity, boolean silent, @Nullable ResultConsumer<CommandSourceStack> consumer, EntityAnchorArgument.Anchor entityAnchor) {
+        this.source = output;
+        this.worldPosition = pos;
+        this.level = world;
+        this.silent = silent;
+        this.entity = entity;
+        this.permissionLevel = level;
+        this.textName = name;
+        this.displayName = displayName;
+        this.server = server;
+        this.consumer = consumer;
+        this.anchor = entityAnchor;
+        this.rotation = rot;
+    }
+
+    public CommandSourceStack withSource(CommandSource output) {
+        return this.source == output ? this : new CommandSourceStack(output, this.worldPosition, this.rotation, this.level, this.permissionLevel, this.textName, this.displayName, this.server, this.entity, this.silent, this.consumer, this.anchor);
+    }
+
+    public CommandSourceStack withEntity(Entity entity) {
+        return this.entity == entity ? this : new CommandSourceStack(this.source, this.worldPosition, this.rotation, this.level, this.permissionLevel, entity.getName().getString(), entity.getDisplayName(), this.server, entity, this.silent, this.consumer, this.anchor);
+    }
+
+    public CommandSourceStack withPosition(Vec3 position) {
+        return this.worldPosition.equals(position) ? this : new CommandSourceStack(this.source, position, this.rotation, this.level, this.permissionLevel, this.textName, this.displayName, this.server, this.entity, this.silent, this.consumer, this.anchor);
+    }
+
+    public CommandSourceStack withRotation(Vec2 rotation) {
+        return this.rotation.equals(rotation) ? this : new CommandSourceStack(this.source, this.worldPosition, rotation, this.level, this.permissionLevel, this.textName, this.displayName, this.server, this.entity, this.silent, this.consumer, this.anchor);
+    }
+
+    public CommandSourceStack withCallback(ResultConsumer<CommandSourceStack> consumer) {
+        return Objects.equals(this.consumer, consumer) ? this : new CommandSourceStack(this.source, this.worldPosition, this.rotation, this.level, this.permissionLevel, this.textName, this.displayName, this.server, this.entity, this.silent, consumer, this.anchor);
+    }
+
+    public CommandSourceStack withCallback(ResultConsumer<CommandSourceStack> consumer, BinaryOperator<ResultConsumer<CommandSourceStack>> merger) {
+        ResultConsumer<CommandSourceStack> resultConsumer = merger.apply(this.consumer, consumer);
+        return this.withCallback(resultConsumer);
+    }
+
+    public CommandSourceStack withSuppressedOutput() {
+        return !this.silent && !this.source.alwaysAccepts() ? new CommandSourceStack(this.source, this.worldPosition, this.rotation, this.level, this.permissionLevel, this.textName, this.displayName, this.server, this.entity, true, this.consumer, this.anchor) : this;
+    }
+
+    public CommandSourceStack withPermission(int level) {
+        return level == this.permissionLevel ? this : new CommandSourceStack(this.source, this.worldPosition, this.rotation, this.level, level, this.textName, this.displayName, this.server, this.entity, this.silent, this.consumer, this.anchor);
+    }
+
+    public CommandSourceStack withMaximumPermission(int level) {
+        return level <= this.permissionLevel ? this : new CommandSourceStack(this.source, this.worldPosition, this.rotation, this.level, level, this.textName, this.displayName, this.server, this.entity, this.silent, this.consumer, this.anchor);
+    }
+
+    public CommandSourceStack withAnchor(EntityAnchorArgument.Anchor anchor) {
+        return anchor == this.anchor ? this : new CommandSourceStack(this.source, this.worldPosition, this.rotation, this.level, this.permissionLevel, this.textName, this.displayName, this.server, this.entity, this.silent, this.consumer, anchor);
+    }
+
+    public CommandSourceStack withLevel(ServerLevel world) {
+        if (world == this.level) {
+            return this;
+        } else {
+            double d = DimensionType.getTeleportationScale(this.level.dimensionType(), world.dimensionType());
+            Vec3 vec3 = new Vec3(this.worldPosition.x * d, this.worldPosition.y, this.worldPosition.z * d);
+            return new CommandSourceStack(this.source, vec3, this.rotation, world, this.permissionLevel, this.textName, this.displayName, this.server, this.entity, this.silent, this.consumer, this.anchor);
+        }
+    }
+
+    public CommandSourceStack facing(Entity entity, EntityAnchorArgument.Anchor anchor) {
+        return this.facing(anchor.apply(entity));
+    }
+
+    public CommandSourceStack facing(Vec3 position) {
+        Vec3 vec3 = this.anchor.apply(this);
+        double d = position.x - vec3.x;
+        double e = position.y - vec3.y;
+        double f = position.z - vec3.z;
+        double g = Math.sqrt(d * d + f * f);
+        float h = Mth.wrapDegrees((float)(-(Mth.atan2(e, g) * (double)(180F / (float)Math.PI))));
+        float i = Mth.wrapDegrees((float)(Mth.atan2(f, d) * (double)(180F / (float)Math.PI)) - 90.0F);
+        return this.withRotation(new Vec2(h, i));
+    }
+
+    public Component getDisplayName() {
+        return this.displayName;
+    }
+
+    public String getTextName() {
+        return this.textName;
+    }
+
+    @Override
+    public boolean hasPermission(int level) {
+        return this.permissionLevel >= level;
+    }
+
+    public Vec3 getPosition() {
+        return this.worldPosition;
+    }
+
+    public ServerLevel getLevel() {
+        return this.level;
+    }
+
+    @Nullable
+    public Entity getEntity() {
+        return this.entity;
+    }
+
+    public Entity getEntityOrException() throws CommandSyntaxException {
+        if (this.entity == null) {
+            throw ERROR_NOT_ENTITY.create();
+        } else {
+            return this.entity;
+        }
+    }
+
+    public ServerPlayer getPlayerOrException() throws CommandSyntaxException {
+        if (!(this.entity instanceof ServerPlayer)) {
+            throw ERROR_NOT_PLAYER.create();
+        } else {
+            return (ServerPlayer)this.entity;
+        }
+    }
+
+    public Vec2 getRotation() {
+        return this.rotation;
+    }
+
+    public MinecraftServer getServer() {
+        return this.server;
+    }
+
+    public EntityAnchorArgument.Anchor getAnchor() {
+        return this.anchor;
+    }
+
+    public void sendSuccess(Component message, boolean broadcastToOps) {
+        if (this.source.acceptsSuccess() && !this.silent) {
+            this.source.sendMessage(message, Util.NIL_UUID);
+        }
+
+        if (broadcastToOps && this.source.shouldInformAdmins() && !this.silent) {
+            this.broadcastToAdmins(message);
+        }
+
+    }
+
+    private void broadcastToAdmins(Component message) {
+        Component component = (new TranslatableComponent("chat.type.admin", this.getDisplayName(), message)).withStyle(new ChatFormatting[]{ChatFormatting.GRAY, ChatFormatting.ITALIC});
+        if (this.server.getGameRules().getBoolean(GameRules.RULE_SENDCOMMANDFEEDBACK)) {
+            for(ServerPlayer serverPlayer : this.server.getPlayerList().getPlayers()) {
+                if (serverPlayer != this.source && this.server.getPlayerList().isOp(serverPlayer.getGameProfile())) {
+                    serverPlayer.sendMessage(component, Util.NIL_UUID);
+                }
+            }
+        }
+
+        if (this.source != this.server && this.server.getGameRules().getBoolean(GameRules.RULE_LOGADMINCOMMANDS)) {
+            this.server.sendMessage(component, Util.NIL_UUID);
+        }
+
+    }
+
+    public void sendFailure(Component message) {
+        if (this.source.acceptsFailure() && !this.silent) {
+            this.source.sendMessage((new TextComponent("")).append(message).withStyle(ChatFormatting.RED), Util.NIL_UUID);
+        }
+
+    }
+
+    public void onCommandComplete(CommandContext<CommandSourceStack> context, boolean success, int result) {
+        if (this.consumer != null) {
+            this.consumer.onCommandComplete(context, success, result);
+        }
+
+    }
+
+    @Override
+    public Collection<String> getOnlinePlayerNames() {
+        return Lists.newArrayList(this.server.getPlayerNames());
+    }
+
+    @Override
+    public Collection<String> getAllTeams() {
+        return this.server.getScoreboard().getTeamNames();
+    }
+
+    @Override
+    public Collection<ResourceLocation> getAvailableSoundEvents() {
+        return Registry.SOUND_EVENT.keySet();
+    }
+
+    @Override
+    public Stream<ResourceLocation> getRecipeNames() {
+        return this.server.getRecipeManager().getRecipeIds();
+    }
+
+    @Override
+    public CompletableFuture<Suggestions> customSuggestion(CommandContext<?> context) {
+        return Suggestions.empty();
+    }
+
+    @Override
+    public CompletableFuture<Suggestions> suggestRegistryElements(ResourceKey<? extends Registry<?>> registryRef, SharedSuggestionProvider.ElementSuggestionType suggestedIdType, SuggestionsBuilder builder, CommandContext<?> context) {
+        return this.registryAccess().registry(registryRef).map((registry) -> {
+            this.suggestRegistryElements(registry, suggestedIdType, builder);
+            return builder.buildFuture();
+        }).orElseGet(Suggestions::empty);
+    }
+
+    @Override
+    public Set<ResourceKey<Level>> levels() {
+        return this.server.levelKeys();
+    }
+
+    @Override
+    public RegistryAccess registryAccess() {
+        return this.server.registryAccess();
+    }
+}
