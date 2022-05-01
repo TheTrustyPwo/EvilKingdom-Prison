@@ -119,10 +119,10 @@ public class DataComponent {
         CompletableFuture.supplyAsync(() -> {
             final DataImplementor dataImplementor = DataImplementor.get(this.plugin);
             final Datasite datasite = dataImplementor.getDatasites().stream().filter(innerDatasite -> innerDatasite.getPlugin() == this.plugin).findFirst().get();
-            if (datasite.getMongoClient().getDatabase(datasite.getName()).getCollection("players").countDocuments() == 0L)  {
+            if (datasite.getMongoClient().getDatabase(datasite.getName()).getCollection("prison_players").countDocuments() == 0L)  {
                 return 1000L;
             } else {
-                return (datasite.getMongoClient().getDatabase(datasite.getName()).getCollection("players").find().sort(Sorts.descending("rank")).first().getLong("rank") + 1000L);
+                return (datasite.getMongoClient().getDatabase(datasite.getName()).getCollection("prison_players").find().sort(Sorts.descending("rank")).first().getLong("rank") + 1000L);
             }
         }).whenComplete((rankGenerationAmount, rankGenerationAmountThrowable) -> {
             SelfData.get().whenComplete((selfData, selfDataThrowable) -> {
