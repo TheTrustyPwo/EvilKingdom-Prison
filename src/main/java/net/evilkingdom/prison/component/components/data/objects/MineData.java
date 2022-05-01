@@ -356,30 +356,12 @@ public class MineData {
     }
 
     /**
-     * Allows you to set the data's banned.
-     *
-     * @param banned ~ The data's banned to set.
-     */
-    public void setBanned(final ArrayList<UUID> banned) {
-        this.banned = banned;
-    }
-
-    /**
      * Allows you to retrieve the data's banned.
      *
      * @return The data's banned.
      */
     public ArrayList<UUID> getBanned() {
         return this.banned;
-    }
-
-    /**
-     * Allows you to set the data's whitelisted.
-     *
-     * @param whitelisted ~ The data's whitelisted to set.
-     */
-    public void setWhitelisted(final ArrayList<UUID> whitelisted) {
-        this.whitelisted = whitelisted;
     }
 
     /**

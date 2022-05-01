@@ -245,9 +245,7 @@ public class MineCommand extends CommandHandler {
                                         player.playSound(player.getLocation(), Sound.valueOf(this.plugin.getComponentManager().getFileComponent().getConfiguration().getString("components.mine.commands.mine.sub-commands.ban.sounds.error.sound")), (float) this.plugin.getComponentManager().getFileComponent().getConfiguration().getDouble("components.mine.commands.mine.sub-commands.ban.sounds.error.volume"), (float) this.plugin.getComponentManager().getFileComponent().getConfiguration().getDouble("components.mine.commands.mine.sub-commands.ban.sounds.error.pitch"));
                                         return;
                                     }
-                                    final ArrayList<UUID> previousBanned = mineData.getBanned();
-                                    previousBanned.add(offlineTarget.getUniqueId());
-                                    mineData.setBanned(previousBanned);
+                                    mineData.getBanned().add(offlineTarget.getUniqueId());
                                     this.plugin.getComponentManager().getFileComponent().getConfiguration().getStringList("components.mine.commands.mine.sub-commands.ban.messages.success.player").forEach(string -> player.sendMessage(StringUtilities.colorize(string.replace("%player%", offlineTarget.getName()))));
                                     player.playSound(player.getLocation(), Sound.valueOf(this.plugin.getComponentManager().getFileComponent().getConfiguration().getString("components.mine.commands.mine.sub-commands.ban.sounds.success.player.sound")), (float) this.plugin.getComponentManager().getFileComponent().getConfiguration().getDouble("components.mine.commands.mine.sub-commands.ban.sounds.success.player.volume"), (float) this.plugin.getComponentManager().getFileComponent().getConfiguration().getDouble("components.mine.commands.mine.sub-commands.ban.sounds.success.player.pitch"));
                                     if (offlineTarget.isOnline()) {
