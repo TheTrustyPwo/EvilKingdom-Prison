@@ -11,6 +11,7 @@ import net.evilkingdom.commons.utilities.string.StringUtilities;
 import net.evilkingdom.prison.component.components.data.objects.MineData;
 import net.evilkingdom.prison.component.components.data.objects.SelfData;
 import net.evilkingdom.prison.component.components.mine.commands.MineCommand;
+import net.evilkingdom.prison.component.components.mine.enums.MineTaskType;
 import net.evilkingdom.prison.component.components.mine.implementations.VoidGenerator;
 import net.evilkingdom.prison.component.components.mine.listeners.ConnectionListener;
 import net.evilkingdom.prison.component.components.mine.objects.MineLocation;
@@ -23,10 +24,7 @@ import org.bukkit.scheduler.BukkitTask;
 import org.checkerframework.checker.units.qual.C;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
@@ -36,7 +34,8 @@ public class MineComponent {
 
     private World world;
     private BukkitTask task;
-    private ArrayList<UUID> playersWaitingForMineCreation, minesDoingTask;
+    private ArrayList<UUID> playersWaitingForCreation;
+    private HashMap<UUID, ArrayList<MineTaskType>> tasks;
 
     /**
      * Allows you to create the component.
@@ -51,8 +50,8 @@ public class MineComponent {
     public void initialize() {
         Bukkit.getConsoleSender().sendMessage(StringUtilities.colorize("&2[Prison » Component » Components » Mine] &aInitializing..."));
         this.initializeWorld();
-        this.minesDoingTask = new ArrayList<UUID>();
-        this.playersWaitingForMineCreation = new ArrayList<UUID>();
+        this.tasks = new HashMap<UUID, ArrayList<MineTaskType>>();
+        this.playersWaitingForCreation = new ArrayList<UUID>();
         this.initializeTask();
         this.registerCommands();
         this.registerListeners();
@@ -149,23 +148,21 @@ public class MineComponent {
     }
 
     /**
-     * Allows you to retrieve the mine uuid's that are doing a task.
-     * This is used to prevent double-actions which may cause game-breaking issues.
+     * Allows you to retrieve the tasks.
      *
-     * @return The mine uuid's that are doing a task.
+     * @return The tasks.
      */
-    public ArrayList<UUID> getMinesDoingTask() {
-        return this.minesDoingTask;
+    public HashMap<UUID, ArrayList<MineTaskType>> getTasks() {
+        return this.tasks;
     }
 
     /**
-     * Allows you to retrieve the player uuid's that are doing a mine creation.
-     * This is used to prevent double-actions which may cause game-breaking issues.
+     * Allows you to retrieve the players waiting for creation.
      *
-     * @return The player uuid's that are doing a mine creation.
+     * @return The players waiting for creation.
      */
-    public ArrayList<UUID> getPlayersWaitingForMineCreation() {
-        return this.playersWaitingForMineCreation;
+    public ArrayList<UUID> getPlayersWaitingForCreation() {
+        return this.playersWaitingForCreation;
     }
 
     /**
@@ -184,20 +181,24 @@ public class MineComponent {
      * @return If the mine reset task was successful.
      */
     public CompletableFuture<Boolean> reset(final UUID uuid) {
-        if (minesDoingTask.contains(uuid)) {
+        if (this.tasks.getOrDefault(uuid, new ArrayList<MineTaskType>()).contains(MineTaskType.RESET)) {
             return CompletableFuture.supplyAsync(() -> false);
         }
         if (MineData.getViaCache(uuid).isEmpty()) {
             return CompletableFuture.supplyAsync(() -> false);
         }
         final MineData mineData = MineData.getViaCache(uuid).get();
-        this.minesDoingTask.add(uuid);
+        final ArrayList<MineTaskType> tasks = this.tasks.getOrDefault(uuid, new ArrayList<MineTaskType>());
+        tasks.add(MineTaskType.RESET);
+        this.tasks.put(uuid, tasks);
         return PlayerData.get(mineData.getOwner()).thenCompose(playerData -> {
             final SelfData selfData = SelfData.getViaCache().get();
             final Rank rank = selfData.getRanks().stream().filter(dataRank -> dataRank.getRank().equals(playerData.getRank())).collect(Collectors.toList()).get(0);
             final ConstructorRegion constructorRegion = new ConstructorRegion(this.plugin, mineData.getMineCornerOne(), mineData.getMineCornerTwo());
             return constructorRegion.fill(rank.getBlockPallet()).thenApply(fillSuccessful -> {
-                this.minesDoingTask.remove(uuid);
+                final ArrayList<MineTaskType> newTasks = this.tasks.getOrDefault(uuid, new ArrayList<MineTaskType>());
+                newTasks.remove(MineTaskType.RESET);
+                this.tasks.put(uuid, newTasks);
                 return fillSuccessful;
             });
         });
@@ -232,8 +233,10 @@ public class MineComponent {
      */
     public CompletableFuture<Optional<UUID>> create(final Player player, final String theme) {
         final UUID uuid = UUID.randomUUID();
-        this.minesDoingTask.add(uuid);
-        this.playersWaitingForMineCreation.add(player.getUniqueId());
+        final ArrayList<MineTaskType> tasks = this.tasks.getOrDefault(uuid, new ArrayList<MineTaskType>());
+        tasks.add(MineTaskType.CREATE);
+        this.tasks.put(uuid, tasks);
+        this.playersWaitingForCreation.add(player.getUniqueId());
         return SelfData.get().thenApply(selfData -> {
             final MineLocation mineLocation = selfData.getMineLocations().stream().filter(dataLocation -> !dataLocation.isUsed()).findFirst().get();
             selfData.getMineLocations().remove(mineLocation);
@@ -263,9 +266,11 @@ public class MineComponent {
                     mineData.setOwner(player.getUniqueId());
                     mineData.setTheme(theme);
                     mineData.cache();
-                    this.minesDoingTask.remove(uuid);
+                    final ArrayList<MineTaskType> newTasks = this.tasks.getOrDefault(uuid, new ArrayList<MineTaskType>());
+                    newTasks.remove(MineTaskType.CREATE);
+                    this.tasks.put(uuid, newTasks);
                     PlayerData.get(player.getUniqueId()).whenComplete((playerData, playerDataThrowable) -> {
-                        this.playersWaitingForMineCreation.remove(player.getUniqueId());
+                        this.playersWaitingForCreation.remove(player.getUniqueId());
                         playerData.setMine(Optional.of(mineData.getUUID()));
                         if (!playerData.isCached()) {
                             playerData.save(true);
@@ -289,14 +294,16 @@ public class MineComponent {
      * @return The mine's theme change completion state.
      */
     public CompletableFuture<Boolean> changeTheme(final UUID uuid, final String theme) {
-        if (minesDoingTask.contains(uuid)) {
+        if (this.tasks.getOrDefault(uuid, new ArrayList<MineTaskType>()).contains(MineTaskType.CHANGE_THEME)) {
             return CompletableFuture.supplyAsync(() -> false);
         }
         if (MineData.getViaCache(uuid).isEmpty()) {
             return CompletableFuture.supplyAsync(() -> false);
         }
         final MineData mineData = MineData.getViaCache(uuid).get();
-        this.minesDoingTask.add(uuid);
+        final ArrayList<MineTaskType> tasks = this.tasks.getOrDefault(uuid, new ArrayList<MineTaskType>());
+        tasks.add(MineTaskType.CHANGE_THEME);
+        this.tasks.put(uuid, tasks);
         final ConstructorRegion constructorRegion = new ConstructorRegion(this.plugin, mineData.getCornerOne(), mineData.getCornerTwo());
         return constructorRegion.fill(Material.AIR).thenCompose(fillSuccessful -> {
             if (!fillSuccessful) {
@@ -313,7 +320,9 @@ public class MineComponent {
                         return false;
                     }
                     mineData.setTheme(theme);
-                    this.minesDoingTask.remove(mineData.getUUID());
+                    final ArrayList<MineTaskType> newTasks = this.tasks.getOrDefault(uuid, new ArrayList<MineTaskType>());
+                    newTasks.remove(MineTaskType.CHANGE_THEME);
+                    this.tasks.put(uuid, newTasks);
                     this.reset(mineData.getUUID());
                     return true;
                 });

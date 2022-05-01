@@ -21,6 +21,7 @@ import net.evilkingdom.commons.utilities.time.TimeUtilities;
 import net.evilkingdom.prison.component.components.data.objects.MineData;
 import net.evilkingdom.prison.Prison;
 import net.evilkingdom.prison.component.components.data.objects.PlayerData;
+import net.evilkingdom.prison.component.components.mine.enums.MineTaskType;
 import net.minecraft.util.TimeUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -71,7 +72,7 @@ public class MineCommand extends CommandHandler {
             return false;
         }
         final String subCommand = arguments[0].toLowerCase();
-        if (!Arrays.asList("help", "create", "go", "privacy", "reset", "ban", "unban", "whitelist", "unwhitelist").contains(subCommand)) {
+        if (!Arrays.asList("help", "create", "go", "privacy", "reset", "retheme", "ban", "unban", "whitelist", "unwhitelist").contains(subCommand)) {
             this.plugin.getComponentManager().getFileComponent().getConfiguration().getStringList("components.mine.commands.mine.sub-commands.help.messages.invalid-usage").forEach(string -> commandSender.sendMessage(StringUtilities.colorize(string)));
             if (commandSender instanceof Player) {
                 final Player player = (Player) commandSender;
@@ -114,6 +115,11 @@ public class MineCommand extends CommandHandler {
                             return false;
                         }
                         final MineData mineData = MineData.getViaCache(playerData.getMine().get()).get();
+                        if (this.plugin.getComponentManager().getMineComponent().getTasks().getOrDefault(mineData.getUUID(), new ArrayList<MineTaskType>()).contains(MineTaskType.CHANGE_THEME)) {
+                            this.plugin.getComponentManager().getFileComponent().getConfiguration().getStringList("components.mine.commands.mine.sub-commands.go.messages.invalid-go.mine-preforming-large-task").forEach(string -> player.sendMessage(StringUtilities.colorize(string)));
+                            player.playSound(player.getLocation(), Sound.valueOf(this.plugin.getComponentManager().getFileComponent().getConfiguration().getString("components.mine.commands.mine.sub-commands.go.sounds.error.sound")), (float) this.plugin.getComponentManager().getFileComponent().getConfiguration().getDouble("components.mine.commands.mine.sub-commands.go.sounds.error.volume"), (float) this.plugin.getComponentManager().getFileComponent().getConfiguration().getDouble("components.mine.commands.mine.sub-commands.go.sounds.error.pitch"));
+                            return false;
+                        }
                         Bukkit.getScheduler().runTask(this.plugin, () -> player.teleport(mineData.getGo()));
                         this.plugin.getComponentManager().getFileComponent().getConfiguration().getStringList("components.mine.commands.mine.sub-commands.go.messages.success.no-target").forEach(string -> player.sendMessage(StringUtilities.colorize(string)));
                         player.playSound(player.getLocation(), Sound.valueOf(this.plugin.getComponentManager().getFileComponent().getConfiguration().getString("components.mine.commands.mine.sub-commands.go.sounds.success.sound")), (float) this.plugin.getComponentManager().getFileComponent().getConfiguration().getDouble("components.mine.commands.mine.sub-commands.go.sounds.success.volume"), (float) this.plugin.getComponentManager().getFileComponent().getConfiguration().getDouble("components.mine.commands.mine.sub-commands.go.sounds.success.pitch"));
@@ -145,6 +151,11 @@ public class MineCommand extends CommandHandler {
                                         return;
                                     }
                                     MineData.get(targetData.getMine().get()).whenComplete((mineData, mineDataThrowable) -> {
+                                        if (this.plugin.getComponentManager().getMineComponent().getTasks().getOrDefault(mineData.getUUID(), new ArrayList<MineTaskType>()).contains(MineTaskType.CHANGE_THEME)) {
+                                            this.plugin.getComponentManager().getFileComponent().getConfiguration().getStringList("components.mine.commands.mine.sub-commands.go.messages.invalid-go.target-mine-preforming-large-task").forEach(string -> player.sendMessage(StringUtilities.colorize(string)));
+                                            player.playSound(player.getLocation(), Sound.valueOf(this.plugin.getComponentManager().getFileComponent().getConfiguration().getString("components.mine.commands.mine.sub-commands.go.sounds.error.sound")), (float) this.plugin.getComponentManager().getFileComponent().getConfiguration().getDouble("components.mine.commands.mine.sub-commands.go.sounds.error.volume"), (float) this.plugin.getComponentManager().getFileComponent().getConfiguration().getDouble("components.mine.commands.mine.sub-commands.go.sounds.error.pitch"));
+                                            return;
+                                        }
                                         if (mineData.getBanned().contains(player.getUniqueId())) {
                                             this.plugin.getComponentManager().getFileComponent().getConfiguration().getStringList("components.mine.commands.mine.sub-commands.go.messages.invalid-go.banned-from-target-mine").forEach(string -> player.sendMessage(StringUtilities.colorize(string.replace("%player%", offlineTarget.getName()))));
                                             player.playSound(player.getLocation(), Sound.valueOf(this.plugin.getComponentManager().getFileComponent().getConfiguration().getString("components.mine.commands.mine.sub-commands.go.sounds.error.sound")), (float) this.plugin.getComponentManager().getFileComponent().getConfiguration().getDouble("components.mine.commands.mine.sub-commands.go.sounds.error.volume"), (float) this.plugin.getComponentManager().getFileComponent().getConfiguration().getDouble("components.mine.commands.mine.sub-commands.go.sounds.error.pitch"));
@@ -187,7 +198,7 @@ public class MineCommand extends CommandHandler {
                     player.playSound(player.getLocation(), Sound.valueOf(this.plugin.getComponentManager().getFileComponent().getConfiguration().getString("components.mine.commands.mine.sub-commands.create.sounds.error.sound")), (float) this.plugin.getComponentManager().getFileComponent().getConfiguration().getDouble("components.mine.commands.mine.sub-commands.create.sounds.error.volume"), (float) this.plugin.getComponentManager().getFileComponent().getConfiguration().getDouble("components.mine.commands.mine.sub-commands.create.sounds.error.pitch"));
                     return false;
                 }
-                if (this.plugin.getComponentManager().getMineComponent().getPlayersWaitingForMineCreation().contains(player.getUniqueId())) {
+                if (this.plugin.getComponentManager().getMineComponent().getPlayersWaitingForCreation().contains(player.getUniqueId())) {
                     this.plugin.getComponentManager().getFileComponent().getConfiguration().getStringList("components.mine.commands.mine.sub-commands.create.messages.invalid-creation.already-creating").forEach(string -> player.sendMessage(StringUtilities.colorize(string)));
                     player.playSound(player.getLocation(), Sound.valueOf(this.plugin.getComponentManager().getFileComponent().getConfiguration().getString("components.mine.commands.mine.sub-commands.create.sounds.error.sound")), (float) this.plugin.getComponentManager().getFileComponent().getConfiguration().getDouble("components.mine.commands.mine.sub-commands.create.sounds.error.volume"), (float) this.plugin.getComponentManager().getFileComponent().getConfiguration().getDouble("components.mine.commands.mine.sub-commands.create.sounds.error.pitch"));
                     return false;
@@ -226,7 +237,7 @@ public class MineCommand extends CommandHandler {
                         player.playSound(player.getLocation(), Sound.valueOf(this.plugin.getComponentManager().getFileComponent().getConfiguration().getString("components.mine.commands.mine.sub-commands.reset.sounds.error.sound")), (float) this.plugin.getComponentManager().getFileComponent().getConfiguration().getDouble("components.mine.commands.mine.sub-commands.reset.sounds.error.volume"), (float) this.plugin.getComponentManager().getFileComponent().getConfiguration().getDouble("components.mine.commands.mine.sub-commands.reset.sounds.error.pitch"));
                         return;
                     }
-                    if (this.plugin.getComponentManager().getMineComponent().getMinesDoingTask().contains(mineData.getUUID())) {
+                    if (this.plugin.getComponentManager().getMineComponent().getTasks().getOrDefault(mineData.getUUID(), new ArrayList<MineTaskType>()).contains(MineTaskType.RESET)) {
                         this.plugin.getComponentManager().getFileComponent().getConfiguration().getStringList("components.mine.commands.mine.sub-commands.reset.messages.invalid-reset.already-resetting").forEach(string -> player.sendMessage(StringUtilities.colorize(string)));
                         player.playSound(player.getLocation(), Sound.valueOf(this.plugin.getComponentManager().getFileComponent().getConfiguration().getString("components.mine.commands.mine.sub-commands.reset.sounds.error.sound")), (float) this.plugin.getComponentManager().getFileComponent().getConfiguration().getDouble("components.mine.commands.mine.sub-commands.reset.sounds.error.volume"), (float) this.plugin.getComponentManager().getFileComponent().getConfiguration().getDouble("components.mine.commands.mine.sub-commands.reset.sounds.error.pitch"));
                         return;
@@ -242,6 +253,39 @@ public class MineCommand extends CommandHandler {
                         cooldown.start();
                     });
                 });
+            }
+            case "retheme" -> {
+                if (!(commandSender instanceof Player)) {
+                    this.plugin.getComponentManager().getFileComponent().getConfiguration().getStringList("components.mine.commands.mine.sub-commands.retheme.messages.invalid-executor").forEach(string -> commandSender.sendMessage(StringUtilities.colorize(string)));
+                    return false;
+                }
+                final Player player = (Player) commandSender;
+                if (arguments.length != 1) {
+                    this.plugin.getComponentManager().getFileComponent().getConfiguration().getStringList("components.mine.commands.mine.sub-commands.retheme.messages.invalid-usage").forEach(string -> player.sendMessage(StringUtilities.colorize(string)));
+                    player.playSound(player.getLocation(), Sound.valueOf(this.plugin.getComponentManager().getFileComponent().getConfiguration().getString("components.mine.commands.mine.sub-commands.retheme.sounds.error.sound")), (float) this.plugin.getComponentManager().getFileComponent().getConfiguration().getDouble("components.mine.commands.mine.sub-commands.retheme.sounds.error.volume"), (float) this.plugin.getComponentManager().getFileComponent().getConfiguration().getDouble("components.mine.commands.mine.sub-commands.retheme.sounds.error.pitch"));
+                    return false;
+                }
+                final PlayerData playerData = PlayerData.getViaCache(player.getUniqueId()).get();
+                if (playerData.getMine().isEmpty()) {
+                    this.plugin.getComponentManager().getFileComponent().getConfiguration().getStringList("components.mine.commands.mine.sub-commands.retheme.messages.invalid-retheme.has-no-mine").forEach(string -> player.sendMessage(StringUtilities.colorize(string)));
+                    player.playSound(player.getLocation(), Sound.valueOf(this.plugin.getComponentManager().getFileComponent().getConfiguration().getString("components.mine.commands.mine.sub-commands.retheme.sounds.error.sound")), (float) this.plugin.getComponentManager().getFileComponent().getConfiguration().getDouble("components.mine.commands.mine.sub-commands.retheme.sounds.error.volume"), (float) this.plugin.getComponentManager().getFileComponent().getConfiguration().getDouble("components.mine.commands.mine.sub-commands.retheme.sounds.error.pitch"));
+                    return false;
+                }
+                if (this.plugin.getComponentManager().getMineComponent().getTasks().getOrDefault(playerData.getMine().get(), new ArrayList<MineTaskType>()).contains(MineTaskType.CHANGE_THEME)) {
+                    this.plugin.getComponentManager().getFileComponent().getConfiguration().getStringList("components.mine.commands.mine.sub-commands.retheme.messages.invalid-retheme.already-retheming").forEach(string -> player.sendMessage(StringUtilities.colorize(string)));
+                    player.playSound(player.getLocation(), Sound.valueOf(this.plugin.getComponentManager().getFileComponent().getConfiguration().getString("components.mine.commands.mine.sub-commands.retheme.sounds.error.sound")), (float) this.plugin.getComponentManager().getFileComponent().getConfiguration().getDouble("components.mine.commands.mine.sub-commands.retheme.sounds.error.volume"), (float) this.plugin.getComponentManager().getFileComponent().getConfiguration().getDouble("components.mine.commands.mine.sub-commands.retheme.sounds.error.pitch"));
+                    return false;
+                }
+                final MineData mineData = MineData.getViaCache(playerData.getMine().get()).get();
+                final Optional<Cooldown> optionalCooldown = mineData.getCooldowns().stream().filter(cooldown -> cooldown.getIdentifier().equals("mine-" + mineData.getUUID() + "-retheme")).findFirst();
+                if (optionalCooldown.isPresent()) {
+                    final Cooldown cooldown = optionalCooldown.get();
+                    final String formattedTimeLeft = TimeUtilities.format((cooldown.getTimeLeft() * 50));
+                    this.plugin.getComponentManager().getFileComponent().getConfiguration().getStringList("components.mine.commands.mine.sub-commands.retheme.messages.invalid-retheme.on-cooldown").forEach(string -> player.sendMessage(StringUtilities.colorize(string.replace("%time_left%", formattedTimeLeft))));
+                    player.playSound(player.getLocation(), Sound.valueOf(this.plugin.getComponentManager().getFileComponent().getConfiguration().getString("components.mine.commands.mine.sub-commands.retheme.sounds.error.sound")), (float) this.plugin.getComponentManager().getFileComponent().getConfiguration().getDouble("components.mine.commands.mine.sub-commands.retheme.sounds.error.volume"), (float) this.plugin.getComponentManager().getFileComponent().getConfiguration().getDouble("components.mine.commands.mine.sub-commands.retheme.sounds.error.pitch"));
+                    return false;
+                }
+                this.openRethemeSelectThemeMenu(player);
             }
             case "ban" -> {
                 if (!(commandSender instanceof Player)) {
@@ -505,7 +549,7 @@ public class MineCommand extends CommandHandler {
         final Player player = (Player) commandSender;
         ArrayList<String> tabCompletion = new ArrayList<String>();
         switch (arguments.length) {
-            case 1 -> tabCompletion.addAll(Arrays.asList("help", "create", "reset", "go", "privacy", "ban", "unban", "whitelist", "unwhitelist"));
+            case 1 -> tabCompletion.addAll(Arrays.asList("help", "create", "reset", "retheme", "go", "privacy", "ban", "unban", "whitelist", "unwhitelist"));
             case 2 -> {
                 final String subCommand = arguments[0];
                 final PlayerData playerData = PlayerData.getViaCache(player.getUniqueId()).get();
@@ -641,6 +685,115 @@ public class MineCommand extends CommandHandler {
                             player.playSound(player.getLocation(), Sound.valueOf(this.plugin.getComponentManager().getFileComponent().getConfiguration().getString("components.mine.commands.mine.sub-commands.create.sounds.success.sound")), (float) this.plugin.getComponentManager().getFileComponent().getConfiguration().getDouble("components.mine.commands.mine.sub-commands.create.sounds.success.volume"), (float) this.plugin.getComponentManager().getFileComponent().getConfiguration().getDouble("components.mine.commands.mine.sub-commands.create.sounds.success.pitch"));
                             final Border border = new Border(this.plugin, player, mineData.getCenter().toCenterLocation(), mineData.getBorderSize(), BorderColor.RED);
                             Bukkit.getScheduler().runTaskLater(this.plugin, () -> border.show(), 5L);
+                        }
+                    });
+                });
+            });
+            menu.getItems().put(slot, menuItem);
+        });
+        Bukkit.getScheduler().runTask(this.plugin, () -> menu.open());
+    }
+
+    /**
+     * Allows you to open the "retheme" sub-command's select theme menu.
+     *
+     * @param player ~ The player to open it for.
+     */
+    private void openRethemeSelectThemeMenu(final Player player) {
+        final InventoryType inventoryType = InventoryType.valueOf(this.plugin.getComponentManager().getFileComponent().getConfiguration().getString("components.mine.commands.mine.sub-commands.retheme.menus.theme-selector.inventory.type"));
+        final String title = StringUtilities.colorize(this.plugin.getComponentManager().getFileComponent().getConfiguration().getString("components.mine.commands.mine.sub-commands.retheme.menus.theme-selector.inventory.title"));
+        Menu menu;
+        if (inventoryType == InventoryType.CHEST) {
+            final int rows = this.plugin.getComponentManager().getFileComponent().getConfiguration().getInt("components.mine.commands.mine.sub-commands.retheme.menus.theme-selector.inventory.rows");
+            menu = new Menu(this.plugin, player, rows, title);
+        } else {
+            menu = new Menu(this.plugin, player, inventoryType, title);
+        }
+        this.plugin.getComponentManager().getFileComponent().getConfiguration().getConfigurationSection("components.mine.commands.mine.sub-commands.retheme.menus.theme-selector.inventory.items").getKeys(false).stream().map(key -> Integer.parseInt(key)).collect(Collectors.toList()).forEach(slot -> {
+            final Material material = Material.getMaterial(this.plugin.getComponentManager().getFileComponent().getConfiguration().getString("components.mine.commands.mine.sub-commands.retheme.menus.theme-selector.inventory.items." + slot + ".material"));
+            final Optional<String> name = Optional.of(StringUtilities.colorize(this.plugin.getComponentManager().getFileComponent().getConfiguration().getString("components.mine.commands.mine.sub-commands.retheme.menus.theme-selector.inventory.items." + slot + ".name")));
+            final Optional<ArrayList<String>> lore = Optional.of(new ArrayList<String>(this.plugin.getComponentManager().getFileComponent().getConfiguration().getStringList("components.mine.commands.mine.sub-commands.retheme.menus.theme-selector.inventory.items." + slot + ".lore").stream().map(loreLine -> StringUtilities.colorize(loreLine)).collect(Collectors.toList())));
+            final boolean glowing = this.plugin.getComponentManager().getFileComponent().getConfiguration().getBoolean("components.mine.commands.mine.sub-commands.retheme.menus.theme-selector.inventory.items." + slot + ".glowing");
+            final boolean unbreakable = this.plugin.getComponentManager().getFileComponent().getConfiguration().getBoolean("components.mine.commands.mine.sub-commands.retheme.menus.theme-selector.inventory.items." + slot + ".unbreakable");
+            final Item item = new Item(new ItemStack(material));
+            name.ifPresent(presentName -> item.setName(presentName));
+            lore.ifPresent(presentLore -> item.setLore(presentLore));
+            if (unbreakable) {
+                item.unbreakable();
+            }
+            if (glowing) {
+                item.glow();
+            }
+            final MenuItem menuItem = new MenuItem(item.getItemStack(), inventoryClickEvent -> {
+                inventoryClickEvent.setCancelled(true);
+            });
+            menu.getItems().put((slot - 1), menuItem);
+        });
+        final ArrayList<Integer> openSlots = new ArrayList<Integer>();
+        int size;
+        if (menu.getRows().isPresent()) {
+            size = (menu.getRows().get() * 9);
+        } else {
+            size = (menu.getType().getDefaultSize() * 9);
+        }
+        for (int menuSlot = 0; menuSlot < size; menuSlot++) {
+            if (!menu.getItems().containsKey(menuSlot)) {
+                openSlots.add(menuSlot);
+            }
+        }
+        final HashMap<Integer, String> themeSlots = new HashMap<Integer, String>();
+        for (int i = 0; i < this.plugin.getComponentManager().getFileComponent().getConfiguration().getConfigurationSection("components.mine.themes").getKeys(false).stream().toList().size(); i++) {
+            final String theme = this.plugin.getComponentManager().getFileComponent().getConfiguration().getConfigurationSection("components.mine.themes").getKeys(false).stream().toList().get(i);
+            final int slot = openSlots.get(i);
+            themeSlots.put(slot, theme);
+        }
+        themeSlots.forEach((slot, theme) -> {
+            final Material material = Material.getMaterial(this.plugin.getComponentManager().getFileComponent().getConfiguration().getString("components.mine.commands.mine.sub-commands.retheme.menus.theme-selector.items.theme.material").replace("%related_material%", this.plugin.getComponentManager().getFileComponent().getConfiguration().getString("components.mine.themes." + theme + ".related-material")));
+            final Optional<String> name = Optional.of(StringUtilities.colorize(this.plugin.getComponentManager().getFileComponent().getConfiguration().getString("components.mine.commands.mine.sub-commands.retheme.menus.theme-selector.items.theme.name").replace("%name%", this.plugin.getComponentManager().getFileComponent().getConfiguration().getString("components.mine.themes." + theme + ".prettified-name"))));
+            final Optional<ArrayList<String>> lore = Optional.of(new ArrayList<String>(this.plugin.getComponentManager().getFileComponent().getConfiguration().getStringList("components.mine.commands.mine.sub-commands.retheme.menus.theme-selector.items.theme.lore").stream().map(loreLine -> StringUtilities.colorize(loreLine.replace("%name%", this.plugin.getComponentManager().getFileComponent().getConfiguration().getString("components.mine.themes." + theme + ".prettified-name")).replace("%description%", this.plugin.getComponentManager().getFileComponent().getConfiguration().getString("components.mine.themes." + theme + ".description")))).collect(Collectors.toList())));
+            final boolean glowing = this.plugin.getComponentManager().getFileComponent().getConfiguration().getBoolean("components.mine.commands.mine.sub-commands.retheme.menus.theme-selector.items.theme.glowing");
+            final boolean unbreakable = this.plugin.getComponentManager().getFileComponent().getConfiguration().getBoolean("components.mine.commands.mine.sub-commands.retheme.menus.theme-selector.items.theme.unbreakable");
+            final Item item = new Item(new ItemStack(material));
+            name.ifPresent(presentName -> item.setName(presentName));
+            lore.ifPresent(presentLore -> item.setLore(presentLore));
+            if (unbreakable) {
+                item.unbreakable();
+            }
+            if (glowing) {
+                item.glow();
+            }
+            final MenuItem menuItem = new MenuItem(item.getItemStack(), inventoryClickEvent -> {
+                inventoryClickEvent.setCancelled(true);
+                player.closeInventory();
+                final PlayerData playerData = PlayerData.getViaCache(player.getUniqueId()).get();
+                final MineData preMineData = MineData.getViaCache(playerData.getMine().get()).get();
+                if (preMineData.getTheme().equals(theme)) {
+                    this.plugin.getComponentManager().getFileComponent().getConfiguration().getStringList("components.mine.commands.mine.sub-commands.retheme.messages.invalid-retheme.already-using-theme").forEach(string -> player.sendMessage(StringUtilities.colorize(string.replace("%theme%", this.plugin.getComponentManager().getFileComponent().getConfiguration().getString("components.mine.themes." + theme + ".prettified-name")))));
+                    player.playSound(player.getLocation(), Sound.valueOf(this.plugin.getComponentManager().getFileComponent().getConfiguration().getString("components.mine.commands.mine.sub-commands.retheme.sounds.error.sound")), (float) this.plugin.getComponentManager().getFileComponent().getConfiguration().getDouble("components.mine.commands.mine.sub-commands.retheme.sounds.error.volume"), (float) this.plugin.getComponentManager().getFileComponent().getConfiguration().getDouble("components.mine.commands.mine.sub-commands.retheme.sounds.error.pitch"));
+                    return;
+                }
+                final SelfData selfData = SelfData.getViaCache().get();
+                player.teleport(selfData.getSpawn());
+                this.plugin.getComponentManager().getFileComponent().getConfiguration().getStringList("components.mine.commands.mine.sub-commands.retheme.messages.success.player.retheming").forEach(string -> player.sendMessage(StringUtilities.colorize(string)));
+                player.playSound(player.getLocation(), Sound.valueOf(this.plugin.getComponentManager().getFileComponent().getConfiguration().getString("components.mine.commands.mine.sub-commands.retheme.sounds.success.player.sound")), (float) this.plugin.getComponentManager().getFileComponent().getConfiguration().getDouble("components.mine.commands.mine.sub-commands.retheme.sounds.success.player.volume"), (float) this.plugin.getComponentManager().getFileComponent().getConfiguration().getDouble("components.mine.commands.mine.sub-commands.retheme.sounds.success.player.pitch"));
+                Bukkit.getOnlinePlayers().stream().filter(onlinePlayer -> this.plugin.getComponentManager().getMineComponent().isWithin(playerData.getMine().get(), onlinePlayer.getLocation())).forEach(onlinePlayer -> {
+                    Bukkit.getScheduler().runTask(this.plugin, () -> onlinePlayer.teleport(selfData.getSpawn()));
+                    this.plugin.getComponentManager().getFileComponent().getConfiguration().getStringList("components.mine.commands.mine.sub-commands.retheme.messages.success.target.retheming").forEach(string -> player.sendMessage(StringUtilities.colorize(string.replace("%player%", player.getName()))));
+                    player.playSound(player.getLocation(), Sound.valueOf(this.plugin.getComponentManager().getFileComponent().getConfiguration().getString("components.mine.commands.mine.sub-commands.retheme.sounds.success.target.sound")), (float) this.plugin.getComponentManager().getFileComponent().getConfiguration().getDouble("components.mine.commands.mine.sub-commands.retheme.sounds.success.target.volume"), (float) this.plugin.getComponentManager().getFileComponent().getConfiguration().getDouble("components.mine.commands.mine.sub-commands.retheme.sounds.success.target.pitch"));
+                });
+                this.plugin.getComponentManager().getMineComponent().changeTheme(playerData.getMine().get(), theme).whenComplete((changeThemeSuccessful, changeThemeSuccessfulThrowable) -> {
+                    MineData.get(playerData.getMine().get()).whenComplete((mineData, mineDataThrowable) -> {
+                        final Cooldown cooldown = new Cooldown(this.plugin, "mine-" + mineData.getUUID() + "-retheme", this.plugin.getComponentManager().getFileComponent().getConfiguration().getInt("components.mine.commands.mine.sub-commands.retheme.cooldown"));
+                        cooldown.start();
+                        if (player.isOnline()) {
+                            Bukkit.getScheduler().runTask(this.plugin, () -> player.teleport(mineData.getGo()));
+                            this.plugin.getComponentManager().getFileComponent().getConfiguration().getStringList("components.mine.commands.mine.sub-commands.retheme.messages.success.player.rethemed").forEach(string -> player.sendMessage(StringUtilities.colorize(string)));
+                            player.playSound(player.getLocation(), Sound.valueOf(this.plugin.getComponentManager().getFileComponent().getConfiguration().getString("components.mine.commands.mine.sub-commands.retheme.sounds.success.player.sound")), (float) this.plugin.getComponentManager().getFileComponent().getConfiguration().getDouble("components.mine.commands.mine.sub-commands.retheme.sounds.success.player.volume"), (float) this.plugin.getComponentManager().getFileComponent().getConfiguration().getDouble("components.mine.commands.mine.sub-commands.retheme.sounds.success.player.pitch"));
+                            final Border border = new Border(this.plugin, player, mineData.getCenter().toCenterLocation(), mineData.getBorderSize(), BorderColor.RED);
+                            Bukkit.getScheduler().runTaskLater(this.plugin, () -> border.show(), 5L);
+                        }
+                        if (!mineData.isCached()) {
+                            mineData.save(true);
                         }
                     });
                 });

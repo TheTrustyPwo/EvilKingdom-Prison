@@ -655,6 +655,7 @@ components:
                 - "&6 » &e/mine help &7| &fAllows you to view this beautiful message."
                 - "&6 » &e/mine create &7| &fAllows you to create a mine."
                 - "&6 » &e/mine reset &7| &fAllows you to reset your mine."
+                - "&6 » &e/mine retheme &7| &fAllows you to retheme your mine."
                 - "&6 » &e/mine go &7| &fAllows you to go to your mine."
                 - "&6 » &e/mine privacy &7| &fAllows you to toggle your mine's privacy state."
                 - "&6 » &e/mine ban <player> &7| &fAllows you to ban a player from your mine."
@@ -719,11 +720,23 @@ components:
                 has-no-mine:
                   - "&6&lPrison &7» &eInvalid go, you do not have a &6mine&e."
 
+                #The message sent when the player's mine is preforming a large task (maybe retheme?).
+                mine-preforming-large-task:
+                  - "&6&lPrison &7» &eInvalid go, your &6mine&e is currently preforming a &6large task&e."
+                  - "&7&o(Please be patient, this could take a bit!)"
+
                 #The message sent when the targeted player has no mine.
                 #Variables:
                 # - %player% ~ The targeted player.
                 target-has-no-mine:
                   - "&6&lPrison &7» &eInvalid go, &6%player% &edoes not have a &6mine&e."
+
+                #The message sent when the targeted player's mine is preforming a large task (maybe retheme?).
+                #Variables:
+                # - %player% ~ The targeted player.
+                target-mine-preforming-large-task:
+                  - "&6&lPrison &7» &eInvalid go, &6%player%&e's &6mine&e is currently preforming a &6large task&e."
+                  - "&7&o(Please be patient, this could take a bit!)"
 
                 #The message sent when the player is banned from the targeted player's mine.
                 #Variables:
@@ -804,7 +817,7 @@ components:
                 has-no-mine:
                   - "&6&lPrison &7» &eInvalid reset, &eyou &6do not&e have a mine."
 
-                #The message sent when the player is on cooldown.
+                #The message sent when the mine is on cooldown.
                 #Variables:
                 # - %time_left% ~ The cooldown's time left.
                 on-cooldown:
@@ -812,11 +825,11 @@ components:
 
                 #The message sent when the player is already resetting their mine.
                 already-resetting:
-                  - "&6&lPrison &7» &eInvalid reset, &eyour mine is &6already&e being &6reset&e."
+                  - "&6&lPrison &7» &eInvalid reset, &eyour &6mine&e is &6already&e being &6reset&e."
 
                 #The message sent when the player's mine is too full.
                 mine-too-full:
-                  - "&6&lPrison &7» &eInvalid reset, &eyour mine is &6too full&e."
+                  - "&6&lPrison &7» &eInvalid reset, &eyour &6mine&e is &6too full&e."
 
               #The message sent when the reset is a success.
               success:
@@ -828,7 +841,7 @@ components:
 
                 #The message sent when the mine is done resetting.
                 reset:
-                  - "&6&lPrison &7» &eYour mine has been &6reset&e!"
+                  - "&6&lPrison &7» &eYour mine has been &6reset&e."
 
             #The sub-command's sounds.
             sounds:
@@ -878,23 +891,23 @@ components:
 
                 #The message sent when the player already has a mine.
                 already-has-a-mine:
-                  - "&6&lPrison &7» &eInvalid creation, &eyou &6already&e have a mine."
+                  - "&6&lPrison &7» &eInvalid creation, &eyou &6already&e have a &6mine&e."
 
                 #The message sent when the player is already creating a mine.
                 already-creating:
-                  - "&6&lPrison &7» &eInvalid creation, &eyour mine is &6already&e being created."
+                  - "&6&lPrison &7» &eInvalid creation, &eyour &6mine&e is &6already&e being &6created&e."
 
               #The message sent when the creation is a success.
               success:
 
                 #The message sent when the mine is being created.
                 creating:
-                  - "&6&lPrison &7» &eYour mine is being &6created&e..."
+                  - "&6&lPrison &7» &eYour &6mine&e is being &6created&e..."
                   - "&7&o(Please be patient, this could take a while!)"
 
                 #The message sent when the mine is done creating.
                 created:
-                  - "&6&lPrison &7» &eYour mine has been &6created&e!"
+                  - "&6&lPrison &7» &eYour &6mine&e has been &6created&e."
 
             #The sub-command's sounds.
             sounds:
@@ -1415,12 +1428,12 @@ components:
 
                 #The message sent to the player.
                 player:
-                  - "&6&lPrison &7» &eYou have banned &6%player%&e from your &6mine&e!"
+                  - "&6&lPrison &7» &eYou have banned &6%player%&e from your &6mine&e."
 
                 #The message sent to the targeted player.
                 #This is only sent to the targeted player if they're inside the mine (if they are, it'll send this, and it'll teleport them to spawn).
                 target:
-                  - "&6&lPrison &7» &eYou have been &6banned&e from &6%player%&e's &6mine&e!"
+                  - "&6&lPrison &7» &eYou have been &6banned&e from &6%player%&e's &6mine&e."
 
             #The sub-command's sounds.
             sounds:
@@ -1511,7 +1524,7 @@ components:
               #Variables:
               # - %player% ~ The targeted player.
               success:
-                - "&6&lPrison &7» &eYou have unbanned &6%player%&e from your &6mine&e!"
+                - "&6&lPrison &7» &eYou have unbanned &6%player%&e from your &6mine&e."
 
             #The sub-command's sounds.
             sounds:
@@ -1568,16 +1581,16 @@ components:
 
                   #The message sent when the mine is now private.
                   now-private:
-                    - "&6&lPrison &7» &eYour &6mine&e is now &6private&e!"
+                    - "&6&lPrison &7» &eYour &6mine&e is now &6private&e."
 
                   #The message sent when the mine is no longer private.
                   not-private:
-                    - "&6&lPrison &7» &eYour &6mine&e is no longer &6private&e!"
+                    - "&6&lPrison &7» &eYour &6mine&e is no longer &6private&e."
 
                 #The message sent to the targeted player.
                 #This is only sent to the targeted player if they're inside the mine when it is set to private (if they are, it'll send this, and it'll teleport them to spawn).
                 target:
-                  - "&6&lPrison &7» &6%player%&e's &6mine&e has been made &6private&e!"
+                  - "&6&lPrison &7» &6%player%&e's &6mine&e is now &6private&e."
 
             #The sub-command's sounds.
             sounds:
@@ -1668,7 +1681,7 @@ components:
               #Variables:
               # - %player% ~ The targeted player.
               success:
-                - "&6&lPrison &7» &eYou have whitelisted &6%player%&e to your &6mine&e!"
+                - "&6&lPrison &7» &eYou have whitelisted &6%player%&e to your &6mine&e."
 
             #The sub-command's sounds.
             sounds:
@@ -1686,7 +1699,7 @@ components:
                 #The sound's volume.
                 volume: 1.0
 
-              #The sound sent when the ban is a success.
+              #The sound sent when the whitelist is a success.
               success:
 
                 #The sound.
@@ -1746,12 +1759,12 @@ components:
 
                 #The message sent to the player.
                 player:
-                  - "&6&lPrison &7» &eYou have unwhitelisted &6%player%&e from your &6mine&e!"
+                  - "&6&lPrison &7» &eYou have unwhitelisted &6%player%&e from your &6mine&e."
 
                 #The message sent to the targeted player.
                 #This is only sent to the targeted player if they're inside the mine (if they are, it'll send this, and it'll teleport them to spawn).
                 target:
-                  - "&6&lPrison &7» &eYou are no longer &6whitelisted&e from &6%player%&e's &6mine&e!"
+                  - "&6&lPrison &7» &eYou are no longer &6whitelisted&e from &6%player%&e's &6mine&e."
 
             #The sub-command's sounds.
             sounds:
@@ -1769,7 +1782,7 @@ components:
                 #The sound's volume.
                 volume: 1.0
 
-              #The sound sent when the ban is a success.
+              #The sound sent when the unwhitelist is a success.
               success:
 
                 #The sound sent to the player.
@@ -1797,6 +1810,555 @@ components:
 
                   #The sound's volume.
                   volume: 1.0
+
+          #The "/mine retheme" sub-command.
+          retheme:
+
+            #The retheme cooldown (in ticks).
+            #This should be a good amount of time to prevent abuse (who needs to change their mine theme that often anyways?).
+            cooldown: 36000
+
+            #The sub-command's messages.
+            messages:
+
+              #The message sent when the executor is not a player.
+              invalid-executor:
+                - "&6&lPrison &7» &eInvalid executor, &eyou must be a &6player&e."
+
+              #The message sent when the player enters an invalid usage.
+              invalid-usage:
+                - "&6&lPrison &7» &eInvalid usage, &etry &6/mine retheme&e."
+
+              #The message sent when the retheme is invalid.
+              invalid-retheme:
+
+                #The message sent when the player does not have a mine.
+                has-no-mine:
+                  - "&6&lPrison &7» &eInvalid retheme, &eyou &6do not&e have a mine."
+
+                #The message sent when the player's mine is already using selected theme.
+                #Variables:
+                # - %theme% ~ The selected theme.
+                already-using-theme:
+                  - "&6&lPrison &7» &eInvalid retheme, &eyour &6mine&e is &6already&e using the &6%theme% &etheme."
+
+                #The message sent when the player's mine is already retheming their mine.
+                already-rethemeing:
+                  - "&6&lPrison &7» &eInvalid retheme, &eyour &6mine&e is &6already&e being &6rethemed&e."
+
+                #The message sent when the mine is on cooldown.
+                #Variables:
+                # - %time_left% ~ The cooldown's time left.
+                on-cooldown:
+                  - "&6&lPrison &7» &eInvalid retheme, &eyou are on &6cooldown &efor another &6%time_left%&e."
+
+              #The message sent when the retheme is a success.
+              success:
+
+                #The message sent to the player.
+                player:
+
+                  #The message sent when the mine is retheming.
+                  retheming:
+                    - "&6&lPrison &7» &eYour &6mine&e is being &6rethemed&e..."
+                    - "&7&o(Please be patient, this could take a while!)"
+
+                  #The message sent when the mine is has been rethemed.
+                  rethemed:
+                    - "&6&lPrison &7» &eYour &6mine&e has been &6rethemed&e."
+
+                #The message sent to the targeted player.
+                #This is only sent to the targeted player if they're inside the mine (if they are, it'll send this, and it'll teleport them to spawn).
+                target:
+                  - "&6&lPrison &7» &6%player%&e's &6mine&e is now being &6rethemed&e."
+
+            #The sub-command's sounds.
+            sounds:
+
+              #The sound sent when there is an error.
+              error:
+
+                #The sound.
+                #Use the SpigotMC 1.18.2's API's sound list, which can be found at https://hub.spigotmc.org/javadocs/spigot/org/bukkit/Sound.html.
+                sound: "BLOCK_NOTE_BLOCK_BIT"
+
+                #The sound's pitch.
+                pitch: 0.5
+
+                #The sound's volume.
+                volume: 1.0
+
+              #The sound sent when the retheme is a success.
+              success:
+
+                #The sound sent to the player.
+                player:
+
+                  #The sound.
+                  #Use the SpigotMC 1.18.2's API's sound list, which can be found at https://hub.spigotmc.org/javadocs/spigot/org/bukkit/Sound.html.
+                  sound: "BLOCK_NOTE_BLOCK_BIT"
+
+                  #The sound's pitch.
+                  pitch: 1.5
+
+                  #The sound's volume.
+                  volume: 1.0
+
+                #The sound sent to the target.
+                target:
+
+                  #The sound.
+                  #Use the SpigotMC 1.18.2's API's sound list, which can be found at https://hub.spigotmc.org/javadocs/spigot/org/bukkit/Sound.html.
+                  sound: "BLOCK_NOTE_BLOCK_BIT"
+
+                  #The sound's pitch.
+                  pitch: 0.5
+
+                  #The sound's volume.
+                  volume: 1.0
+
+            #The sub-command's menus.
+            menus:
+
+              #The theme selector menu.
+              theme-selector:
+
+                #The menu's items.
+                items:
+
+                  #The theme item (used for selecting a theme).
+                  #It will automatically fill empty slots using it.
+                  theme:
+
+                    #The material of the item.
+                    #It is suggested you use set this to the "%related_material%" variable which retrieves the theme's related material.
+                    #Use the SpigotMC 1.18.2's API's material list, which can be found at https://hub.spigotmc.org/javadocs/spigot/org/bukkit/Material.html.
+                    #Variables:
+                    # - %related_material% ~ The theme's related material.
+                    material: "%related_material%"
+
+                    #The name of the item.
+                    #Variables:
+                    # - %name% ~ The name of the theme.
+                    name: "&6&l%name%"
+
+                    #The lore of the item.
+                    #Variables:
+                    # - %name% ~ The name of the theme.
+                    # - %description% ~ The description of the theme.
+                    lore:
+                      - ""
+                      - "&6&lDescription"
+                      - " &6» &e%description%"
+                      - ""
+                      - "&7Select this theme by using &nLeft Click&7."
+
+                    #The item's glowing state.
+                    glowing: true
+
+                    #The item's unbreakable state.
+                    unbreakable: true
+
+                #The menu's inventory.
+                inventory:
+
+                  #The menu's type.
+                  #Use the SpigotMC 1.18.2's API's inventory type list, which can be found at https://hub.spigotmc.org/javadocs/spigot/org/bukkit/event/inventory/InventoryType.html.
+                  type: "CHEST"
+
+                  #The menu's rows.
+                  #This should only be used if the menu's type is CHEST.
+                  rows: 3
+
+                  #The menu's title
+                  title: "Mine | Theme Selector"
+
+                  #The inventory's items.
+                  items:
+
+                    #The item's slot.
+                    1:
+
+                      #The material of the item.
+                      #Use the SpigotMC 1.18.2's API's material list, which can be found at https://hub.spigotmc.org/javadocs/spigot/org/bukkit/Material.html.
+                      material: "BLACK_STAINED_GLASS_PANE"
+
+                      #The name of the item.
+                      name: "&0"
+
+                      #The item's glowing state.
+                      glowing: false
+
+                      #The item's unbreakable state.
+                      unbreakable: true
+
+                    #The item's slot.
+                    2:
+
+                      #The material of the item.
+                      #Use the SpigotMC 1.18.2's API's material list, which can be found at https://hub.spigotmc.org/javadocs/spigot/org/bukkit/Material.html.
+                      material: "BLACK_STAINED_GLASS_PANE"
+
+                      #The name of the item.
+                      name: "&0"
+
+                      #The item's glowing state.
+                      glowing: false
+
+                      #The item's unbreakable state.
+                      unbreakable: true
+
+                    #The item's slot.
+                    3:
+
+                      #The material of the item.
+                      #Use the SpigotMC 1.18.2's API's material list, which can be found at https://hub.spigotmc.org/javadocs/spigot/org/bukkit/Material.html.
+                      material: "BLACK_STAINED_GLASS_PANE"
+
+                      #The name of the item.
+                      name: "&0"
+
+                      #The item's glowing state.
+                      glowing: false
+
+                      #The item's unbreakable state.
+                      unbreakable: true
+
+                    #The item's slot.
+                    4:
+
+                      #The material of the item.
+                      #Use the SpigotMC 1.18.2's API's material list, which can be found at https://hub.spigotmc.org/javadocs/spigot/org/bukkit/Material.html.
+                      material: "BLACK_STAINED_GLASS_PANE"
+
+                      #The name of the item.
+                      name: "&0"
+
+                      #The item's glowing state.
+                      glowing: false
+
+                      #The item's unbreakable state.
+                      unbreakable: true
+
+                    #The item's slot.
+                    5:
+
+                      #The material of the item.
+                      #Use the SpigotMC 1.18.2's API's material list, which can be found at https://hub.spigotmc.org/javadocs/spigot/org/bukkit/Material.html.
+                      material: "BLACK_STAINED_GLASS_PANE"
+
+                      #The name of the item.
+                      name: "&0"
+
+                      #The item's glowing state.
+                      glowing: false
+
+                      #The item's unbreakable state.
+                      unbreakable: true
+
+                    #The item's slot.
+                    6:
+
+                      #The material of the item.
+                      #Use the SpigotMC 1.18.2's API's material list, which can be found at https://hub.spigotmc.org/javadocs/spigot/org/bukkit/Material.html.
+                      material: "BLACK_STAINED_GLASS_PANE"
+
+                      #The name of the item.
+                      name: "&0"
+
+                      #The item's glowing state.
+                      glowing: false
+
+                      #The item's unbreakable state.
+                      unbreakable: true
+
+                    #The item's slot.
+                    7:
+
+                      #The material of the item.
+                      #Use the SpigotMC 1.18.2's API's material list, which can be found at https://hub.spigotmc.org/javadocs/spigot/org/bukkit/Material.html.
+                      material: "BLACK_STAINED_GLASS_PANE"
+
+                      #The name of the item.
+                      name: "&0"
+
+                      #The item's glowing state.
+                      glowing: false
+
+                      #The item's unbreakable state.
+                      unbreakable: true
+
+                    #The item's slot.
+                    8:
+
+                      #The material of the item.
+                      #Use the SpigotMC 1.18.2's API's material list, which can be found at https://hub.spigotmc.org/javadocs/spigot/org/bukkit/Material.html.
+                      material: "BLACK_STAINED_GLASS_PANE"
+
+                      #The name of the item.
+                      name: "&0"
+
+                      #The item's glowing state.
+                      glowing: false
+
+                      #The item's unbreakable state.
+                      unbreakable: true
+
+                    #The item's slot.
+                    9:
+
+                      #The material of the item.
+                      #Use the SpigotMC 1.18.2's API's material list, which can be found at https://hub.spigotmc.org/javadocs/spigot/org/bukkit/Material.html.
+                      material: "BLACK_STAINED_GLASS_PANE"
+
+                      #The name of the item.
+                      name: "&0"
+
+                      #The item's glowing state.
+                      glowing: false
+
+                      #The item's unbreakable state.
+                      unbreakable: true
+
+                    #The item's slot.
+                    10:
+
+                      #The material of the item.
+                      #Use the SpigotMC 1.18.2's API's material list, which can be found at https://hub.spigotmc.org/javadocs/spigot/org/bukkit/Material.html.
+                      material: "BLACK_STAINED_GLASS_PANE"
+
+                      #The name of the item.
+                      name: "&0"
+
+                      #The item's glowing state.
+                      glowing: false
+
+                      #The item's unbreakable state.
+                      unbreakable: true
+
+                    #The item's slot.
+                    11:
+
+                      #The material of the item.
+                      #Use the SpigotMC 1.18.2's API's material list, which can be found at https://hub.spigotmc.org/javadocs/spigot/org/bukkit/Material.html.
+                      material: "BLACK_STAINED_GLASS_PANE"
+
+                      #The name of the item.
+                      name: "&0"
+
+                      #The item's glowing state.
+                      glowing: false
+
+                      #The item's unbreakable state.
+                      unbreakable: true
+
+                    #The item's slot.
+                    13:
+
+                      #The material of the item.
+                      #Use the SpigotMC 1.18.2's API's material list, which can be found at https://hub.spigotmc.org/javadocs/spigot/org/bukkit/Material.html.
+                      material: "BLACK_STAINED_GLASS_PANE"
+
+                      #The name of the item.
+                      name: "&0"
+
+                      #The item's glowing state.
+                      glowing: false
+
+                      #The item's unbreakable state.
+                      unbreakable: true
+
+                    #The item's slot.
+                    15:
+
+                      #The material of the item.
+                      #Use the SpigotMC 1.18.2's API's material list, which can be found at https://hub.spigotmc.org/javadocs/spigot/org/bukkit/Material.html.
+                      material: "BLACK_STAINED_GLASS_PANE"
+
+                      #The name of the item.
+                      name: "&0"
+
+                      #The item's glowing state.
+                      glowing: false
+
+                      #The item's unbreakable state.
+                      unbreakable: true
+
+                    #The item's slot.
+                    17:
+
+                      #The material of the item.
+                      #Use the SpigotMC 1.18.2's API's material list, which can be found at https://hub.spigotmc.org/javadocs/spigot/org/bukkit/Material.html.
+                      material: "BLACK_STAINED_GLASS_PANE"
+
+                      #The name of the item.
+                      name: "&0"
+
+                      #The item's glowing state.
+                      glowing: false
+
+                      #The item's unbreakable state.
+                      unbreakable: true
+
+                    #The item's slot.
+                    18:
+
+                      #The material of the item.
+                      #Use the SpigotMC 1.18.2's API's material list, which can be found at https://hub.spigotmc.org/javadocs/spigot/org/bukkit/Material.html.
+                      material: "BLACK_STAINED_GLASS_PANE"
+
+                      #The name of the item.
+                      name: "&0"
+
+                      #The item's glowing state.
+                      glowing: false
+
+                      #The item's unbreakable state.
+                      unbreakable: true
+
+                    #The item's slot.
+                    19:
+
+                      #The material of the item.
+                      #Use the SpigotMC 1.18.2's API's material list, which can be found at https://hub.spigotmc.org/javadocs/spigot/org/bukkit/Material.html.
+                      material: "BLACK_STAINED_GLASS_PANE"
+
+                      #The name of the item.
+                      name: "&0"
+
+                      #The item's glowing state.
+                      glowing: false
+
+                      #The item's unbreakable state.
+                      unbreakable: true
+
+                    #The item's slot.
+                    20:
+
+                      #The material of the item.
+                      #Use the SpigotMC 1.18.2's API's material list, which can be found at https://hub.spigotmc.org/javadocs/spigot/org/bukkit/Material.html.
+                      material: "BLACK_STAINED_GLASS_PANE"
+
+                      #The name of the item.
+                      name: "&0"
+
+                      #The item's glowing state.
+                      glowing: false
+
+                      #The item's unbreakable state.
+                      unbreakable: true
+
+                    #The item's slot.
+                    21:
+
+                      #The material of the item.
+                      #Use the SpigotMC 1.18.2's API's material list, which can be found at https://hub.spigotmc.org/javadocs/spigot/org/bukkit/Material.html.
+                      material: "BLACK_STAINED_GLASS_PANE"
+
+                      #The name of the item.
+                      name: "&0"
+
+                      #The item's glowing state.
+                      glowing: false
+
+                      #The item's unbreakable state.
+                      unbreakable: true
+
+                    #The item's slot.
+                    22:
+
+                      #The material of the item.
+                      #Use the SpigotMC 1.18.2's API's material list, which can be found at https://hub.spigotmc.org/javadocs/spigot/org/bukkit/Material.html.
+                      material: "BLACK_STAINED_GLASS_PANE"
+
+                      #The name of the item.
+                      name: "&0"
+
+                      #The item's glowing state.
+                      glowing: false
+
+                      #The item's unbreakable state.
+                      unbreakable: true
+
+                    #The item's slot.
+                    23:
+
+                      #The material of the item.
+                      #Use the SpigotMC 1.18.2's API's material list, which can be found at https://hub.spigotmc.org/javadocs/spigot/org/bukkit/Material.html.
+                      material: "BLACK_STAINED_GLASS_PANE"
+
+                      #The name of the item.
+                      name: "&0"
+
+                      #The item's glowing state.
+                      glowing: false
+
+                      #The item's unbreakable state.
+                      unbreakable: true
+
+                    #The item's slot.
+                    24:
+
+                      #The material of the item.
+                      #Use the SpigotMC 1.18.2's API's material list, which can be found at https://hub.spigotmc.org/javadocs/spigot/org/bukkit/Material.html.
+                      material: "BLACK_STAINED_GLASS_PANE"
+
+                      #The name of the item.
+                      name: "&0"
+
+                      #The item's glowing state.
+                      glowing: false
+
+                      #The item's unbreakable state.
+                      unbreakable: true
+
+                    #The item's slot.
+                    25:
+
+                      #The material of the item.
+                      #Use the SpigotMC 1.18.2's API's material list, which can be found at https://hub.spigotmc.org/javadocs/spigot/org/bukkit/Material.html.
+                      material: "BLACK_STAINED_GLASS_PANE"
+
+                      #The name of the item.
+                      name: "&0"
+
+                      #The item's glowing state.
+                      glowing: false
+
+                      #The item's unbreakable state.
+                      unbreakable: true
+
+                    #The item's slot.
+                    26:
+
+                      #The material of the item.
+                      #Use the SpigotMC 1.18.2's API's material list, which can be found at https://hub.spigotmc.org/javadocs/spigot/org/bukkit/Material.html.
+                      material: "BLACK_STAINED_GLASS_PANE"
+
+                      #The name of the item.
+                      name: "&0"
+
+                      #The item's glowing state.
+                      glowing: false
+
+                      #The item's unbreakable state.
+                      unbreakable: true
+
+                    #The item's slot.
+                    27:
+
+                      #The material of the item.
+                      #Use the SpigotMC 1.18.2's API's material list, which can be found at https://hub.spigotmc.org/javadocs/spigot/org/bukkit/Material.html.
+                      material: "BLACK_STAINED_GLASS_PANE"
+
+                      #The name of the item.
+                      name: "&0"
+
+                      #The item's glowing state.
+                      glowing: false
+
+                      #The item's unbreakable state.
+                      unbreakable: true
 
     #The mines' themes.
     themes:
