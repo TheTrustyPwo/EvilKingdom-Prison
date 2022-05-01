@@ -64,10 +64,10 @@ public class ItemListener implements Listener {
                 case "tokens" -> playerData.setTokens((playerData.getTokens() + amount));
                 case "gems" -> playerData.setGems((playerData.getGems() + amount));
             }
-            player.sendMessage(StringUtilities.colorize(this.plugin.getComponentManager().getFileComponent().getConfiguration().getString("components.currency.commands.balance.note.messages.success").replace("%currency%", currency).replace("%amount%", formattedAmount)));
-            player.playSound(player.getLocation(), Sound.valueOf(this.plugin.getComponentManager().getFileComponent().getConfiguration().getString("components.currency.commands.balance.note.sounds.success.sound")), ((float) this.plugin.getComponentManager().getFileComponent().getConfiguration().getDouble("components.currency.commands.balance.note.sounds.success.volume")), ((float) this.plugin.getComponentManager().getFileComponent().getConfiguration().getDouble("components.currency.commands.balance.note.sounds.success.pitch")));
+            player.sendMessage(StringUtilities.colorize(this.plugin.getComponentManager().getFileComponent().getConfiguration().getString("components.currency.commands.withdraaw.note.messages.success").replace("%currency%", currency).replace("%amount%", formattedAmount)));
+            player.playSound(player.getLocation(), Sound.valueOf(this.plugin.getComponentManager().getFileComponent().getConfiguration().getString("components.currency.commands.withdraaw.note.sounds.success.sound")), ((float) this.plugin.getComponentManager().getFileComponent().getConfiguration().getDouble("components.currency.commands.balance.note.sounds.success.volume")), ((float) this.plugin.getComponentManager().getFileComponent().getConfiguration().getDouble("components.currency.commands.balance.note.sounds.success.pitch")));
             item.setAmount((item.getAmount() - 1));
-            player.getInventory().setItem(player.getInventory().first(item), item);
+            player.getInventory().setItem(playerInteractEvent.getHand(), item);
         }));
     }
 

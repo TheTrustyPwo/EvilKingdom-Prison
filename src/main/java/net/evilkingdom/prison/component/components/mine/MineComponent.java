@@ -109,6 +109,7 @@ public class MineComponent {
             world.setGameRule(GameRule.DO_MOB_SPAWNING, false);
             world.setGameRule(GameRule.DO_DAYLIGHT_CYCLE, false);
             world.setGameRule(GameRule.DO_WEATHER_CYCLE, false);
+            world.setGameRule(GameRule.FIRE_DAMAGE, false);
         }, 20L);
         Bukkit.getConsoleSender().sendMessage(StringUtilities.colorize("&2[Prison » Component » Components » Mine] &aWorld loaded."));
         Bukkit.getConsoleSender().sendMessage(StringUtilities.colorize("&2[Prison » Component » Components » Mine] &aInitialized world."));
