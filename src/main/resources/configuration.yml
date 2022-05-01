@@ -1743,7 +1743,15 @@ components:
               #Variables:
               # - %player% ~ The targeted player.
               success:
-                - "&6&lPrison &7» &eYou have unwhitelisted &6%player%&e from your &6mine&e!"
+
+                #The message sent to the player.
+                player:
+                  - "&6&lPrison &7» &eYou have unwhitelisted &6%player%&e from your &6mine&e!"
+
+                #The message sent to the targeted player.
+                #This is only sent to the targeted player if they're inside the mine (if they are, it'll send this, and it'll teleport them to spawn).
+                target:
+                  - "&6&lPrison &7» &eYou are no longer &6whitelisted&e from &6%player%&e's &6mine&e!"
 
             #The sub-command's sounds.
             sounds:
@@ -1764,15 +1772,31 @@ components:
               #The sound sent when the ban is a success.
               success:
 
-                #The sound.
-                #Use the SpigotMC 1.18.2's API's sound list, which can be found at https://hub.spigotmc.org/javadocs/spigot/org/bukkit/Sound.html.
-                sound: "BLOCK_NOTE_BLOCK_BIT"
+                #The sound sent to the player.
+                player:
 
-                #The sound's pitch.
-                pitch: 1.5
+                  #The sound.
+                  #Use the SpigotMC 1.18.2's API's sound list, which can be found at https://hub.spigotmc.org/javadocs/spigot/org/bukkit/Sound.html.
+                  sound: "BLOCK_NOTE_BLOCK_BIT"
 
-                #The sound's volume.
-                volume: 1.0
+                  #The sound's pitch.
+                  pitch: 1.5
+
+                  #The sound's volume.
+                  volume: 1.0
+
+                #The sound sent to the target.
+                target:
+
+                  #The sound.
+                  #Use the SpigotMC 1.18.2's API's sound list, which can be found at https://hub.spigotmc.org/javadocs/spigot/org/bukkit/Sound.html.
+                  sound: "BLOCK_NOTE_BLOCK_BIT"
+
+                  #The sound's pitch.
+                  pitch: 0.5
+
+                  #The sound's volume.
+                  volume: 1.0
 
     #The mines' themes.
     themes:
