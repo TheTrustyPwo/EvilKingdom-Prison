@@ -118,7 +118,11 @@ public class BalanceCommand extends CommandHandler {
         ArrayList<String> tabCompletion = new ArrayList<String>();
         switch (arguments.length) {
             case 1 -> tabCompletion.addAll(Arrays.asList("gems", "tokens"));
-            case 2 ->  tabCompletion.addAll(Bukkit.getOnlinePlayers().stream().map(onlinePlayer -> onlinePlayer.getName()).collect(Collectors.toList()));
+            case 2 -> {
+                final ArrayList<String> playerNames = new ArrayList<String>(Bukkit.getOnlinePlayers().stream().map(onlinePlayer -> onlinePlayer.getName()).collect(Collectors.toList()));
+                playerNames.remove(player.getName());
+                tabCompletion.addAll(playerNames);
+            }
         }
         return tabCompletion;
     }
