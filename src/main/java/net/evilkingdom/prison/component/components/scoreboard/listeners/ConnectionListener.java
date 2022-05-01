@@ -36,7 +36,7 @@ public class ConnectionListener implements Listener {
     @EventHandler
     public void onPlayerJoin(final PlayerJoinEvent playerJoinEvent) {
         final Player player = playerJoinEvent.getPlayer();
-        this.plugin.getComponentManager().getScoreboardComponent().createScoreboard(player);
+        Bukkit.getScheduler().runTaskLater(this.plugin, () -> this.plugin.getComponentManager().getScoreboardComponent().createScoreboard(player), 5L);
     }
 
 }
