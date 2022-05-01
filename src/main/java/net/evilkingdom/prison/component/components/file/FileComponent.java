@@ -58,7 +58,6 @@ public class FileComponent {
         } else {
             Bukkit.getConsoleSender().sendMessage(StringUtilities.colorize("&2[Prison » Component » Components » File] &aRoot folder exists."));
         }
-        Bukkit.getConsoleSender().sendMessage(StringUtilities.colorize("&2[Prison » Component » Components » File] &aChecking if configuration file exists..."));
         Bukkit.getConsoleSender().sendMessage(StringUtilities.colorize("&2[Prison » Component » Components » File] &aChecking if schematics folder exists..."));
         final File schematicsFolder = new File(rootFolder, "schematics");
         if (!schematicsFolder.exists()) {
