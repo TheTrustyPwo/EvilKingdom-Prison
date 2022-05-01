@@ -60,7 +60,7 @@ public class PlayerData {
         } else {
             final DataImplementor dataImplementor = DataImplementor.get(this.plugin);
             final Datasite datasite = dataImplementor.getDatasites().stream().filter(innerDatasite -> innerDatasite.getPlugin() == this.plugin).findFirst().get();
-            final Datapoint datapoint = datasite.getDatapoints().stream().filter(innerDatapoint -> innerDatapoint.getName().equals("players")).findFirst().get();
+            final Datapoint datapoint = datasite.getDatapoints().stream().filter(innerDatapoint -> innerDatapoint.getName().equals("prison_players")).findFirst().get();
             return datapoint.exists(this.uuid.toString());
         }
     }
@@ -74,7 +74,7 @@ public class PlayerData {
     private CompletableFuture<Boolean> load() {
         final DataImplementor dataImplementor = DataImplementor.get(this.plugin);
         final Datasite datasite = dataImplementor.getDatasites().stream().filter(innerDatasite -> innerDatasite.getPlugin() == this.plugin).findFirst().get();
-        final Datapoint datapoint = datasite.getDatapoints().stream().filter(innerDatapoint -> innerDatapoint.getName().equals("players")).findFirst().get();
+        final Datapoint datapoint = datasite.getDatapoints().stream().filter(innerDatapoint -> innerDatapoint.getName().equals("prison_players")).findFirst().get();
         return datapoint.get(this.uuid.toString()).thenApply(optionalDatapointModel -> {
             if (optionalDatapointModel.isEmpty()) {
                 return false;
@@ -123,7 +123,7 @@ public class PlayerData {
         datapointModel.getObjects().put("multiplier", new DatapointObject(this.multiplier));
         final DataImplementor dataImplementor = DataImplementor.get(this.plugin);
         final Datasite datasite = dataImplementor.getDatasites().stream().filter(innerDatasite -> innerDatasite.getPlugin() == this.plugin).findFirst().get();
-        final Datapoint datapoint = datasite.getDatapoints().stream().filter(innerDatapoint -> innerDatapoint.getName().equals("players")).findFirst().get();
+        final Datapoint datapoint = datasite.getDatapoints().stream().filter(innerDatapoint -> innerDatapoint.getName().equals("prison_players")).findFirst().get();
         datapoint.save(datapointModel, asynchronous);
     }
 

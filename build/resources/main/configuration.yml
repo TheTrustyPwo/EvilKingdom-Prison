@@ -36,9 +36,15 @@ components:
   #Configuration for the Data component.
   data:
 
-    #The Mongo database connection string.
-    #All of the data for this plugin is stored via MongoDB and if this is wrong, the plugin will disable itself.
-    mongo-database-connection-string: "mongodb://root:BCwjJV8YQ6Qg5PveKuAWf5Gy@174.138.184.86:27017"
+    #The configuration for the database.
+    #All of the data for this plugin is stored via MongoDB and if this fails, the plugin will disable itself.
+    database:
+
+      #The name of the database.
+      name: "prison"
+
+      #The connection string of the database.
+      connection-string: "mongodb://root:BCwjJV8YQ6Qg5PveKuAWf5Gy@174.138.184.86:27017"
 
     #The component's commands.
     commands:

@@ -53,7 +53,7 @@ public class SelfData {
         } else {
             final DataImplementor dataImplementor = DataImplementor.get(this.plugin);
             final Datasite datasite = dataImplementor.getDatasites().stream().filter(innerDatasite -> innerDatasite.getPlugin() == this.plugin).findFirst().get();
-            final Datapoint datapoint = datasite.getDatapoints().stream().filter(innerDatapoint -> innerDatapoint.getName().equals("self")).findFirst().get();
+            final Datapoint datapoint = datasite.getDatapoints().stream().filter(innerDatapoint -> innerDatapoint.getName().equals("prison_self")).findFirst().get();
             return datapoint.exists("self");
         }
     }
@@ -66,7 +66,7 @@ public class SelfData {
     private CompletableFuture<Boolean> load() {
         final DataImplementor dataImplementor = DataImplementor.get(this.plugin);
         final Datasite datasite = dataImplementor.getDatasites().stream().filter(innerDatasite -> innerDatasite.getPlugin() == this.plugin).findFirst().get();
-        final Datapoint datapoint = datasite.getDatapoints().stream().filter(innerDatapoint -> innerDatapoint.getName().equals("self")).findFirst().get();
+        final Datapoint datapoint = datasite.getDatapoints().stream().filter(innerDatapoint -> innerDatapoint.getName().equals("prison_self")).findFirst().get();
         return datapoint.get("self").thenApply(optionalDatapointModel -> {
             if (optionalDatapointModel.isEmpty()) {
                 return false;
@@ -129,7 +129,7 @@ public class SelfData {
         datapointModel.getObjects().put("ranks", ranksDatapointObject);
         final DataImplementor dataImplementor = DataImplementor.get(this.plugin);
         final Datasite datasite = dataImplementor.getDatasites().stream().filter(innerDatasite -> innerDatasite.getPlugin() == this.plugin).findFirst().get();
-        final Datapoint datapoint = datasite.getDatapoints().stream().filter(innerDatapoint -> innerDatapoint.getName().equals("self")).findFirst().get();
+        final Datapoint datapoint = datasite.getDatapoints().stream().filter(innerDatapoint -> innerDatapoint.getName().equals("prison_self")).findFirst().get();
         datapoint.save(datapointModel, asynchronous);
     }
 

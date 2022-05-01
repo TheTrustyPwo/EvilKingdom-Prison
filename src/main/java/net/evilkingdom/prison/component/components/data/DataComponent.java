@@ -87,10 +87,10 @@ public class DataComponent {
      */
     private void connectToDatabase() {
         Bukkit.getConsoleSender().sendMessage(StringUtilities.colorize("&2[Prison » Component » Components » Data] &aConnecting to database..."));
-        final Datasite datasite = new Datasite(this.plugin, DatasiteType.MONGO_DATABASE, new String[]{this.plugin.getComponentManager().getFileComponent().getConfiguration().getString("components.data.mongo-database-connection-string")});
-        new Datapoint(datasite, "players");
-        new Datapoint(datasite, "mines");
-        new Datapoint(datasite, "self");
+        final Datasite datasite = new Datasite(this.plugin, this.plugin.getComponentManager().getFileComponent().getConfiguration().getString("components.data.database.name"), DatasiteType.MONGO_DATABASE, new String[]{this.plugin.getComponentManager().getFileComponent().getConfiguration().getString("components.data.database.connection-string")});
+        new Datapoint(datasite, "prison_players");
+        new Datapoint(datasite, "prison_mines");
+        new Datapoint(datasite, "prison_self");
         try {
             datasite.initialize();
         } catch (final Exception exception) {
@@ -119,10 +119,10 @@ public class DataComponent {
         CompletableFuture.supplyAsync(() -> {
             final DataImplementor dataImplementor = DataImplementor.get(this.plugin);
             final Datasite datasite = dataImplementor.getDatasites().stream().filter(innerDatasite -> innerDatasite.getPlugin() == this.plugin).findFirst().get();
-            if (datasite.getMongoClient().getDatabase(this.plugin.getName()).getCollection("players").countDocuments() == 0L)  {
+            if (datasite.getMongoClient().getDatabase(datasite.getName()).getCollection("players").countDocuments() == 0L)  {
                 return 1000L;
             } else {
-                return (datasite.getMongoClient().getDatabase(this.plugin.getName()).getCollection("players").find().sort(Sorts.descending("rank")).first().getLong("rank") + 100L);
+                return (datasite.getMongoClient().getDatabase(datasite.getName()).getCollection("players").find().sort(Sorts.descending("rank")).first().getLong("rank") + 1000L);
             }
         }).whenComplete((rankGenerationAmount, rankGenerationAmountThrowable) -> {
             SelfData.get().whenComplete((selfData, selfDataThrowable) -> {
