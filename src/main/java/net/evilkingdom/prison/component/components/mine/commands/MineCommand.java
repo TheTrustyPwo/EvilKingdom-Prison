@@ -4,6 +4,7 @@ package net.evilkingdom.prison.component.components.mine.commands;
  * Made with love by https://kodirati.com/.
  */
 
+import net.evilkingdom.basics.component.components.data.objects.SelfData;
 import net.evilkingdom.commons.border.enums.BorderColor;
 import net.evilkingdom.commons.border.objects.Border;
 import net.evilkingdom.commons.command.abstracts.CommandHandler;
@@ -253,9 +254,11 @@ public class MineCommand extends CommandHandler {
                                         final Player target = offlineTarget.getPlayer();
                                         final ConstructorRegion constructorRegion = new ConstructorRegion(this.plugin, mineData.getCornerOne(), mineData.getCornerTwo());
                                         if (constructorRegion.isWithin(target.getLocation())) {
-                                            //target.teleport(); WE NEED BASICS TO DO THIS, IT'LL TELEPORT THE PLAYER TO THE BASICS SET SPAWN!!!!!!!!!
-                                            this.plugin.getComponentManager().getFileComponent().getConfiguration().getStringList("components.mine.commands.mine.sub-commands.ban.messages.success.target").forEach(string -> target.sendMessage(StringUtilities.colorize(string)));
-                                            player.playSound(player.getLocation(), Sound.valueOf(this.plugin.getComponentManager().getFileComponent().getConfiguration().getString("components.mine.commands.mine.sub-commands.ban.sounds.success.target.sound")), (float) this.plugin.getComponentManager().getFileComponent().getConfiguration().getDouble("components.mine.commands.mine.sub-commands.ban.sounds.success.target.volume"), (float) this.plugin.getComponentManager().getFileComponent().getConfiguration().getDouble("components.mine.commands.mine.sub-commands.ban.sounds.success.target.pitch"));
+                                            SelfData.get().whenComplete((selfData, selfDataThrowable) -> {
+                                                target.teleport(selfData.getSpawn());
+                                                this.plugin.getComponentManager().getFileComponent().getConfiguration().getStringList("components.mine.commands.mine.sub-commands.ban.messages.success.target").forEach(string -> target.sendMessage(StringUtilities.colorize(string)));
+                                                target.playSound(player.getLocation(), Sound.valueOf(this.plugin.getComponentManager().getFileComponent().getConfiguration().getString("components.mine.commands.mine.sub-commands.ban.sounds.success.target.sound")), (float) this.plugin.getComponentManager().getFileComponent().getConfiguration().getDouble("components.mine.commands.mine.sub-commands.ban.sounds.success.target.volume"), (float) this.plugin.getComponentManager().getFileComponent().getConfiguration().getDouble("components.mine.commands.mine.sub-commands.ban.sounds.success.target.pitch"));
+                                            });
                                         }
                                     }
                                 });
