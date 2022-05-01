@@ -83,11 +83,11 @@ public class CurrencyComponent {
      */
     public ItemStack getNoteItem(final String currency, final long amount, final String withdrawer) {
         final String formattedAmount = this.plugin.getComponentManager().getFileComponent().getConfiguration().getString("components.currency.symbols." + currency) + NumberUtilities.format(amount, NumberFormatType.COMMAS);
-        final Material material = Material.getMaterial(this.plugin.getComponentManager().getFileComponent().getConfiguration().getString("components.currency.commands.balance.note.item.material"));
-        final Optional<String> name = Optional.of(StringUtilities.colorize(this.plugin.getComponentManager().getFileComponent().getConfiguration().getString("components.currency.commands.balance.note.item.name").replace("%currency%", WordUtils.capitalizeFully(currency)).replace("%withdrawer%", withdrawer).replace("%amount%", formattedAmount)));
-        final Optional<ArrayList<String>> lore = Optional.of(new ArrayList<String>(this.plugin.getComponentManager().getFileComponent().getConfiguration().getStringList("components.currency.commands.balance.note.item.lore").stream().map(loreLine -> StringUtilities.colorize(loreLine.replace("%currency%", WordUtils.capitalizeFully(currency)).replace("%withdrawer%", withdrawer).replace("%amount%", formattedAmount))).collect(Collectors.toList())));
-        final boolean glowing = this.plugin.getComponentManager().getFileComponent().getConfiguration().getBoolean("components.currency.commands.balance.note.item.glowing");
-        final boolean unbreakable = this.plugin.getComponentManager().getFileComponent().getConfiguration().getBoolean("components.currency.commands.balance.note.item.unbreakable");
+        final Material material = Material.getMaterial(this.plugin.getComponentManager().getFileComponent().getConfiguration().getString("components.currency.commands.withdraw.note.item.material"));
+        final Optional<String> name = Optional.of(StringUtilities.colorize(this.plugin.getComponentManager().getFileComponent().getConfiguration().getString("components.currency.commands.withdraw.note.item.name").replace("%currency%", WordUtils.capitalizeFully(currency)).replace("%withdrawer%", withdrawer).replace("%amount%", formattedAmount)));
+        final Optional<ArrayList<String>> lore = Optional.of(new ArrayList<String>(this.plugin.getComponentManager().getFileComponent().getConfiguration().getStringList("components.currency.commands.withdraw.note.item.lore").stream().map(loreLine -> StringUtilities.colorize(loreLine.replace("%currency%", WordUtils.capitalizeFully(currency)).replace("%withdrawer%", withdrawer).replace("%amount%", formattedAmount))).collect(Collectors.toList())));
+        final boolean glowing = this.plugin.getComponentManager().getFileComponent().getConfiguration().getBoolean("components.currency.commands.withdraw.note.item.glowing");
+        final boolean unbreakable = this.plugin.getComponentManager().getFileComponent().getConfiguration().getBoolean("components.currency.commands.withdraw.note.item.unbreakable");
         final Item item = new Item(new ItemStack(material));
         name.ifPresent(presentName -> item.setName(presentName));
         lore.ifPresent(presentLore -> item.setLore(presentLore));
