@@ -700,15 +700,51 @@ components:
 
               #The message sent when the player enters an invalid usage.
               invalid-usage:
-                - "&6&lPrison &7» &eInvalid usage, &etry &6/mine go&e."
+                - "&6&lPrison &7» &eInvalid usage, &etry &6/mine go [player]&e."
 
-              #The message sent when the go is invalid (player doesn't have a mine).
+              #The message sent when the targeted player is invalid (not in the database).
+              #Variables:
+              # - %player% ~ The targeted player.
+              invalid-player:
+                - "&6&lPrison &7» &eInvalid player, &6%player%&e does not exist in the database."
+
+              #The message sent when the go is invalid.
               invalid-go:
-                - "&6&lPrison &7» &eInvalid go, &eyou &6do not&e have a mine."
+
+                #The message sent when the player has no mine.
+                has-no-mine:
+                  - "&6&lPrison &7» &eInvalid go, you do not have a &6mine&e."
+
+                #The message sent when the targeted player has no mine.
+                #Variables:
+                # - %player% ~ The targeted player.
+                target-has-no-mine:
+                  - "&6&lPrison &7» &eInvalid go, &6%player% &edoes not have a &6mine&e."
+
+                #The message sent when the player is banned from the targeted player's mine.
+                #Variables:
+                # - %player% ~ The targeted player.
+                banned-from-target-mine:
+                  - "&6&lPrison &7» &eInvalid go, you are banned from &6%player%&e's &6mine&e."
+
+                #The message sent when the targeted player's mine is private (and the player isn't whitelisted obviously).
+                #Variables:
+                # - %player% ~ The targeted player.
+                target-mine-private:
+                  - "&6&lPrison &7» &eInvalid go, &6%player%&e's &6mine&e is currently private."
 
               #The message sent when the go is a success.
               success:
-                - "&6&lPrison &7» &eYou have been &6teleported&e to your mine."
+
+                #The message sent when there is no targeted player.
+                no-target:
+                  - "&6&lPrison &7» &eYou have been teleported to your &6mine&e."
+
+                #The message sent when there is a targeted player.
+                #Variables:
+                # - %player% ~ The targeted player.
+                with-target:
+                  - "&6&lPrison &7» &eYou have been teleported to &6%player%&e's &6mine&e."
 
             #The sub-command's sounds.
             sounds:

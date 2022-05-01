@@ -111,11 +111,11 @@ public class MineData {
             }
             if (datapointModel.getObjects().containsKey("banned")) {
                 final DatapointObject datapointObject = datapointModel.getObjects().get("banned");
-                this.banned = new ArrayList<UUID>(datapointObject.getInnerObjects().values().stream().map(innerDatapointObject -> UUID.fromString(((String) datapointObject.getObject()))).collect(Collectors.toList()));
+                this.banned = new ArrayList<UUID>(datapointObject.getInnerObjects().values().stream().map(innerDatapointObject -> UUID.fromString(((String) innerDatapointObject.getObject()))).collect(Collectors.toList()));
             }
             if (datapointModel.getObjects().containsKey("whitelisted")) {
                 final DatapointObject datapointObject = datapointModel.getObjects().get("whitelisted");
-                this.whitelisted = new ArrayList<UUID>(datapointObject.getInnerObjects().values().stream().map(innerDatapointObject -> UUID.fromString(((String) datapointObject.getObject()))).collect(Collectors.toList()));
+                this.whitelisted = new ArrayList<UUID>(datapointObject.getInnerObjects().values().stream().map(innerDatapointObject -> UUID.fromString(((String) innerDatapointObject.getObject()))).collect(Collectors.toList()));
             }
             if (datapointModel.getObjects().containsKey("cooldowns")) {
                 final DatapointObject datapointObject = datapointModel.getObjects().get("cooldowns");

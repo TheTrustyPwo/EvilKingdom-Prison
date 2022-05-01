@@ -42,8 +42,11 @@ public class ConnectionListener implements Listener {
         final Player player = playerJoinEvent.getPlayer();
         PlayerData.get(player.getUniqueId()).whenComplete((playerData, playerDataThrowable) -> {
             if (playerData.getMine().isPresent()) {
-                //DONT DO THIS IF ITS ALRAEADY CACHED LOL
-                MineData.get(playerData.getMine().get()).whenComplete((mineData, mineDataThrowable) -> mineData.cache());
+                MineData.get(playerData.getMine().get()).whenComplete((mineData, mineDataThrowable) -> {
+                    if (!mineData.isCached()) {
+                        mineData.cache();
+                    }
+                });
             }
             playerData.cache();
         });
@@ -56,9 +59,6 @@ public class ConnectionListener implements Listener {
     public void onPlayerQuit(final PlayerQuitEvent playerQuitEvent) {
         final Player player = playerQuitEvent.getPlayer();
         PlayerData.get(player.getUniqueId()).whenComplete((playerData, playerDataThrowable) -> {
-            if (playerDataThrowable != null) {
-                playerDataThrowable.printStackTrace();
-            }
             if (!playerData.isCached()) {
                 return;
             }

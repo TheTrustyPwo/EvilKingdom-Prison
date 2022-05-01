@@ -124,19 +124,19 @@ public class DataComponent {
             } else {
                 return (datasite.getMongoClient().getDatabase(datasite.getName()).getCollection("prison_players").find().sort(Sorts.descending("rank")).first().getLong("rank") + 1000L);
             }
-        }).whenComplete((rankGenerationAmount, rankGenerationAmountThrowable) -> {
+        }).whenComplete((generationAmount, generationAmountThrowable) -> {
             SelfData.get().whenComplete((selfData, selfDataThrowable) -> {
                 selfData.cache();
                 selfData.getRanks().clear();
-                this.plugin.getComponentManager().getRankComponent().generate(0, rankGenerationAmount).whenComplete((generatedRanks, generatedRanksThrowable) -> selfData.getRanks().addAll(generatedRanks));
+                this.plugin.getComponentManager().getRankComponent().generate(0, generationAmount).whenComplete((generated, generatedThrowable) -> selfData.getRanks().addAll(generated));
                 if (selfData.getMineLocations().isEmpty()) {
-                    this.plugin.getComponentManager().getMineComponent().generateLocations(0, 0, 100).whenComplete((generatedMineLocations, generatedMineLocationsThrowable) -> {
-                        selfData.getMineLocations().addAll(generatedMineLocations);
+                    this.plugin.getComponentManager().getMineComponent().generateLocations(0, 0, 100).whenComplete((generatedLocations, generatedLocationsThrowable) -> {
+                        selfData.getMineLocations().addAll(generatedLocations);
                     });
                 } else {
                     final MineLocation latestMineLocation = selfData.getMineLocations().get((selfData.getMineLocations().size() - 1));
-                    this.plugin.getComponentManager().getMineComponent().generateLocations(latestMineLocation.getX(), latestMineLocation.getZ(), 1).whenComplete((generatedMineLocations, generatedMineLocationsThrowable) -> {
-                        selfData.getMineLocations().addAll(generatedMineLocations);
+                    this.plugin.getComponentManager().getMineComponent().generateLocations(latestMineLocation.getX(), latestMineLocation.getZ(), 1).whenComplete((generatedLocations, generatedLocationsThrowable) -> {
+                        selfData.getMineLocations().addAll(generatedLocations);
                     });
                 }
             });
