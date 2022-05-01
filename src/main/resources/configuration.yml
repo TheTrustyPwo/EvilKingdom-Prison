@@ -334,7 +334,7 @@ components:
 
             #The message sent to the player if a target is set.
             player-with-target:
-              - "&6&lPrison &7» &6%player&e has &6%amount%&e of &6%currency%&e."
+              - "&6&lPrison &7» &6%player%&e has &6%amount%&e of &6%currency%&e."
 
       #The "/withdraw" command.
       withdraw:
