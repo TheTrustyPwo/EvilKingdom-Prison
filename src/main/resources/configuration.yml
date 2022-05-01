@@ -657,6 +657,7 @@ components:
                 - "&6 » &e/mine reset &7| &fAllows you to reset your mine."
                 - "&6 » &e/mine go &7| &fAllows you to go to your mine."
                 - "&6 » &e/mine ban <player> &7| &fAllows you to ban a player from your mine."
+                - "&6 » &e/mine unban <player> &7| &fAllows you to unban a player from your mine."
                 - ""
 
             #The sub-command's sounds.
@@ -1391,7 +1392,7 @@ components:
                 self-ban:
                   - "&6&lPrison &7» &eInvalid player, you cannot ban &6yourself&e."
 
-              #The message sent when the reset is invalid.
+              #The message sent when the ban is invalid.
               invalid-ban:
 
                 #The message sent when the player does not have a mine.
@@ -1462,6 +1463,81 @@ components:
 
                   #The sound's volume.
                   volume: 1.0
+
+          #The "/mine unban" sub-command.
+          unban:
+
+            #The sub-command's messages.
+            messages:
+
+              #The message sent when the executor is not a player.
+              invalid-executor:
+                - "&6&lPrison &7» &eInvalid executor, &eyou must be a &6player&e."
+
+              #The message sent when the player enters an invalid usage.
+              invalid-usage:
+                - "&6&lPrison &7» &eInvalid usage, &etry &6/mine unban <player>&e."
+
+              #The message sent when the targeted player is invalid.
+              #Variables:
+              # - %player% ~ The targeted player.
+              invalid-player:
+
+                #The message sent if the targeted player does not exist in the database.
+                does-not-exist:
+                  - "&6&lPrison &7» &eInvalid player, &6%player%&e does not exist in the database."
+
+                #The message sent if the targeted player is the player.
+                self-unban:
+                  - "&6&lPrison &7» &eInvalid player, you cannot unban &6yourself&e."
+
+              #The message sent when the unban is invalid.
+              invalid-unban:
+
+                #The message sent when the player does not have a mine.
+                has-no-mine:
+                  - "&6&lPrison &7» &eInvalid unban, &eyou &6do not&e have a mine."
+
+                #The message sent when the targeted player is not banned.
+                #Variables:
+                # - %player% ~ The targeted player.
+                not-banned:
+                  - "&6&lPrison &7» &eInvalid unban, &6%player% &eis not banned."
+
+              #The message sent when the unban is a success.
+              #Variables:
+              # - %player% ~ The targeted player.
+              success:
+                - "&6&lPrison &7» &eYou have unbanned &6%player%&e from your &6mine&e!"
+
+            #The sub-command's sounds.
+            sounds:
+
+              #The sound sent when there is an error.
+              error:
+
+                #The sound.
+                #Use the SpigotMC 1.18.2's API's sound list, which can be found at https://hub.spigotmc.org/javadocs/spigot/org/bukkit/Sound.html.
+                sound: "BLOCK_NOTE_BLOCK_BIT"
+
+                #The sound's pitch.
+                pitch: 0.5
+
+                #The sound's volume.
+                volume: 1.0
+
+              #The sound sent when the ban is a success.
+              success:
+
+                #The sound.
+                #Use the SpigotMC 1.18.2's API's sound list, which can be found at https://hub.spigotmc.org/javadocs/spigot/org/bukkit/Sound.html.
+                sound: "BLOCK_NOTE_BLOCK_BIT"
+
+                #The sound's pitch.
+                pitch: 1.5
+
+                #The sound's volume.
+                volume: 1.0
 
     #The mines' themes.
     themes:

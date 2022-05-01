@@ -10,6 +10,7 @@ import com.mongodb.client.MongoClients;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.model.Sorts;
+import net.evilkingdom.commons.cooldown.CooldownImplementor;
 import net.evilkingdom.commons.datapoint.DataImplementor;
 import net.evilkingdom.commons.datapoint.enums.DatasiteType;
 import net.evilkingdom.commons.datapoint.objects.Datapoint;
@@ -117,6 +118,7 @@ public class DataComponent {
     public void initializeData() {
         Bukkit.getConsoleSender().sendMessage(StringUtilities.colorize("&2[Prison » Component » Components » Data] &aInitializing data..."));
         CompletableFuture.supplyAsync(() -> {
+            CooldownImplementor.get(this.plugin);
             final DataImplementor dataImplementor = DataImplementor.get(this.plugin);
             final Datasite datasite = dataImplementor.getDatasites().stream().filter(innerDatasite -> innerDatasite.getPlugin() == this.plugin).findFirst().get();
             if (datasite.getMongoClient().getDatabase(datasite.getName()).getCollection("prison_players").countDocuments() == 0L)  {

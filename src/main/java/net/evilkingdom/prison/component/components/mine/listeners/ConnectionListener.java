@@ -47,7 +47,7 @@ public class ConnectionListener implements Listener {
             final Optional<UUID> optionalMineUUID = this.plugin.getComponentManager().getMineComponent().get(player.getLocation());
             optionalMineUUID.ifPresent(uuid -> MineData.get(uuid).whenComplete((mineData, mineDataThrowable) -> {
                 final Border border = new Border(this.plugin, player, mineData.getCenter().toCenterLocation(), mineData.getBorderSize(), BorderColor.RED);
-                Bukkit.getScheduler().runTaskLater(this.plugin, () -> border.show(), 20L);
+                Bukkit.getScheduler().runTaskLater(this.plugin, () -> border.show(), 5L);
             }));
         }, 20L);
     }
