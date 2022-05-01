@@ -297,4 +297,14 @@ public class PlayerData {
         }
     }
 
+    /**
+     * Allows you to retrieve a PlayerData from the cache directly.
+     * This should only be used if you know this will be cached.
+     *
+     * @return The self class.
+     */
+    public static Optional<PlayerData> getViaCache(final UUID uuid) {
+        return cache.stream().filter(playerData -> playerData.getUUID() == uuid).findFirst();
+    }
+
 }

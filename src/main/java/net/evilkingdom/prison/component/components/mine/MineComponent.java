@@ -184,22 +184,22 @@ public class MineComponent {
      * @return If the mine reset task was successful.
      */
     public CompletableFuture<Boolean> reset(final UUID uuid) {
-        if (this.minesDoingTask.contains(uuid)) {
+        if (minesDoingTask.contains(uuid)) {
             return CompletableFuture.supplyAsync(() -> false);
         }
-        return MineData.get(uuid).thenCompose(mineData -> {
-           if (!mineData.isCached()) {
-               return CompletableFuture.supplyAsync(() -> false);
-           }
-           this.minesDoingTask.add(uuid);
-           return PlayerData.get(mineData.getOwner()).thenCompose(playerData -> SelfData.get().thenCompose(selfData -> {
-               final Rank rank = selfData.getRanks().stream().filter(dataRank -> dataRank.getRank().equals(playerData.getRank())).collect(Collectors.toList()).get(0);
-               final ConstructorRegion constructorRegion = new ConstructorRegion(this.plugin, mineData.getMineCornerOne(), mineData.getMineCornerTwo());
-               return constructorRegion.fill(rank.getBlockPallet()).thenApply(fillSuccessful -> {
-                   this.minesDoingTask.remove(uuid);
-                   return fillSuccessful;
-               });
-           }));
+        if (MineData.getViaCache(uuid).isEmpty()) {
+            return CompletableFuture.supplyAsync(() -> false);
+        }
+        final MineData mineData = MineData.getViaCache(uuid).get();
+        this.minesDoingTask.add(uuid);
+        return PlayerData.get(mineData.getOwner()).thenCompose(playerData -> {
+            final SelfData selfData = SelfData.getViaCache().get();
+            final Rank rank = selfData.getRanks().stream().filter(dataRank -> dataRank.getRank().equals(playerData.getRank())).collect(Collectors.toList()).get(0);
+            final ConstructorRegion constructorRegion = new ConstructorRegion(this.plugin, mineData.getMineCornerOne(), mineData.getMineCornerTwo());
+            return constructorRegion.fill(rank.getBlockPallet()).thenApply(fillSuccessful -> {
+                this.minesDoingTask.remove(uuid);
+                return fillSuccessful;
+            });
         });
     }
 
@@ -210,16 +210,15 @@ public class MineComponent {
      * @return The mine's percentage (out of 100).
      */
     public CompletableFuture<Double> getPercentage(final UUID uuid) {
-        return MineData.get(uuid).thenCompose(mineData -> {
-            if (!mineData.isCached()) {
-                return CompletableFuture.supplyAsync(() -> 100.0);
-            }
-            final ConstructorRegion constructorRegion = new ConstructorRegion(this.plugin, mineData.getMineCornerOne(), mineData.getMineCornerTwo());
-            return constructorRegion.getBlockComposition().thenApply(blockComposition -> {
-                double air = blockComposition.getOrDefault(Material.AIR, 0);
-                double total = blockComposition.values().stream().mapToInt(integer -> integer).sum();
-                return ((total - air) / total) * 100;
-            });
+        if (MineData.getViaCache(uuid).isEmpty()) {
+            return CompletableFuture.supplyAsync(() -> 100.0);
+        }
+        final MineData mineData = MineData.getViaCache(uuid).get();
+        final ConstructorRegion constructorRegion = new ConstructorRegion(this.plugin, mineData.getMineCornerOne(), mineData.getMineCornerTwo());
+        return constructorRegion.getBlockComposition().thenApply(blockComposition -> {
+            double air = blockComposition.getOrDefault(Material.AIR, 0);
+            double total = blockComposition.values().stream().mapToInt(integer -> integer).sum();
+            return ((total - air) / total) * 100;
         });
     }
 
@@ -290,34 +289,33 @@ public class MineComponent {
      * @return The mine's theme change completion state.
      */
     public CompletableFuture<Boolean> changeTheme(final UUID uuid, final String theme) {
-        return MineData.get(uuid).thenCompose(mineData -> {
-            if (!mineData.isCached()) {
+        if (minesDoingTask.contains(uuid)) {
+            return CompletableFuture.supplyAsync(() -> false);
+        }
+        if (MineData.getViaCache(uuid).isEmpty()) {
+            return CompletableFuture.supplyAsync(() -> false);
+        }
+        final MineData mineData = MineData.getViaCache(uuid).get();
+        this.minesDoingTask.add(uuid);
+        final ConstructorRegion constructorRegion = new ConstructorRegion(this.plugin, mineData.getCornerOne(), mineData.getCornerTwo());
+        return constructorRegion.fill(Material.AIR).thenCompose(fillSuccessful -> {
+            if (!fillSuccessful) {
                 return CompletableFuture.supplyAsync(() -> false);
             }
-            if (this.minesDoingTask.contains(uuid)) {
-                return CompletableFuture.supplyAsync(() -> false);
-            }
-            this.minesDoingTask.add(mineData.getUUID());
-            final ConstructorRegion constructorRegion = new ConstructorRegion(this.plugin, mineData.getCornerOne(), mineData.getCornerTwo());
-            return constructorRegion.fill(Material.AIR).thenCompose(fillSuccessful -> {
-                if (!fillSuccessful) {
+            final ConstructorSchematic constructorSchematic = new ConstructorSchematic(this.plugin, mineData.getCenter());
+            final File schematicFile = new File(this.plugin.getDataFolder() + File.separator + "schematics", this.plugin.getComponentManager().getFileComponent().getConfiguration().getString("components.mine.themes." + theme + ".schematic"));
+            return constructorSchematic.load(schematicFile).thenCompose(loadSuccessful -> {
+                if (!loadSuccessful) {
                     return CompletableFuture.supplyAsync(() -> false);
                 }
-                final ConstructorSchematic constructorSchematic = new ConstructorSchematic(this.plugin, mineData.getCenter());
-                final File schematicFile = new File(this.plugin.getDataFolder() + File.separator + "schematics", this.plugin.getComponentManager().getFileComponent().getConfiguration().getString("components.mine.themes." + theme + ".schematic"));
-                return constructorSchematic.load(schematicFile).thenCompose(loadSuccessful -> {
-                    if (!loadSuccessful) {
-                        return CompletableFuture.supplyAsync(() -> false);
+                return constructorSchematic.paste().thenApply(pasteSuccessful -> {
+                    if (!pasteSuccessful) {
+                        return false;
                     }
-                    return constructorSchematic.paste().thenApply(pasteSuccessful -> {
-                        if (!pasteSuccessful) {
-                            return false;
-                        }
-                        mineData.setTheme(theme);
-                        this.minesDoingTask.remove(mineData.getUUID());
-                        this.reset(mineData.getUUID());
-                        return true;
-                    });
+                    mineData.setTheme(theme);
+                    this.minesDoingTask.remove(mineData.getUUID());
+                    this.reset(mineData.getUUID());
+                    return true;
                 });
             });
         });
@@ -381,14 +379,13 @@ public class MineComponent {
      * @param location ~ The location to check.
      * @return If the location is within the mine.
      */
-    public CompletableFuture<Boolean> isWithin(final UUID uuid, final Location location) {
-        return MineData.get(uuid).thenApply(mineData -> {
-            if (!mineData.isCached()) {
-                return false;
-            }
-            final ConstructorRegion constructorRegion = new ConstructorRegion(this.plugin, mineData.getCornerOne(), mineData.getCornerTwo());
-            return constructorRegion.isWithin(location);
-        });
+    public boolean isWithin(final UUID uuid, final Location location) {
+        if (MineData.getViaCache(uuid).isEmpty()) {
+            return false;
+        }
+        final MineData mineData = MineData.getViaCache(uuid).get();
+        final ConstructorRegion constructorRegion = new ConstructorRegion(this.plugin, mineData.getCornerOne(), mineData.getCornerTwo());
+        return constructorRegion.isWithin(location);
     }
 
     /**
@@ -398,14 +395,13 @@ public class MineComponent {
      * @param location ~ The location to check.
      * @return If the location is within the mine's mine.
      */
-    public CompletableFuture<Boolean> isWithinInner(final UUID uuid, final Location location) {
-        return MineData.get(uuid).thenApply(mineData -> {
-            if (!mineData.isCached()) {
-                return false;
-            }
-            final ConstructorRegion constructorRegion = new ConstructorRegion(this.plugin, mineData.getMineCornerOne(), mineData.getMineCornerTwo());
-            return constructorRegion.isWithin(location);
-        });
+    public boolean isWithinInner(final UUID uuid, final Location location) {
+        if (MineData.getViaCache(uuid).isEmpty()) {
+            return false;
+        }
+        final MineData mineData = MineData.getViaCache(uuid).get();
+        final ConstructorRegion constructorRegion = new ConstructorRegion(this.plugin, mineData.getMineCornerOne(), mineData.getMineCornerTwo());
+        return constructorRegion.isWithin(location);
     }
 
 }

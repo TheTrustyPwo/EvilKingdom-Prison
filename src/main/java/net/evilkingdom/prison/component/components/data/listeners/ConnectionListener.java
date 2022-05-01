@@ -4,6 +4,7 @@ package net.evilkingdom.prison.component.components.data.listeners;
  * Made with love by https://kodirati.com/.
  */
 
+import net.evilkingdom.commons.constructor.objects.ConstructorRegion;
 import net.evilkingdom.prison.Prison;
 import net.evilkingdom.prison.component.components.data.objects.MineData;
 import net.evilkingdom.prison.component.components.data.objects.PlayerData;
@@ -58,24 +59,23 @@ public class ConnectionListener implements Listener {
     @EventHandler
     public void onPlayerQuit(final PlayerQuitEvent playerQuitEvent) {
         final Player player = playerQuitEvent.getPlayer();
-        PlayerData.get(player.getUniqueId()).whenComplete((playerData, playerDataThrowable) -> {
-            if (!playerData.isCached()) {
+        if (PlayerData.getViaCache(player.getUniqueId()).isEmpty()) {
+            return;
+        }
+        final PlayerData playerData = PlayerData.getViaCache(player.getUniqueId()).get();
+        if (playerData.getMine().isPresent()) {
+            if (MineData.getViaCache(playerData.getMine().get()).isEmpty()) {
                 return;
             }
-            if (playerData.getMine().isPresent()) {
-                MineData.get(playerData.getMine().get()).whenComplete((mineData, mineDataThrowable) -> {
-                    if (!mineData.isCached()) {
-                        return;
-                    }
-                    //IN THE FUTURE ADD A SYSTEM TO CHECK IF THE MINE HAS ANY PLAYERS AT IT AND DONT UNSAVE AND UNCACHE THEN.
-                    //INSTEAD ITLL UNSAVE AND UNCACHE AUTOMATICALLY WHEN IT'S EMPTY AND CACHE WHEN IT ISN'T
-                    mineData.save(true);
-                    mineData.uncache();
-                });
+            final MineData mineData = MineData.getViaCache(playerData.getMine().get()).get();
+            final ConstructorRegion constructorRegion = new ConstructorRegion(this.plugin, mineData.getCornerOne(), mineData.getCornerTwo());
+            if (Bukkit.getOnlinePlayers().stream().map(onlinePlayer -> constructorRegion.isWithin(onlinePlayer.getLocation())).findFirst().isEmpty()) {
+                mineData.save(true);
+                mineData.uncache();
             }
-            playerData.save(true);
-            playerData.uncache();
-        });
+        }
+        playerData.save(true);
+        playerData.uncache();
     }
 
 }

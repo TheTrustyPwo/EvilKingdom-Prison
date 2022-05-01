@@ -199,4 +199,14 @@ public class SelfData {
         }
     }
 
+    /**
+     * Allows you to retrieve a SelfData from the cache directly.
+     * This should only be used if you know this will be cached.
+     *
+     * @return The self class.
+     */
+    public static Optional<SelfData> getViaCache() {
+        return cache.stream().findFirst();
+    }
+
 }

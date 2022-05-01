@@ -77,37 +77,36 @@ public class WithdrawCommand extends CommandHandler {
             return false;
         }
         final String formattedAmount = this.plugin.getComponentManager().getFileComponent().getConfiguration().getString("components.currency.symbols." + currency) + NumberUtilities.format(amount, NumberFormatType.COMMAS);
-        PlayerData.get(player.getUniqueId()).whenComplete((playerData, playerDataThrowable) -> {
-            switch (currency) {
-                case "tokens" -> {
-                    if (playerData.getTokens() < amount) {
-                        this.plugin.getComponentManager().getFileComponent().getConfiguration().getStringList("components.currency.commands.withdraw.messages.invalid-amount.not-enough").forEach(string -> player.sendMessage(StringUtilities.colorize(string.replace("%currency%", currency))));
-                        player.playSound(player.getLocation(), Sound.valueOf(this.plugin.getComponentManager().getFileComponent().getConfiguration().getString("components.currency.commands.withdraw.sounds.error.sound")), (float) this.plugin.getComponentManager().getFileComponent().getConfiguration().getDouble("components.currency.commands.withdraw.sounds.error.volume"), (float) this.plugin.getComponentManager().getFileComponent().getConfiguration().getDouble("components.currency.commands.withdraw.sounds.error.pitch"));
-                        return;
-                    }
-                }
-                case "gems" -> {
-                    if (playerData.getGems() < amount) {
-                        this.plugin.getComponentManager().getFileComponent().getConfiguration().getStringList("components.currency.commands.withdraw.messages.invalid-amount.not-enough").forEach(string -> player.sendMessage(StringUtilities.colorize(string.replace("%currency%", currency))));
-                        player.playSound(player.getLocation(), Sound.valueOf(this.plugin.getComponentManager().getFileComponent().getConfiguration().getString("components.currency.commands.withdraw.sounds.error.sound")), (float) this.plugin.getComponentManager().getFileComponent().getConfiguration().getDouble("components.currency.commands.withdraw.sounds.error.volume"), (float) this.plugin.getComponentManager().getFileComponent().getConfiguration().getDouble("components.currency.commands.withdraw.sounds.error.pitch"));
-                        return;
-                    }
+        final PlayerData playerData = PlayerData.getViaCache(player.getUniqueId()).get();
+        switch (currency) {
+            case "tokens" -> {
+                if (playerData.getTokens() < amount) {
+                    this.plugin.getComponentManager().getFileComponent().getConfiguration().getStringList("components.currency.commands.withdraw.messages.invalid-amount.not-enough").forEach(string -> player.sendMessage(StringUtilities.colorize(string.replace("%currency%", currency))));
+                    player.playSound(player.getLocation(), Sound.valueOf(this.plugin.getComponentManager().getFileComponent().getConfiguration().getString("components.currency.commands.withdraw.sounds.error.sound")), (float) this.plugin.getComponentManager().getFileComponent().getConfiguration().getDouble("components.currency.commands.withdraw.sounds.error.volume"), (float) this.plugin.getComponentManager().getFileComponent().getConfiguration().getDouble("components.currency.commands.withdraw.sounds.error.pitch"));
+                    return false;
                 }
             }
-            final ItemStack note = this.plugin.getComponentManager().getCurrencyComponent().getNoteItem(currency, amount, player.getName());
-            if (!InventoryUtilities.canFit(player.getInventory(), note)) {
-                this.plugin.getComponentManager().getFileComponent().getConfiguration().getStringList("components.currency.commands.withdraw.messages.invalid-inventory").forEach(string -> player.sendMessage(StringUtilities.colorize(string)));
-                player.playSound(player.getLocation(), Sound.valueOf(this.plugin.getComponentManager().getFileComponent().getConfiguration().getString("components.currency.commands.withdraw.sounds.error.sound")), (float) this.plugin.getComponentManager().getFileComponent().getConfiguration().getDouble("components.currency.commands.withdraw.sounds.error.volume"), (float) this.plugin.getComponentManager().getFileComponent().getConfiguration().getDouble("components.currency.commands.withdraw.sounds.error.pitch"));
-                return;
+            case "gems" -> {
+                if (playerData.getGems() < amount) {
+                    this.plugin.getComponentManager().getFileComponent().getConfiguration().getStringList("components.currency.commands.withdraw.messages.invalid-amount.not-enough").forEach(string -> player.sendMessage(StringUtilities.colorize(string.replace("%currency%", currency))));
+                    player.playSound(player.getLocation(), Sound.valueOf(this.plugin.getComponentManager().getFileComponent().getConfiguration().getString("components.currency.commands.withdraw.sounds.error.sound")), (float) this.plugin.getComponentManager().getFileComponent().getConfiguration().getDouble("components.currency.commands.withdraw.sounds.error.volume"), (float) this.plugin.getComponentManager().getFileComponent().getConfiguration().getDouble("components.currency.commands.withdraw.sounds.error.pitch"));
+                    return false;
+                }
             }
-            switch (currency) {
-                case "tokens" -> playerData.setTokens(playerData.getTokens() - amount);
-                case "gems" -> playerData.setGems(playerData.getGems() - amount);
-            }
-            player.getInventory().addItem(note);
-            this.plugin.getComponentManager().getFileComponent().getConfiguration().getStringList("components.currency.commands.withdraw.messages.success").forEach(string -> player.sendMessage(StringUtilities.colorize(string.replace("%amount%", formattedAmount).replace("%currency%", currency))));
-            player.playSound(player.getLocation(), Sound.valueOf(this.plugin.getComponentManager().getFileComponent().getConfiguration().getString("components.currency.commands.withdraw.sounds.success.sound")), (float) this.plugin.getComponentManager().getFileComponent().getConfiguration().getDouble("components.currency.commands.withdraw.sounds.success.volume"), (float) this.plugin.getComponentManager().getFileComponent().getConfiguration().getDouble("components.currency.commands.withdraw.sounds.success.pitch"));
-        });
+        }
+        final ItemStack note = this.plugin.getComponentManager().getCurrencyComponent().getNoteItem(currency, amount, player.getName());
+        if (!InventoryUtilities.canFit(player.getInventory(), note)) {
+            this.plugin.getComponentManager().getFileComponent().getConfiguration().getStringList("components.currency.commands.withdraw.messages.invalid-inventory").forEach(string -> player.sendMessage(StringUtilities.colorize(string)));
+            player.playSound(player.getLocation(), Sound.valueOf(this.plugin.getComponentManager().getFileComponent().getConfiguration().getString("components.currency.commands.withdraw.sounds.error.sound")), (float) this.plugin.getComponentManager().getFileComponent().getConfiguration().getDouble("components.currency.commands.withdraw.sounds.error.volume"), (float) this.plugin.getComponentManager().getFileComponent().getConfiguration().getDouble("components.currency.commands.withdraw.sounds.error.pitch"));
+            return false;
+        }
+        switch (currency) {
+            case "tokens" -> playerData.setTokens(playerData.getTokens() - amount);
+            case "gems" -> playerData.setGems(playerData.getGems() - amount);
+        }
+        player.getInventory().addItem(note);
+        this.plugin.getComponentManager().getFileComponent().getConfiguration().getStringList("components.currency.commands.withdraw.messages.success").forEach(string -> player.sendMessage(StringUtilities.colorize(string.replace("%amount%", formattedAmount).replace("%currency%", currency))));
+        player.playSound(player.getLocation(), Sound.valueOf(this.plugin.getComponentManager().getFileComponent().getConfiguration().getString("components.currency.commands.withdraw.sounds.success.sound")), (float) this.plugin.getComponentManager().getFileComponent().getConfiguration().getDouble("components.currency.commands.withdraw.sounds.success.volume"), (float) this.plugin.getComponentManager().getFileComponent().getConfiguration().getDouble("components.currency.commands.withdraw.sounds.success.pitch"));
         return true;
     }
 

@@ -433,4 +433,14 @@ public class MineData {
         }
     }
 
+    /**
+     * Allows you to retrieve a MineData from the cache directly.
+     * This should only be used if you know this will be cached.
+     *
+     * @return The self class.
+     */
+    public static Optional<MineData> getViaCache(final UUID uuid) {
+        return cache.stream().filter(mineData -> mineData.getUUID() == uuid).findFirst();
+    }
+
 }

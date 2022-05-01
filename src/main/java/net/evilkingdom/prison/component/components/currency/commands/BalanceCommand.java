@@ -66,7 +66,8 @@ public class BalanceCommand extends CommandHandler {
             return false;
         }
         switch (arguments.length) {
-            case 1 -> PlayerData.get(player.getUniqueId()).whenComplete((playerData, playerDataThrowable) -> {
+            case 1 -> {
+                final PlayerData playerData = PlayerData.getViaCache(player.getUniqueId()).get();
                 long amount = 0L;
                 switch (currency) {
                     case "gems" -> amount = playerData.getGems();
@@ -75,32 +76,38 @@ public class BalanceCommand extends CommandHandler {
                 final String formattedAmount = this.plugin.getComponentManager().getFileComponent().getConfiguration().getString("components.currency.symbols." + currency) + NumberUtilities.format(amount, NumberFormatType.COMMAS);
                 this.plugin.getComponentManager().getFileComponent().getConfiguration().getStringList("components.currency.commands.balance.messages.success.player").forEach(string -> player.sendMessage(StringUtilities.colorize(string.replace("%currency%", currency).replace("%amount%", formattedAmount))));
                 player.playSound(player.getLocation(), Sound.valueOf(this.plugin.getComponentManager().getFileComponent().getConfiguration().getString("components.currency.commands.balance.sounds.success.sound")), (float) this.plugin.getComponentManager().getFileComponent().getConfiguration().getDouble("components.currency.commands.balance.sounds.success.volume"), (float) this.plugin.getComponentManager().getFileComponent().getConfiguration().getDouble("components.currency.commands.balance.sounds.success.pitch"));
-            });
-            case 2 -> MojangUtilities.getUUID(arguments[1]).whenComplete((optionalTargetUUID, uuidThrowable) -> {
-                if (optionalTargetUUID.isEmpty()) {
-                    this.plugin.getComponentManager().getFileComponent().getConfiguration().getStringList("components.currency.commands.balance.messages.invalid-player").forEach(string -> player.sendMessage(StringUtilities.colorize(string.replace("%player%", arguments[1]))));
-                    player.playSound(player.getLocation(), Sound.valueOf(this.plugin.getComponentManager().getFileComponent().getConfiguration().getString("components.data.commands.data.sub-commands.modify.sounds.error.sound")), (float) this.plugin.getComponentManager().getFileComponent().getConfiguration().getDouble("components.data.commands.data.sub-commands.modify.sounds.error.volume"), (float) this.plugin.getComponentManager().getFileComponent().getConfiguration().getDouble("components.data.commands.data.sub-commands.modify.sounds.error.pitch"));
-                    return;
+            }
+            case 2 -> {
+                if (arguments[1].equalsIgnoreCase(player.getName())) {
+                    player.chat("/balance " + currency);
+                    return false;
                 }
-                final OfflinePlayer offlineTarget = Bukkit.getOfflinePlayer(optionalTargetUUID.get());
-                PlayerData.get(offlineTarget.getUniqueId()).whenComplete((targetData, targetDataThrowable) -> {
-                    targetData.exists().whenComplete((targetDataExists, targetDataExistsThrowable) -> {
-                        if (!targetDataExists) {
-                            this.plugin.getComponentManager().getFileComponent().getConfiguration().getStringList("components.currency.commands.balance.messages.invalid-player").forEach(string -> player.sendMessage(StringUtilities.colorize(string.replace("%player%", offlineTarget.getName()))));
-                            player.playSound(player.getLocation(), Sound.valueOf(this.plugin.getComponentManager().getFileComponent().getConfiguration().getString("components.data.commands.data.sub-commands.modify.sounds.error.sound")), (float) this.plugin.getComponentManager().getFileComponent().getConfiguration().getDouble("components.data.commands.data.sub-commands.modify.sounds.error.volume"), (float) this.plugin.getComponentManager().getFileComponent().getConfiguration().getDouble("components.data.commands.data.sub-commands.modify.sounds.error.pitch"));
-                            return;
-                        }
-                        long amount = 0L;
-                        switch (currency) {
-                            case "gems" -> amount = targetData.getGems();
-                            case "tokens" -> amount = targetData.getTokens();
-                        }
-                        final String formattedAmount = this.plugin.getComponentManager().getFileComponent().getConfiguration().getString("components.currency.symbols." + currency) + NumberUtilities.format(amount, NumberFormatType.COMMAS);
-                        this.plugin.getComponentManager().getFileComponent().getConfiguration().getStringList("components.currency.commands.balance.messages.success.player-with-target").forEach(string -> player.sendMessage(StringUtilities.colorize(string.replace("%player%", offlineTarget.getName()).replace("%currency%", currency).replace("%amount%", formattedAmount))));
-                        player.playSound(player.getLocation(), Sound.valueOf(this.plugin.getComponentManager().getFileComponent().getConfiguration().getString("components.currency.commands.balance.sounds.success.sound")), (float) this.plugin.getComponentManager().getFileComponent().getConfiguration().getDouble("components.currency.commands.balance.sounds.success.volume"), (float) this.plugin.getComponentManager().getFileComponent().getConfiguration().getDouble("components.currency.commands.balance.sounds.success.pitch"));
+                MojangUtilities.getUUID(arguments[1]).whenComplete((optionalTargetUUID, uuidThrowable) -> {
+                    if (optionalTargetUUID.isEmpty()) {
+                        this.plugin.getComponentManager().getFileComponent().getConfiguration().getStringList("components.currency.commands.balance.messages.invalid-player").forEach(string -> player.sendMessage(StringUtilities.colorize(string.replace("%player%", arguments[1]))));
+                        player.playSound(player.getLocation(), Sound.valueOf(this.plugin.getComponentManager().getFileComponent().getConfiguration().getString("components.data.commands.data.sub-commands.modify.sounds.error.sound")), (float) this.plugin.getComponentManager().getFileComponent().getConfiguration().getDouble("components.data.commands.data.sub-commands.modify.sounds.error.volume"), (float) this.plugin.getComponentManager().getFileComponent().getConfiguration().getDouble("components.data.commands.data.sub-commands.modify.sounds.error.pitch"));
+                        return;
+                    }
+                    final OfflinePlayer offlineTarget = Bukkit.getOfflinePlayer(optionalTargetUUID.get());
+                    PlayerData.get(offlineTarget.getUniqueId()).whenComplete((targetData, targetDataThrowable) -> {
+                        targetData.exists().whenComplete((targetDataExists, targetDataExistsThrowable) -> {
+                            if (!targetDataExists) {
+                                this.plugin.getComponentManager().getFileComponent().getConfiguration().getStringList("components.currency.commands.balance.messages.invalid-player").forEach(string -> player.sendMessage(StringUtilities.colorize(string.replace("%player%", offlineTarget.getName()))));
+                                player.playSound(player.getLocation(), Sound.valueOf(this.plugin.getComponentManager().getFileComponent().getConfiguration().getString("components.data.commands.data.sub-commands.modify.sounds.error.sound")), (float) this.plugin.getComponentManager().getFileComponent().getConfiguration().getDouble("components.data.commands.data.sub-commands.modify.sounds.error.volume"), (float) this.plugin.getComponentManager().getFileComponent().getConfiguration().getDouble("components.data.commands.data.sub-commands.modify.sounds.error.pitch"));
+                                return;
+                            }
+                            long amount = 0L;
+                            switch (currency) {
+                                case "gems" -> amount = targetData.getGems();
+                                case "tokens" -> amount = targetData.getTokens();
+                            }
+                            final String formattedAmount = this.plugin.getComponentManager().getFileComponent().getConfiguration().getString("components.currency.symbols." + currency) + NumberUtilities.format(amount, NumberFormatType.COMMAS);
+                            this.plugin.getComponentManager().getFileComponent().getConfiguration().getStringList("components.currency.commands.balance.messages.success.player-with-target").forEach(string -> player.sendMessage(StringUtilities.colorize(string.replace("%player%", offlineTarget.getName()).replace("%currency%", currency).replace("%amount%", formattedAmount))));
+                            player.playSound(player.getLocation(), Sound.valueOf(this.plugin.getComponentManager().getFileComponent().getConfiguration().getString("components.currency.commands.balance.sounds.success.sound")), (float) this.plugin.getComponentManager().getFileComponent().getConfiguration().getDouble("components.currency.commands.balance.sounds.success.volume"), (float) this.plugin.getComponentManager().getFileComponent().getConfiguration().getDouble("components.currency.commands.balance.sounds.success.pitch"));
+                        });
                     });
                 });
-            });
+            }
         }
         return true;
     }

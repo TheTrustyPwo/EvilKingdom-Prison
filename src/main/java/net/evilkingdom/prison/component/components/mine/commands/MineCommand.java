@@ -106,20 +106,20 @@ public class MineCommand extends CommandHandler {
                     return false;
                 }
                 switch (arguments.length) {
-                    case 1 -> PlayerData.get(player.getUniqueId()).whenComplete((playerData, playerDataThrowable) -> {
+                    case 1 -> {
+                        final PlayerData playerData = PlayerData.getViaCache(player.getUniqueId()).get();
                         if (playerData.getMine().isEmpty()) {
                             this.plugin.getComponentManager().getFileComponent().getConfiguration().getStringList("components.mine.commands.mine.sub-commands.go.messages.invalid-go.has-no-mine").forEach(string -> player.sendMessage(StringUtilities.colorize(string)));
                             player.playSound(player.getLocation(), Sound.valueOf(this.plugin.getComponentManager().getFileComponent().getConfiguration().getString("components.mine.commands.mine.sub-commands.go.sounds.error.sound")), (float) this.plugin.getComponentManager().getFileComponent().getConfiguration().getDouble("components.mine.commands.mine.sub-commands.go.sounds.error.volume"), (float) this.plugin.getComponentManager().getFileComponent().getConfiguration().getDouble("components.mine.commands.mine.sub-commands.go.sounds.error.pitch"));
-                            return;
+                            return false;
                         }
-                        MineData.get(playerData.getMine().get()).whenComplete((mineData, mineDataThrowable) -> {
-                            Bukkit.getScheduler().runTask(this.plugin, () -> player.teleport(mineData.getGo()));
-                            this.plugin.getComponentManager().getFileComponent().getConfiguration().getStringList("components.mine.commands.mine.sub-commands.go.messages.success.no-target").forEach(string -> player.sendMessage(StringUtilities.colorize(string)));
-                            player.playSound(player.getLocation(), Sound.valueOf(this.plugin.getComponentManager().getFileComponent().getConfiguration().getString("components.mine.commands.mine.sub-commands.go.sounds.success.sound")), (float) this.plugin.getComponentManager().getFileComponent().getConfiguration().getDouble("components.mine.commands.mine.sub-commands.go.sounds.success.volume"), (float) this.plugin.getComponentManager().getFileComponent().getConfiguration().getDouble("components.mine.commands.mine.sub-commands.go.sounds.success.pitch"));
-                            final Border border = new Border(this.plugin, player, mineData.getCenter().toCenterLocation(), mineData.getBorderSize(), BorderColor.RED);
-                            Bukkit.getScheduler().runTaskLater(this.plugin, () -> border.show(), 5L);
-                        });
-                    });
+                        final MineData mineData = MineData.getViaCache(playerData.getMine().get()).get();
+                        Bukkit.getScheduler().runTask(this.plugin, () -> player.teleport(mineData.getGo()));
+                        this.plugin.getComponentManager().getFileComponent().getConfiguration().getStringList("components.mine.commands.mine.sub-commands.go.messages.success.no-target").forEach(string -> player.sendMessage(StringUtilities.colorize(string)));
+                        player.playSound(player.getLocation(), Sound.valueOf(this.plugin.getComponentManager().getFileComponent().getConfiguration().getString("components.mine.commands.mine.sub-commands.go.sounds.success.sound")), (float) this.plugin.getComponentManager().getFileComponent().getConfiguration().getDouble("components.mine.commands.mine.sub-commands.go.sounds.success.volume"), (float) this.plugin.getComponentManager().getFileComponent().getConfiguration().getDouble("components.mine.commands.mine.sub-commands.go.sounds.success.pitch"));
+                        final Border border = new Border(this.plugin, player, mineData.getCenter().toCenterLocation(), mineData.getBorderSize(), BorderColor.RED);
+                        Bukkit.getScheduler().runTaskLater(this.plugin, () -> border.show(), 5L);
+                    }
                     case 2 -> {
                         if (arguments[1].equalsIgnoreCase(player.getName())) {
                             player.chat("/mine go");
@@ -145,9 +145,6 @@ public class MineCommand extends CommandHandler {
                                         return;
                                     }
                                     MineData.get(targetData.getMine().get()).whenComplete((mineData, mineDataThrowable) -> {
-                                        if (mineDataThrowable != null) {
-                                            mineDataThrowable.printStackTrace();
-                                        }
                                         if (mineData.getBanned().contains(player.getUniqueId())) {
                                             this.plugin.getComponentManager().getFileComponent().getConfiguration().getStringList("components.mine.commands.mine.sub-commands.go.messages.invalid-go.banned-from-target-mine").forEach(string -> player.sendMessage(StringUtilities.colorize(string.replace("%player%", offlineTarget.getName()))));
                                             player.playSound(player.getLocation(), Sound.valueOf(this.plugin.getComponentManager().getFileComponent().getConfiguration().getString("components.mine.commands.mine.sub-commands.go.sounds.error.sound")), (float) this.plugin.getComponentManager().getFileComponent().getConfiguration().getDouble("components.mine.commands.mine.sub-commands.go.sounds.error.volume"), (float) this.plugin.getComponentManager().getFileComponent().getConfiguration().getDouble("components.mine.commands.mine.sub-commands.go.sounds.error.pitch"));
@@ -184,19 +181,18 @@ public class MineCommand extends CommandHandler {
                     player.playSound(player.getLocation(), Sound.valueOf(this.plugin.getComponentManager().getFileComponent().getConfiguration().getString("components.mine.commands.mine.sub-commands.create.sounds.error.sound")), (float) this.plugin.getComponentManager().getFileComponent().getConfiguration().getDouble("components.mine.commands.mine.sub-commands.create.sounds.error.volume"), (float) this.plugin.getComponentManager().getFileComponent().getConfiguration().getDouble("components.mine.commands.mine.sub-commands.create.sounds.error.pitch"));
                     return false;
                 }
-                PlayerData.get(player.getUniqueId()).whenComplete((playerData, playerDataThrowable) -> {
-                    if (playerData.getMine().isPresent()) {
-                        this.plugin.getComponentManager().getFileComponent().getConfiguration().getStringList("components.mine.commands.mine.sub-commands.create.messages.invalid-creation.already-has-a-mine").forEach(string -> player.sendMessage(StringUtilities.colorize(string)));
-                        player.playSound(player.getLocation(), Sound.valueOf(this.plugin.getComponentManager().getFileComponent().getConfiguration().getString("components.mine.commands.mine.sub-commands.create.sounds.error.sound")), (float) this.plugin.getComponentManager().getFileComponent().getConfiguration().getDouble("components.mine.commands.mine.sub-commands.create.sounds.error.volume"), (float) this.plugin.getComponentManager().getFileComponent().getConfiguration().getDouble("components.mine.commands.mine.sub-commands.create.sounds.error.pitch"));
-                        return;
-                    }
-                    if (this.plugin.getComponentManager().getMineComponent().getPlayersWaitingForMineCreation().contains(player.getUniqueId())) {
-                        this.plugin.getComponentManager().getFileComponent().getConfiguration().getStringList("components.mine.commands.mine.sub-commands.create.messages.invalid-creation.already-creating").forEach(string -> player.sendMessage(StringUtilities.colorize(string)));
-                        player.playSound(player.getLocation(), Sound.valueOf(this.plugin.getComponentManager().getFileComponent().getConfiguration().getString("components.mine.commands.mine.sub-commands.create.sounds.error.sound")), (float) this.plugin.getComponentManager().getFileComponent().getConfiguration().getDouble("components.mine.commands.mine.sub-commands.create.sounds.error.volume"), (float) this.plugin.getComponentManager().getFileComponent().getConfiguration().getDouble("components.mine.commands.mine.sub-commands.create.sounds.error.pitch"));
-                        return;
-                    }
-                    this.openCreateSelectThemeMenu(player);
-                });
+                final PlayerData playerData = PlayerData.getViaCache(player.getUniqueId()).get();
+                if (playerData.getMine().isPresent()) {
+                    this.plugin.getComponentManager().getFileComponent().getConfiguration().getStringList("components.mine.commands.mine.sub-commands.create.messages.invalid-creation.already-has-a-mine").forEach(string -> player.sendMessage(StringUtilities.colorize(string)));
+                    player.playSound(player.getLocation(), Sound.valueOf(this.plugin.getComponentManager().getFileComponent().getConfiguration().getString("components.mine.commands.mine.sub-commands.create.sounds.error.sound")), (float) this.plugin.getComponentManager().getFileComponent().getConfiguration().getDouble("components.mine.commands.mine.sub-commands.create.sounds.error.volume"), (float) this.plugin.getComponentManager().getFileComponent().getConfiguration().getDouble("components.mine.commands.mine.sub-commands.create.sounds.error.pitch"));
+                    return false;
+                }
+                if (this.plugin.getComponentManager().getMineComponent().getPlayersWaitingForMineCreation().contains(player.getUniqueId())) {
+                    this.plugin.getComponentManager().getFileComponent().getConfiguration().getStringList("components.mine.commands.mine.sub-commands.create.messages.invalid-creation.already-creating").forEach(string -> player.sendMessage(StringUtilities.colorize(string)));
+                    player.playSound(player.getLocation(), Sound.valueOf(this.plugin.getComponentManager().getFileComponent().getConfiguration().getString("components.mine.commands.mine.sub-commands.create.sounds.error.sound")), (float) this.plugin.getComponentManager().getFileComponent().getConfiguration().getDouble("components.mine.commands.mine.sub-commands.create.sounds.error.volume"), (float) this.plugin.getComponentManager().getFileComponent().getConfiguration().getDouble("components.mine.commands.mine.sub-commands.create.sounds.error.pitch"));
+                    return false;
+                }
+                this.openCreateSelectThemeMenu(player);
             }
             case "reset" -> {
                 if (!(commandSender instanceof Player)) {
@@ -209,50 +205,41 @@ public class MineCommand extends CommandHandler {
                     player.playSound(player.getLocation(), Sound.valueOf(this.plugin.getComponentManager().getFileComponent().getConfiguration().getString("components.mine.commands.mine.sub-commands.reset.sounds.error.sound")), (float) this.plugin.getComponentManager().getFileComponent().getConfiguration().getDouble("components.mine.commands.mine.sub-commands.reset.sounds.error.volume"), (float) this.plugin.getComponentManager().getFileComponent().getConfiguration().getDouble("components.mine.commands.mine.sub-commands.reset.sounds.error.pitch"));
                     return false;
                 }
-                PlayerData.get(player.getUniqueId()).whenComplete((playerData, playerDataThrowable) -> {
-                    if (playerData.getMine().isEmpty()) {
-                        this.plugin.getComponentManager().getFileComponent().getConfiguration().getStringList("components.mine.commands.mine.sub-commands.reset.messages.invalid-reset.has-no-mine").forEach(string -> player.sendMessage(StringUtilities.colorize(string)));
+                final PlayerData playerData = PlayerData.getViaCache(player.getUniqueId()).get();
+                if (playerData.getMine().isEmpty()) {
+                    this.plugin.getComponentManager().getFileComponent().getConfiguration().getStringList("components.mine.commands.mine.sub-commands.reset.messages.invalid-reset.has-no-mine").forEach(string -> player.sendMessage(StringUtilities.colorize(string)));
+                    player.playSound(player.getLocation(), Sound.valueOf(this.plugin.getComponentManager().getFileComponent().getConfiguration().getString("components.mine.commands.mine.sub-commands.reset.sounds.error.sound")), (float) this.plugin.getComponentManager().getFileComponent().getConfiguration().getDouble("components.mine.commands.mine.sub-commands.reset.sounds.error.volume"), (float) this.plugin.getComponentManager().getFileComponent().getConfiguration().getDouble("components.mine.commands.mine.sub-commands.reset.sounds.error.pitch"));
+                    return false;
+                }
+                final MineData mineData = MineData.getViaCache(playerData.getMine().get()).get();
+                final Optional<Cooldown> optionalCooldown = mineData.getCooldowns().stream().filter(cooldown -> cooldown.getIdentifier().equals("mine-" + mineData.getUUID() + "-reset")).findFirst();
+                if (optionalCooldown.isPresent()) {
+                    final Cooldown cooldown = optionalCooldown.get();
+                    final String formattedTimeLeft = TimeUtilities.format((cooldown.getTimeLeft() * 50));
+                    this.plugin.getComponentManager().getFileComponent().getConfiguration().getStringList("components.mine.commands.mine.sub-commands.reset.messages.invalid-reset.on-cooldown").forEach(string -> player.sendMessage(StringUtilities.colorize(string.replace("%time_left%", formattedTimeLeft))));
+                    player.playSound(player.getLocation(), Sound.valueOf(this.plugin.getComponentManager().getFileComponent().getConfiguration().getString("components.mine.commands.mine.sub-commands.reset.sounds.error.sound")), (float) this.plugin.getComponentManager().getFileComponent().getConfiguration().getDouble("components.mine.commands.mine.sub-commands.reset.sounds.error.volume"), (float) this.plugin.getComponentManager().getFileComponent().getConfiguration().getDouble("components.mine.commands.mine.sub-commands.reset.sounds.error.pitch"));
+                    return false;
+                }
+                this.plugin.getComponentManager().getMineComponent().getPercentage(mineData.getUUID()).whenComplete((minePercentage, minePercentageThrowable) -> {
+                    if (minePercentage > this.plugin.getComponentManager().getFileComponent().getConfiguration().getInt("components.mine.reset-percentages.manual")) {
+                        this.plugin.getComponentManager().getFileComponent().getConfiguration().getStringList("components.mine.commands.mine.sub-commands.reset.messages.invalid-reset.mine-too-full").forEach(string -> player.sendMessage(StringUtilities.colorize(string)));
                         player.playSound(player.getLocation(), Sound.valueOf(this.plugin.getComponentManager().getFileComponent().getConfiguration().getString("components.mine.commands.mine.sub-commands.reset.sounds.error.sound")), (float) this.plugin.getComponentManager().getFileComponent().getConfiguration().getDouble("components.mine.commands.mine.sub-commands.reset.sounds.error.volume"), (float) this.plugin.getComponentManager().getFileComponent().getConfiguration().getDouble("components.mine.commands.mine.sub-commands.reset.sounds.error.pitch"));
                         return;
                     }
-                    MineData.get(playerData.getMine().get()).whenComplete((mineData, mineDataThrowable) -> {
-                        final Optional<Cooldown> optionalCooldown = mineData.getCooldowns().stream().filter(cooldown -> cooldown.getIdentifier().equals("mine-" + mineData.getUUID() + "-reset")).findFirst();
-                        if (optionalCooldown.isPresent()) {
-                            final Cooldown cooldown = optionalCooldown.get();
-                            final String formattedTimeLeft = TimeUtilities.format((cooldown.getTimeLeft() * 50));
-                            this.plugin.getComponentManager().getFileComponent().getConfiguration().getStringList("components.mine.commands.mine.sub-commands.reset.messages.invalid-reset.on-cooldown").forEach(string -> player.sendMessage(StringUtilities.colorize(string.replace("%time_left%", formattedTimeLeft))));
-                            player.playSound(player.getLocation(), Sound.valueOf(this.plugin.getComponentManager().getFileComponent().getConfiguration().getString("components.mine.commands.mine.sub-commands.reset.sounds.error.sound")), (float) this.plugin.getComponentManager().getFileComponent().getConfiguration().getDouble("components.mine.commands.mine.sub-commands.reset.sounds.error.volume"), (float) this.plugin.getComponentManager().getFileComponent().getConfiguration().getDouble("components.mine.commands.mine.sub-commands.reset.sounds.error.pitch"));
-                            return;
-                        }
-                        this.plugin.getComponentManager().getMineComponent().getPercentage(mineData.getUUID()).whenComplete((minePercentage, minePercentageThrowable) -> {
-                            if (minePercentage > this.plugin.getComponentManager().getFileComponent().getConfiguration().getInt("components.mine.reset-percentages.manual")) {
-                                this.plugin.getComponentManager().getFileComponent().getConfiguration().getStringList("components.mine.commands.mine.sub-commands.reset.messages.invalid-reset.mine-too-full").forEach(string -> player.sendMessage(StringUtilities.colorize(string)));
-                                player.playSound(player.getLocation(), Sound.valueOf(this.plugin.getComponentManager().getFileComponent().getConfiguration().getString("components.mine.commands.mine.sub-commands.reset.sounds.error.sound")), (float) this.plugin.getComponentManager().getFileComponent().getConfiguration().getDouble("components.mine.commands.mine.sub-commands.reset.sounds.error.volume"), (float) this.plugin.getComponentManager().getFileComponent().getConfiguration().getDouble("components.mine.commands.mine.sub-commands.reset.sounds.error.pitch"));
-                                return;
-                            }
-                            if (this.plugin.getComponentManager().getMineComponent().getMinesDoingTask().contains(mineData.getUUID())) {
-                                this.plugin.getComponentManager().getFileComponent().getConfiguration().getStringList("components.mine.commands.mine.sub-commands.reset.messages.invalid-reset.already-resetting").forEach(string -> player.sendMessage(StringUtilities.colorize(string)));
-                                player.playSound(player.getLocation(), Sound.valueOf(this.plugin.getComponentManager().getFileComponent().getConfiguration().getString("components.mine.commands.mine.sub-commands.reset.sounds.error.sound")), (float) this.plugin.getComponentManager().getFileComponent().getConfiguration().getDouble("components.mine.commands.mine.sub-commands.reset.sounds.error.volume"), (float) this.plugin.getComponentManager().getFileComponent().getConfiguration().getDouble("components.mine.commands.mine.sub-commands.reset.sounds.error.pitch"));
-                                return;
-                            }
-                            this.plugin.getComponentManager().getFileComponent().getConfiguration().getStringList("components.mine.commands.mine.sub-commands.reset.messages.success.resetting").forEach(string -> player.sendMessage(StringUtilities.colorize(string)));
-                            player.playSound(player.getLocation(), Sound.valueOf(this.plugin.getComponentManager().getFileComponent().getConfiguration().getString("components.mine.commands.mine.sub-commands.reset.sounds.success.sound")), (float) this.plugin.getComponentManager().getFileComponent().getConfiguration().getDouble("components.mine.commands.mine.sub-commands.reset.sounds.success.volume"), (float) this.plugin.getComponentManager().getFileComponent().getConfiguration().getDouble("components.mine.commands.mine.sub-commands.reset.sounds.success.pitch"));
-                            this.plugin.getComponentManager().getMineComponent().reset(mineData.getUUID()).whenComplete((resetSuccessful, resetSuccessfulThrowable) -> {
-                                this.plugin.getComponentManager().getFileComponent().getConfiguration().getStringList("components.mine.commands.mine.sub-commands.reset.messages.success.reset").forEach(string -> player.sendMessage(StringUtilities.colorize(string)));
-                                player.playSound(player.getLocation(), Sound.valueOf(this.plugin.getComponentManager().getFileComponent().getConfiguration().getString("components.mine.commands.mine.sub-commands.reset.sounds.success.sound")), (float) this.plugin.getComponentManager().getFileComponent().getConfiguration().getDouble("components.mine.commands.mine.sub-commands.reset.sounds.success.volume"), (float) this.plugin.getComponentManager().getFileComponent().getConfiguration().getDouble("components.mine.commands.mine.sub-commands.reset.sounds.success.pitch"));
-                                LuckPermsUtilities.getPermissions(player.getUniqueId()).whenComplete((playerPermissions, playerPermissionsThrowable) -> {
-                                    final ArrayList<Long> durations = new ArrayList<Long>(List.of(this.plugin.getComponentManager().getFileComponent().getConfiguration().getLong("components.mine.commands.mine.sub-commands.reset.default-cooldown")));
-                                    playerPermissions.forEach(permission -> {
-                                        if (permission.startsWith("prison.mine.commands.mine.sub-commands.reset.cooldown.")) {
-                                            durations.add((TimeUtilities.get(permission.replaceFirst("prison.mine.commands.mine.sub-commands.reset.cooldown.", "")) / 50));
-                                        }
-                                    });
-                                    Collections.sort(durations);
-                                    final Cooldown cooldown = new Cooldown(this.plugin, "mine-" + mineData.getUUID() + "-reset", durations.get(0));
-                                    cooldown.start();
-                                });
-                            });
-                        });
+                    if (this.plugin.getComponentManager().getMineComponent().getMinesDoingTask().contains(mineData.getUUID())) {
+                        this.plugin.getComponentManager().getFileComponent().getConfiguration().getStringList("components.mine.commands.mine.sub-commands.reset.messages.invalid-reset.already-resetting").forEach(string -> player.sendMessage(StringUtilities.colorize(string)));
+                        player.playSound(player.getLocation(), Sound.valueOf(this.plugin.getComponentManager().getFileComponent().getConfiguration().getString("components.mine.commands.mine.sub-commands.reset.sounds.error.sound")), (float) this.plugin.getComponentManager().getFileComponent().getConfiguration().getDouble("components.mine.commands.mine.sub-commands.reset.sounds.error.volume"), (float) this.plugin.getComponentManager().getFileComponent().getConfiguration().getDouble("components.mine.commands.mine.sub-commands.reset.sounds.error.pitch"));
+                        return;
+                    }
+                    this.plugin.getComponentManager().getFileComponent().getConfiguration().getStringList("components.mine.commands.mine.sub-commands.reset.messages.success.resetting").forEach(string -> player.sendMessage(StringUtilities.colorize(string)));
+                    player.playSound(player.getLocation(), Sound.valueOf(this.plugin.getComponentManager().getFileComponent().getConfiguration().getString("components.mine.commands.mine.sub-commands.reset.sounds.success.sound")), (float) this.plugin.getComponentManager().getFileComponent().getConfiguration().getDouble("components.mine.commands.mine.sub-commands.reset.sounds.success.volume"), (float) this.plugin.getComponentManager().getFileComponent().getConfiguration().getDouble("components.mine.commands.mine.sub-commands.reset.sounds.success.pitch"));
+                    this.plugin.getComponentManager().getMineComponent().reset(mineData.getUUID()).whenComplete((resetSuccessful, resetSuccessfulThrowable) -> {
+                        this.plugin.getComponentManager().getFileComponent().getConfiguration().getStringList("components.mine.commands.mine.sub-commands.reset.messages.success.reset").forEach(string -> player.sendMessage(StringUtilities.colorize(string)));
+                        player.playSound(player.getLocation(), Sound.valueOf(this.plugin.getComponentManager().getFileComponent().getConfiguration().getString("components.mine.commands.mine.sub-commands.reset.sounds.success.sound")), (float) this.plugin.getComponentManager().getFileComponent().getConfiguration().getDouble("components.mine.commands.mine.sub-commands.reset.sounds.success.volume"), (float) this.plugin.getComponentManager().getFileComponent().getConfiguration().getDouble("components.mine.commands.mine.sub-commands.reset.sounds.success.pitch"));
+                        final ArrayList<Long> durations = new ArrayList<Long>(LuckPermsUtilities.getPermissionsViaCache(player.getUniqueId()).stream().filter(permission -> permission.startsWith("prison.mine.commands.mine.sub-commands.reset.cooldown.")).map(permission -> TimeUtilities.get(permission.replaceFirst("prison.mine.commands.mine.sub-commands.reset.cooldown.", "")) / 50).collect(Collectors.toList()));
+                        Collections.sort(durations);
+                        final Cooldown cooldown = new Cooldown(this.plugin, "mine-" + mineData.getUUID() + "-reset", durations.get(0));
+                        cooldown.start();
                     });
                 });
             }
@@ -286,31 +273,30 @@ public class MineCommand extends CommandHandler {
                                 player.playSound(player.getLocation(), Sound.valueOf(this.plugin.getComponentManager().getFileComponent().getConfiguration().getString("components.mine.commands.mine.sub-commands.ban.sounds.error.sound")), (float) this.plugin.getComponentManager().getFileComponent().getConfiguration().getDouble("components.mine.commands.mine.sub-commands.ban.sounds.error.volume"), (float) this.plugin.getComponentManager().getFileComponent().getConfiguration().getDouble("components.mine.commands.mine.sub-commands.ban.sounds.error.pitch"));
                                 return;
                             }
-                            PlayerData.get(player.getUniqueId()).whenComplete((playerData, playerDataThrowable) -> {
-                                if (playerData.getMine().isEmpty()) {
-                                    this.plugin.getComponentManager().getFileComponent().getConfiguration().getStringList("components.mine.commands.mine.sub-commands.ban.messages.invalid-ban.has-no-mine").forEach(string -> player.sendMessage(StringUtilities.colorize(string)));
-                                    player.playSound(player.getLocation(), Sound.valueOf(this.plugin.getComponentManager().getFileComponent().getConfiguration().getString("components.mine.commands.mine.sub-commands.ban.sounds.error.sound")), (float) this.plugin.getComponentManager().getFileComponent().getConfiguration().getDouble("components.mine.commands.mine.sub-commands.ban.sounds.error.volume"), (float) this.plugin.getComponentManager().getFileComponent().getConfiguration().getDouble("components.mine.commands.mine.sub-commands.ban.sounds.error.pitch"));
-                                    return;
+                            final PlayerData playerData = PlayerData.getViaCache(player.getUniqueId()).get();
+                            if (playerData.getMine().isEmpty()) {
+                                this.plugin.getComponentManager().getFileComponent().getConfiguration().getStringList("components.mine.commands.mine.sub-commands.ban.messages.invalid-ban.has-no-mine").forEach(string -> player.sendMessage(StringUtilities.colorize(string)));
+                                player.playSound(player.getLocation(), Sound.valueOf(this.plugin.getComponentManager().getFileComponent().getConfiguration().getString("components.mine.commands.mine.sub-commands.ban.sounds.error.sound")), (float) this.plugin.getComponentManager().getFileComponent().getConfiguration().getDouble("components.mine.commands.mine.sub-commands.ban.sounds.error.volume"), (float) this.plugin.getComponentManager().getFileComponent().getConfiguration().getDouble("components.mine.commands.mine.sub-commands.ban.sounds.error.pitch"));
+                                return;
+                            }
+                            final MineData mineData = MineData.getViaCache(playerData.getMine().get()).get();
+                            if (mineData.getBanned().contains(offlineTarget.getUniqueId())) {
+                                this.plugin.getComponentManager().getFileComponent().getConfiguration().getStringList("components.mine.commands.mine.sub-commands.ban.messages.invalid-ban.already-banned").forEach(string -> player.sendMessage(StringUtilities.colorize(string.replace("%player%", offlineTarget.getName()))));
+                                player.playSound(player.getLocation(), Sound.valueOf(this.plugin.getComponentManager().getFileComponent().getConfiguration().getString("components.mine.commands.mine.sub-commands.ban.sounds.error.sound")), (float) this.plugin.getComponentManager().getFileComponent().getConfiguration().getDouble("components.mine.commands.mine.sub-commands.ban.sounds.error.volume"), (float) this.plugin.getComponentManager().getFileComponent().getConfiguration().getDouble("components.mine.commands.mine.sub-commands.ban.sounds.error.pitch"));
+                                return;
+                            }
+                            mineData.getBanned().add(offlineTarget.getUniqueId());
+                            this.plugin.getComponentManager().getFileComponent().getConfiguration().getStringList("components.mine.commands.mine.sub-commands.ban.messages.success.player").forEach(string -> player.sendMessage(StringUtilities.colorize(string.replace("%player%", offlineTarget.getName()))));
+                            player.playSound(player.getLocation(), Sound.valueOf(this.plugin.getComponentManager().getFileComponent().getConfiguration().getString("components.mine.commands.mine.sub-commands.ban.sounds.success.player.sound")), (float) this.plugin.getComponentManager().getFileComponent().getConfiguration().getDouble("components.mine.commands.mine.sub-commands.ban.sounds.success.player.volume"), (float) this.plugin.getComponentManager().getFileComponent().getConfiguration().getDouble("components.mine.commands.mine.sub-commands.ban.sounds.success.player.pitch"));
+                            if (offlineTarget.isOnline()) {
+                                final Player target = offlineTarget.getPlayer();
+                                if (this.plugin.getComponentManager().getMineComponent().isWithin(mineData.getUUID(), target.getLocation())) {
+                                    final SelfData selfData = SelfData.getViaCache().get();
+                                    Bukkit.getScheduler().runTask(this.plugin, () -> target.teleport(selfData.getSpawn()));
+                                    this.plugin.getComponentManager().getFileComponent().getConfiguration().getStringList("components.mine.commands.mine.sub-commands.ban.messages.success.target").forEach(string -> target.sendMessage(StringUtilities.colorize(string.replace("%player%", player.getName()))));
+                                    target.playSound(player.getLocation(), Sound.valueOf(this.plugin.getComponentManager().getFileComponent().getConfiguration().getString("components.mine.commands.mine.sub-commands.ban.sounds.success.target.sound")), (float) this.plugin.getComponentManager().getFileComponent().getConfiguration().getDouble("components.mine.commands.mine.sub-commands.ban.sounds.success.target.volume"), (float) this.plugin.getComponentManager().getFileComponent().getConfiguration().getDouble("components.mine.commands.mine.sub-commands.ban.sounds.success.target.pitch"));
                                 }
-                                MineData.get(playerData.getMine().get()).whenComplete((mineData, mineDataThrowable) -> {
-                                    if (mineData.getBanned().contains(offlineTarget.getUniqueId())) {
-                                        this.plugin.getComponentManager().getFileComponent().getConfiguration().getStringList("components.mine.commands.mine.sub-commands.ban.messages.invalid-ban.already-banned").forEach(string -> player.sendMessage(StringUtilities.colorize(string.replace("%player%", offlineTarget.getName()))));
-                                        player.playSound(player.getLocation(), Sound.valueOf(this.plugin.getComponentManager().getFileComponent().getConfiguration().getString("components.mine.commands.mine.sub-commands.ban.sounds.error.sound")), (float) this.plugin.getComponentManager().getFileComponent().getConfiguration().getDouble("components.mine.commands.mine.sub-commands.ban.sounds.error.volume"), (float) this.plugin.getComponentManager().getFileComponent().getConfiguration().getDouble("components.mine.commands.mine.sub-commands.ban.sounds.error.pitch"));
-                                        return;
-                                    }
-                                    mineData.getBanned().add(offlineTarget.getUniqueId());
-                                    this.plugin.getComponentManager().getFileComponent().getConfiguration().getStringList("components.mine.commands.mine.sub-commands.ban.messages.success.player").forEach(string -> player.sendMessage(StringUtilities.colorize(string.replace("%player%", offlineTarget.getName()))));
-                                    player.playSound(player.getLocation(), Sound.valueOf(this.plugin.getComponentManager().getFileComponent().getConfiguration().getString("components.mine.commands.mine.sub-commands.ban.sounds.success.player.sound")), (float) this.plugin.getComponentManager().getFileComponent().getConfiguration().getDouble("components.mine.commands.mine.sub-commands.ban.sounds.success.player.volume"), (float) this.plugin.getComponentManager().getFileComponent().getConfiguration().getDouble("components.mine.commands.mine.sub-commands.ban.sounds.success.player.pitch"));
-                                    if (offlineTarget.isOnline()) {
-                                        final Player target = offlineTarget.getPlayer();
-                                        this.plugin.getComponentManager().getMineComponent().isWithin(mineData.getUUID(), target.getLocation()).whenComplete((within, withinThrowable) -> SelfData.get().whenComplete((selfData, selfDataThrowable) -> {
-                                            Bukkit.getScheduler().runTask(this.plugin, () -> target.teleport(selfData.getSpawn()));
-                                            this.plugin.getComponentManager().getFileComponent().getConfiguration().getStringList("components.mine.commands.mine.sub-commands.ban.messages.success.target").forEach(string -> target.sendMessage(StringUtilities.colorize(string)));
-                                            target.playSound(player.getLocation(), Sound.valueOf(this.plugin.getComponentManager().getFileComponent().getConfiguration().getString("components.mine.commands.mine.sub-commands.ban.sounds.success.target.sound")), (float) this.plugin.getComponentManager().getFileComponent().getConfiguration().getDouble("components.mine.commands.mine.sub-commands.ban.sounds.success.target.volume"), (float) this.plugin.getComponentManager().getFileComponent().getConfiguration().getDouble("components.mine.commands.mine.sub-commands.ban.sounds.success.target.pitch"));
-                                        }));
-                                    }
-                                });
-                            });
+                            }
                         });
                     });
                 });
@@ -345,23 +331,21 @@ public class MineCommand extends CommandHandler {
                                 player.playSound(player.getLocation(), Sound.valueOf(this.plugin.getComponentManager().getFileComponent().getConfiguration().getString("components.mine.commands.mine.sub-commands.unban.sounds.error.sound")), (float) this.plugin.getComponentManager().getFileComponent().getConfiguration().getDouble("components.mine.commands.mine.sub-commands.unban.sounds.error.volume"), (float) this.plugin.getComponentManager().getFileComponent().getConfiguration().getDouble("components.mine.commands.mine.sub-commands.unban.sounds.error.pitch"));
                                 return;
                             }
-                            PlayerData.get(player.getUniqueId()).whenComplete((playerData, playerDataThrowable) -> {
-                                if (playerData.getMine().isEmpty()) {
-                                    this.plugin.getComponentManager().getFileComponent().getConfiguration().getStringList("components.mine.commands.mine.sub-commands.ban.messages.invalid-unban.has-no-mine").forEach(string -> player.sendMessage(StringUtilities.colorize(string)));
-                                    player.playSound(player.getLocation(), Sound.valueOf(this.plugin.getComponentManager().getFileComponent().getConfiguration().getString("components.mine.commands.mine.sub-commands.unban.sounds.error.sound")), (float) this.plugin.getComponentManager().getFileComponent().getConfiguration().getDouble("components.mine.commands.mine.sub-commands.unban.sounds.error.volume"), (float) this.plugin.getComponentManager().getFileComponent().getConfiguration().getDouble("components.mine.commands.mine.sub-commands.unban.sounds.error.pitch"));
-                                    return;
-                                }
-                                MineData.get(playerData.getMine().get()).whenComplete((mineData, mineDataThrowable) -> {
-                                    if (mineData.getBanned().contains(offlineTarget.getUniqueId())) {
-                                        this.plugin.getComponentManager().getFileComponent().getConfiguration().getStringList("components.mine.commands.mine.sub-commands.ban.messages.invalid-unban.not-banned").forEach(string -> player.sendMessage(StringUtilities.colorize(string.replace("%player%", offlineTarget.getName()))));
-                                        player.playSound(player.getLocation(), Sound.valueOf(this.plugin.getComponentManager().getFileComponent().getConfiguration().getString("components.mine.commands.mine.sub-commands.unban.sounds.error.sound")), (float) this.plugin.getComponentManager().getFileComponent().getConfiguration().getDouble("components.mine.commands.mine.sub-commands.unban.sounds.error.volume"), (float) this.plugin.getComponentManager().getFileComponent().getConfiguration().getDouble("components.mine.commands.mine.sub-commands.unban.sounds.error.pitch"));
-                                        return;
-                                    }
-                                    mineData.getBanned().remove(offlineTarget.getUniqueId());
-                                    this.plugin.getComponentManager().getFileComponent().getConfiguration().getStringList("components.mine.commands.mine.sub-commands.unban.messages.success").forEach(string -> player.sendMessage(StringUtilities.colorize(string.replace("%player%", offlineTarget.getName()))));
-                                    player.playSound(player.getLocation(), Sound.valueOf(this.plugin.getComponentManager().getFileComponent().getConfiguration().getString("components.mine.commands.mine.sub-commands.ban.sounds.success.sound")), (float) this.plugin.getComponentManager().getFileComponent().getConfiguration().getDouble("components.mine.commands.mine.sub-commands.ban.sounds.success.volume"), (float) this.plugin.getComponentManager().getFileComponent().getConfiguration().getDouble("components.mine.commands.mine.sub-commands.ban.sounds.success.pitch"));
-                                });
-                            });
+                            final PlayerData playerData = PlayerData.getViaCache(player.getUniqueId()).get();
+                            if (playerData.getMine().isEmpty()) {
+                                this.plugin.getComponentManager().getFileComponent().getConfiguration().getStringList("components.mine.commands.mine.sub-commands.ban.messages.invalid-unban.has-no-mine").forEach(string -> player.sendMessage(StringUtilities.colorize(string)));
+                                player.playSound(player.getLocation(), Sound.valueOf(this.plugin.getComponentManager().getFileComponent().getConfiguration().getString("components.mine.commands.mine.sub-commands.unban.sounds.error.sound")), (float) this.plugin.getComponentManager().getFileComponent().getConfiguration().getDouble("components.mine.commands.mine.sub-commands.unban.sounds.error.volume"), (float) this.plugin.getComponentManager().getFileComponent().getConfiguration().getDouble("components.mine.commands.mine.sub-commands.unban.sounds.error.pitch"));
+                                return;
+                            }
+                            final MineData mineData = MineData.getViaCache(playerData.getMine().get()).get();
+                            if (mineData.getBanned().contains(offlineTarget.getUniqueId())) {
+                                this.plugin.getComponentManager().getFileComponent().getConfiguration().getStringList("components.mine.commands.mine.sub-commands.ban.messages.invalid-unban.not-banned").forEach(string -> player.sendMessage(StringUtilities.colorize(string.replace("%player%", offlineTarget.getName()))));
+                                player.playSound(player.getLocation(), Sound.valueOf(this.plugin.getComponentManager().getFileComponent().getConfiguration().getString("components.mine.commands.mine.sub-commands.unban.sounds.error.sound")), (float) this.plugin.getComponentManager().getFileComponent().getConfiguration().getDouble("components.mine.commands.mine.sub-commands.unban.sounds.error.volume"), (float) this.plugin.getComponentManager().getFileComponent().getConfiguration().getDouble("components.mine.commands.mine.sub-commands.unban.sounds.error.pitch"));
+                                return;
+                            }
+                            mineData.getBanned().remove(offlineTarget.getUniqueId());
+                            this.plugin.getComponentManager().getFileComponent().getConfiguration().getStringList("components.mine.commands.mine.sub-commands.unban.messages.success").forEach(string -> player.sendMessage(StringUtilities.colorize(string.replace("%player%", offlineTarget.getName()))));
+                            player.playSound(player.getLocation(), Sound.valueOf(this.plugin.getComponentManager().getFileComponent().getConfiguration().getString("components.mine.commands.mine.sub-commands.ban.sounds.success.sound")), (float) this.plugin.getComponentManager().getFileComponent().getConfiguration().getDouble("components.mine.commands.mine.sub-commands.ban.sounds.success.volume"), (float) this.plugin.getComponentManager().getFileComponent().getConfiguration().getDouble("components.mine.commands.mine.sub-commands.ban.sounds.success.pitch"));
                         });
                     });
                 });
@@ -385,19 +369,27 @@ public class MineCommand extends CommandHandler {
             case 1 -> tabCompletion.addAll(Arrays.asList("help", "create", "reset", "go", "ban", "unban"));
             case 2 -> {
                 final String subCommand = arguments[0];
+                final PlayerData playerData = PlayerData.getViaCache(player.getUniqueId()).get();
                 switch (subCommand) {
                     case "ban" -> {
-                        final ArrayList<String> playerNames = new ArrayList<String>(Bukkit.getOnlinePlayers().stream().map(onlinePlayer -> onlinePlayer.getName()).collect(Collectors.toList()));
-                        playerNames.remove(player.getName());
-                        tabCompletion.addAll(playerNames);
+                        if (playerData.getMine().isPresent()) {
+                            final MineData mineData = MineData.getViaCache(playerData.getMine().get()).get();
+                            final ArrayList<String> playerNames = new ArrayList<String>(Bukkit.getOnlinePlayers().stream().map(onlinePlayer -> onlinePlayer.getName()).collect(Collectors.toList()));
+                            playerNames.remove(player.getName());
+                            playerNames.removeAll(mineData.getBanned().stream().map(playerUUID -> Bukkit.getOfflinePlayer(playerUUID).getName()).collect(Collectors.toList()));
+                            tabCompletion.addAll(playerNames);
+                        }
                     }
                     case "go" -> {
-                        final ArrayList<String> playerNames = new ArrayList<String>(Bukkit.getOnlinePlayers().stream().filter(onlinePlayer -> PlayerData.getCache().stream().filter(playerData -> playerData.getUUID() == onlinePlayer.getUniqueId()).findFirst().get().getMine().isPresent()).map(onlinePlayer -> onlinePlayer.getName()).collect(Collectors.toList()));
+                        final ArrayList<String> playerNames = new ArrayList<String>(Bukkit.getOnlinePlayers().stream().filter(onlinePlayer -> PlayerData.getViaCache(onlinePlayer.getUniqueId()).get().getMine().isPresent()).map(onlinePlayer -> onlinePlayer.getName()).collect(Collectors.toList()));
                         playerNames.remove(player.getName());
                         tabCompletion.addAll(playerNames);
                     }
                     case "unban" -> {
-                        tabCompletion.addAll(MineData.getCache().stream().filter(playerData -> playerData.getUUID() == player.getUniqueId()).findFirst().get().getBanned().stream().map(playerUUID -> Bukkit.getOfflinePlayer(playerUUID).getName()).collect(Collectors.toList()));
+                        if (playerData.getMine().isPresent()) {
+                            final MineData mineData = MineData.getViaCache(playerData.getMine().get()).get();
+                            tabCompletion.addAll(mineData.getBanned().stream().map(playerUUID -> Bukkit.getOfflinePlayer(playerUUID).getName()).collect(Collectors.toList()));
+                        }
                     }
                 }
             }

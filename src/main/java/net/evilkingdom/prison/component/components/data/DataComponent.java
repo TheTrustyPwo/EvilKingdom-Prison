@@ -151,26 +151,18 @@ public class DataComponent {
      */
     public void terminateData() {
         Bukkit.getConsoleSender().sendMessage(StringUtilities.colorize("&4[Prison » Component » Components » Data] &cTerminating data..."));
-        try {
-            final SelfData selfData = SelfData.get().get();
-            selfData.save(false);
-            selfData.uncache();
-        } catch (final ExecutionException | InterruptedException executionException) {
-            //Does nothing, just in case! :)
-        }
+        final SelfData selfData = SelfData.getViaCache().get();
+        selfData.save(false);
+        selfData.uncache();
         Bukkit.getOnlinePlayers().forEach(onlinePlayer -> {
-            try {
-                final PlayerData onlinePlayerData = PlayerData.get(onlinePlayer.getUniqueId()).get();
-                if (onlinePlayerData.getMine().isPresent()) {
-                    final MineData onlinePlayerMineData = MineData.get(onlinePlayerData.getMine().get()).get();
-                    onlinePlayerMineData.save(false);
-                    onlinePlayerMineData.uncache();
-                }
-                onlinePlayerData.save(false);
-                onlinePlayerData.uncache();
-            } catch (final ExecutionException | InterruptedException executionException) {
-                //Does nothing, just in case! :)
+            final PlayerData onlinePlayerData = PlayerData.getViaCache(onlinePlayer.getUniqueId()).get();
+            if (onlinePlayerData.getMine().isPresent()) {
+                final MineData onlinePlayerMineData = MineData.getViaCache(onlinePlayerData.getMine().get()).get();
+                onlinePlayerMineData.save(false);
+                onlinePlayerMineData.uncache();
             }
+            onlinePlayerData.save(false);
+            onlinePlayerData.uncache();
         });
         Bukkit.getConsoleSender().sendMessage(StringUtilities.colorize("&4[Prison » Component » Components » Data] &cTerminated data."));
     }
