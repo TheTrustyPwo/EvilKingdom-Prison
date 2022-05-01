@@ -48,8 +48,9 @@ public class RankComponent {
      *
      * @param startingRank ~ The rank to start with.
      * @param amount ~ The amount of ranks to generate.
+     * @return The generated ranks.
      */
-    public CompletableFuture<ArrayList<Rank>> generateRanks(final long startingRank, final long amount) {
+    public CompletableFuture<ArrayList<Rank>> generate(final long startingRank, final long amount) {
         return CompletableFuture.supplyAsync(() -> {
             ArrayList<Rank> ranks = new ArrayList<Rank>();
             for (long rankNumber = (startingRank + 1); rankNumber < (amount + 1); rankNumber++) {
@@ -72,6 +73,7 @@ public class RankComponent {
      * Automatically calculates the block pallet using the positioning of the block on the list as well as the rank.
      *
      * @param rank ~ The rank to generate a block pallet for.
+     * @return The block pallet for the rank.
      */
     private HashMap<Material, Double> generateBlockPallet(final long rank) {
         final ArrayList<Material> blocks = new ArrayList<Material>(this.plugin.getComponentManager().getFileComponent().getConfiguration().getStringList("components.mine.blocks").stream().map(blockString -> Material.getMaterial(blockString)).collect(Collectors.toList()));

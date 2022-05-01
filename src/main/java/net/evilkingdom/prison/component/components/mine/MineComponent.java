@@ -12,6 +12,7 @@ import net.evilkingdom.prison.component.components.data.objects.MineData;
 import net.evilkingdom.prison.component.components.data.objects.SelfData;
 import net.evilkingdom.prison.component.components.mine.commands.MineCommand;
 import net.evilkingdom.prison.component.components.mine.implementations.VoidGenerator;
+import net.evilkingdom.prison.component.components.mine.listeners.ConnectionListener;
 import net.evilkingdom.prison.component.components.mine.objects.MineLocation;
 import net.evilkingdom.prison.component.components.rank.objects.Rank;
 import net.evilkingdom.prison.Prison;
@@ -19,6 +20,7 @@ import net.evilkingdom.prison.component.components.data.objects.PlayerData;
 import org.bukkit.*;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitTask;
+import org.checkerframework.checker.units.qual.C;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -52,6 +54,7 @@ public class MineComponent {
         this.playersWaitingForMineCreation = new ArrayList<UUID>();
         this.initializeTask();
         this.registerCommands();
+        this.registerListeners();
         Bukkit.getConsoleSender().sendMessage(StringUtilities.colorize("&2[Prison » Component » Components » Mine] &aInitialized."));
     }
 
@@ -62,6 +65,15 @@ public class MineComponent {
         Bukkit.getConsoleSender().sendMessage(StringUtilities.colorize("&4[Prison » Component » Components » Mine] &cTerminating..."));
         this.terminateTask();
         Bukkit.getConsoleSender().sendMessage(StringUtilities.colorize("&4[Prison » Component » Components » Mine] &cTerminated."));
+    }
+
+    /**
+     * Allows you to register the listeners.
+     */
+    private void registerListeners() {
+        Bukkit.getConsoleSender().sendMessage(StringUtilities.colorize("&2[Prison » Component » Components » Mine] &aRegistering listeners..."));
+        new ConnectionListener().register();
+        Bukkit.getConsoleSender().sendMessage(StringUtilities.colorize("&2[Prison » Component » Components » Mine] &aRegistered listeners."));
     }
 
     /**
@@ -107,9 +119,9 @@ public class MineComponent {
      */
     public void initializeTask() {
         Bukkit.getConsoleSender().sendMessage(StringUtilities.colorize("&2[Prison » Component » Components » Mine] &aInitializing task..."));
-        this.task = Bukkit.getServer().getScheduler().runTaskTimer(this.plugin, () -> MineData.getCache().forEach(mineData -> this.getMinePercentage(mineData.getUUID()).whenComplete((minePercentage, minePercentageThrowable) -> {
+        this.task = Bukkit.getServer().getScheduler().runTaskTimer(this.plugin, () -> MineData.getCache().forEach(mineData -> this.getPercentage(mineData.getUUID()).whenComplete((minePercentage, minePercentageThrowable) -> {
             if (minePercentage <= this.plugin.getComponentManager().getFileComponent().getConfiguration().getInt("components.mine.reset-percentages.automatic")) {
-                this.resetMine(mineData.getUUID());
+                this.reset(mineData.getUUID());
             }
         })), 0L, 100L);
         Bukkit.getConsoleSender().sendMessage(StringUtilities.colorize("&2[Prison » Component » Components » Mine] &aInitialized task."));
@@ -159,7 +171,7 @@ public class MineComponent {
      * @param uuid ~ The UUID of the mine.
      * @return If the mine reset task was successful.
      */
-    public CompletableFuture<Boolean> resetMine(final UUID uuid) {
+    public CompletableFuture<Boolean> reset(final UUID uuid) {
         if (this.minesDoingTask.contains(uuid)) {
             return CompletableFuture.supplyAsync(() -> false);
         }
@@ -185,7 +197,7 @@ public class MineComponent {
      * @param uuid ~ The mine's UUID.
      * @return The mine's percentage (out of 100).
      */
-    public CompletableFuture<Double> getMinePercentage(final UUID uuid) {
+    public CompletableFuture<Double> getPercentage(final UUID uuid) {
         return MineData.get(uuid).thenCompose(mineData -> mineData.exists().thenCompose(mineExists -> {
             if (!mineExists) {
                 return CompletableFuture.supplyAsync(() -> 100.0);
@@ -207,7 +219,7 @@ public class MineComponent {
      * @param theme ~ The mine's theme.
      * @return The UUID of the mine when it reaches the completion state (or empty if it doesn't).
      */
-    public CompletableFuture<Optional<UUID>> createMine(final Player player, final String theme) {
+    public CompletableFuture<Optional<UUID>> create(final Player player, final String theme) {
         final UUID uuid = UUID.randomUUID();
         this.minesDoingTask.add(uuid);
         this.playersWaitingForMineCreation.add(player.getUniqueId());
@@ -216,7 +228,7 @@ public class MineComponent {
             selfData.getMineLocations().remove(mineLocation);
             final MineLocation replacementMineLocation = new MineLocation(mineLocation.getX(), mineLocation.getZ(), true);
             selfData.getMineLocations().add(replacementMineLocation);
-            this.plugin.getComponentManager().getMineComponent().generateMineLocations(replacementMineLocation.getX(), replacementMineLocation.getZ(), 1).whenComplete((generatedMineLocations, generatedMineLocationsThrowable) -> {
+            this.generateLocations(replacementMineLocation.getX(), replacementMineLocation.getZ(), 1).whenComplete((generatedMineLocations, generatedMineLocationsThrowable) -> {
                 selfData.getMineLocations().addAll(generatedMineLocations);
             });
             return mineLocation;
@@ -249,7 +261,7 @@ public class MineComponent {
                             mineData.save(true);
                             mineData.uncache();
                         } else {
-                            this.resetMine(uuid);
+                            this.reset(uuid);
                         }
                     });
                     return Optional.of(uuid);
@@ -291,7 +303,7 @@ public class MineComponent {
                         }
                         mineData.setTheme(theme);
                         this.minesDoingTask.remove(mineData.getUUID());
-                        this.resetMine(mineData.getUUID());
+                        this.reset(mineData.getUUID());
                         return true;
                     });
                 });
@@ -305,8 +317,9 @@ public class MineComponent {
      * @param x ~ The x coordinate to start with.
      * @param z ~ The z coordinate to start with.
      * @param amount ~ The amount of mine locations to generate.
+     * @return The mine locations.
      */
-    public CompletableFuture<ArrayList<MineLocation>> generateMineLocations(final int x, final int z, final long amount) {
+    public CompletableFuture<ArrayList<MineLocation>> generateLocations(final int x, final int z, final long amount) {
         return CompletableFuture.supplyAsync(() -> {
             final ArrayList<MineLocation> mineLocations = new ArrayList<MineLocation>();
             boolean valid = false;
@@ -334,6 +347,53 @@ public class MineComponent {
             }
             return mineLocations;
         });
+    }
+
+    /**
+     * Allows you to retrieve a mine from a location.
+     *
+     * @param location ~ The location to retrieve from.
+     * @return The mine (if the location leads to one).
+     */
+    public Optional<UUID> get(final Location location) {
+        return MineData.getCache().stream().filter(mineData -> {
+            final ConstructorRegion constructorRegion = new ConstructorRegion(this.plugin, mineData.getCornerOne(), mineData.getCornerTwo());
+            return constructorRegion.isWithin(location);
+        }).map(mineData -> mineData.getUUID()).findFirst();
+    }
+
+    /**
+     * Allows you to retrieve if a location is within a mine.
+     *
+     * @param uuid ~ The UUID of the mine.
+     * @param location ~ The location to check.
+     * @return If the location is within the mine.
+     */
+    public CompletableFuture<Boolean> isWithin(final UUID uuid, final Location location) {
+        return MineData.get(uuid).thenCompose(mineData -> mineData.exists().thenApply(mineExists -> {
+            if (!mineExists) {
+                return false;
+            }
+            final ConstructorRegion constructorRegion = new ConstructorRegion(this.plugin, mineData.getCornerOne(), mineData.getCornerTwo());
+            return constructorRegion.isWithin(location);
+        }));
+    }
+
+    /**
+     * Allows you to retrieve if a location is within a mine's mine.
+     *
+     * @param uuid ~ The UUID of the mine.
+     * @param location ~ The location to check.
+     * @return If the location is within the mine's mine.
+     */
+    public CompletableFuture<Boolean> isWithinInner(final UUID uuid, final Location location) {
+        return MineData.get(uuid).thenCompose(mineData -> mineData.exists().thenApply(mineExists -> {
+            if (!mineExists) {
+                return false;
+            }
+            final ConstructorRegion constructorRegion = new ConstructorRegion(this.plugin, mineData.getMineCornerOne(), mineData.getMineCornerTwo());
+            return constructorRegion.isWithin(location);
+        }));
     }
 
 }
