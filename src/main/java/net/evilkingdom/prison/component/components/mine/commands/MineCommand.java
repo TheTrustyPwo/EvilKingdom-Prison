@@ -415,7 +415,18 @@ public class MineCommand extends CommandHandler {
                         }
                     }
                     case "go" -> {
-                        final ArrayList<String> playerNames = new ArrayList<String>(Bukkit.getOnlinePlayers().stream().filter(onlinePlayer -> PlayerData.getViaCache(onlinePlayer.getUniqueId()).get().getMine().isPresent()).map(onlinePlayer -> onlinePlayer.getName()).collect(Collectors.toList()));
+                        final ArrayList<String> playerNames = new ArrayList<String>(Bukkit.getOnlinePlayers().stream().filter(onlinePlayer -> {
+                            final PlayerData onlinePlayerData = PlayerData.getViaCache(onlinePlayer.getUniqueId()).get();
+                            if (onlinePlayerData.getMine().isPresent()) {
+                                final MineData mineData = MineData.getViaCache(onlinePlayerData.getMine().get()).get();
+                                if (mineData.isPrivate()) {
+                                    return mineData.getWhitelisted().contains(player.getUniqueId());
+                                } else {
+                                    return !mineData.getBanned().contains(player.getUniqueId());
+                                }
+                            }
+                            return false;
+                        }).map(onlinePlayer -> onlinePlayer.getName()).collect(Collectors.toList()));
                         playerNames.remove(player.getName());
                         tabCompletion.addAll(playerNames);
                     }
