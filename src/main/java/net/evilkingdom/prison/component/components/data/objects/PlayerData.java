@@ -115,7 +115,11 @@ public class PlayerData {
      */
     public void save(final boolean asynchronous) {
         final DatapointModel datapointModel = new DatapointModel(this.uuid.toString());
-        datapointModel.getObjects().put("mine", new DatapointObject(Optional.ofNullable(this.mine.toString()).orElse(null)));
+        if (this.mine.isPresent()) {
+            datapointModel.getObjects().put("mine", new DatapointObject(this.mine.get().toString()));
+        } else {
+            datapointModel.getObjects().put("mine", new DatapointObject());
+        }
         datapointModel.getObjects().put("tokens", new DatapointObject(this.tokens));
         datapointModel.getObjects().put("gems", new DatapointObject(this.gems));
         datapointModel.getObjects().put("rank", new DatapointObject(this.rank));

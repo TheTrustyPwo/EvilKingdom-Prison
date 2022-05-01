@@ -255,7 +255,7 @@ public class MineCommand extends CommandHandler {
                                         final ConstructorRegion constructorRegion = new ConstructorRegion(this.plugin, mineData.getCornerOne(), mineData.getCornerTwo());
                                         if (constructorRegion.isWithin(target.getLocation())) {
                                             SelfData.get().whenComplete((selfData, selfDataThrowable) -> {
-                                                target.teleport(selfData.getSpawn());
+                                                Bukkit.getScheduler().runTask(this.plugin, () -> target.teleport(selfData.getSpawn()));
                                                 this.plugin.getComponentManager().getFileComponent().getConfiguration().getStringList("components.mine.commands.mine.sub-commands.ban.messages.success.target").forEach(string -> target.sendMessage(StringUtilities.colorize(string)));
                                                 target.playSound(player.getLocation(), Sound.valueOf(this.plugin.getComponentManager().getFileComponent().getConfiguration().getString("components.mine.commands.mine.sub-commands.ban.sounds.success.target.sound")), (float) this.plugin.getComponentManager().getFileComponent().getConfiguration().getDouble("components.mine.commands.mine.sub-commands.ban.sounds.success.target.volume"), (float) this.plugin.getComponentManager().getFileComponent().getConfiguration().getDouble("components.mine.commands.mine.sub-commands.ban.sounds.success.target.pitch"));
                                             });
