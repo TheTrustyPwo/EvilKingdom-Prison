@@ -44,6 +44,9 @@ public class ConnectionListener implements Listener {
     public void onPlayerJoin(final PlayerJoinEvent playerJoinEvent) {
         final Player player = playerJoinEvent.getPlayer();
         Bukkit.getScheduler().runTaskLater(this.plugin, () -> {
+            if (player.getWorld() != this.plugin.getComponentManager().getMineComponent().getWorld()) {
+                return;
+            }
             final Optional<UUID> optionalMineUUID = this.plugin.getComponentManager().getMineComponent().get(player.getLocation());
             optionalMineUUID.ifPresent(uuid -> MineData.get(uuid).whenComplete((mineData, mineDataThrowable) -> {
                 final Border border = new Border(this.plugin, player, mineData.getCenter().toCenterLocation(), mineData.getBorderSize(), BorderColor.RED);

@@ -373,7 +373,7 @@ public class MineComponent {
      * Allows you to retrieve a mine from a location.
      *
      * @param location ~ The location to retrieve from.
-     * @return The mine (if the location leads to one).
+     * @return The mine's uuid (if the location leads to one).
      */
     public Optional<UUID> get(final Location location) {
         return MineData.getCache().stream().filter(mineData -> {

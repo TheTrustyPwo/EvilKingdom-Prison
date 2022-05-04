@@ -12,6 +12,8 @@ import net.evilkingdom.commons.command.objects.Command;
 import net.evilkingdom.commons.constructor.objects.ConstructorRegion;
 import net.evilkingdom.commons.cooldown.objects.Cooldown;
 import net.evilkingdom.commons.item.objects.Item;
+import net.evilkingdom.commons.item.objects.ItemData;
+import net.evilkingdom.commons.menu.MenuImplementor;
 import net.evilkingdom.commons.menu.objects.Menu;
 import net.evilkingdom.commons.menu.objects.MenuItem;
 import net.evilkingdom.commons.utilities.luckperms.LuckPermsUtilities;
@@ -32,6 +34,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.CookingRecipe;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.persistence.PersistentDataType;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -64,23 +67,28 @@ public class MineCommand extends CommandHandler {
     @Override
     public boolean onExecution(final CommandSender commandSender, final String[] arguments) {
         if (arguments.length == 0) {
-            this.plugin.getComponentManager().getFileComponent().getConfiguration().getStringList("components.mine.commands.mine.sub-commands.help.messages.invalid-usage").forEach(string -> commandSender.sendMessage(StringUtilities.colorize(string)));
-            if (commandSender instanceof Player) {
-                final Player player = (Player) commandSender;
-                player.playSound(player.getLocation(), Sound.valueOf(this.plugin.getComponentManager().getFileComponent().getConfiguration().getString("components.mine.commands.mine.sub-commands.help.sounds.error.sound")), (float) this.plugin.getComponentManager().getFileComponent().getConfiguration().getDouble("components.mine.commands.mine.sub-commands.help.sounds.error.volume"), (float) this.plugin.getComponentManager().getFileComponent().getConfiguration().getDouble("components.mine.commands.mine.sub-commands.help.sounds.error.pitch"));
+            if (!(commandSender instanceof Player)) {
+                Bukkit.getServer().dispatchCommand(commandSender, "mine help");
+                return false;
+            }
+            final Player player = (Player) commandSender;
+            final PlayerData playerData = PlayerData.getViaCache(player.getUniqueId()).get();
+            if (playerData.getMine().isEmpty()) {
+                player.chat("/mine create");
+            } else {
+                player.chat("/mine panel");
             }
             return false;
         }
         final String subCommand = arguments[0].toLowerCase();
-        if (!Arrays.asList("help", "create", "go", "privacy", "reset", "retheme", "ban", "unban", "whitelist", "unwhitelist").contains(subCommand)) {
-            this.plugin.getComponentManager().getFileComponent().getConfiguration().getStringList("components.mine.commands.mine.sub-commands.help.messages.invalid-usage").forEach(string -> commandSender.sendMessage(StringUtilities.colorize(string)));
-            if (commandSender instanceof Player) {
-                final Player player = (Player) commandSender;
-                player.playSound(player.getLocation(), Sound.valueOf(this.plugin.getComponentManager().getFileComponent().getConfiguration().getString("components.mine.commands.mine.sub-commands.help.sounds.error.sound")), (float) this.plugin.getComponentManager().getFileComponent().getConfiguration().getDouble("components.mine.commands.mine.sub-commands.help.sounds.error.volume"), (float) this.plugin.getComponentManager().getFileComponent().getConfiguration().getDouble("components.mine.commands.mine.sub-commands.help.sounds.error.pitch"));
-            }
-            return false;
-        }
         switch (subCommand) {
+            default -> {
+                this.plugin.getComponentManager().getFileComponent().getConfiguration().getStringList("components.mine.commands.mine.sub-commands.help.messages.invalid-usage").forEach(string -> commandSender.sendMessage(StringUtilities.colorize(string)));
+                if (commandSender instanceof Player) {
+                    final Player player = (Player) commandSender;
+                    player.playSound(player.getLocation(), Sound.valueOf(this.plugin.getComponentManager().getFileComponent().getConfiguration().getString("components.mine.commands.mine.sub-commands.help.sounds.error.sound")), (float) this.plugin.getComponentManager().getFileComponent().getConfiguration().getDouble("components.mine.commands.mine.sub-commands.help.sounds.error.volume"), (float) this.plugin.getComponentManager().getFileComponent().getConfiguration().getDouble("components.mine.commands.mine.sub-commands.help.sounds.error.pitch"));
+                }
+            }
             case "help" -> {
                 if (!(commandSender instanceof Player)) {
                     this.plugin.getComponentManager().getFileComponent().getConfiguration().getStringList("components.mine.commands.mine.sub-commands.help.messages.invalid-executor").forEach(string -> commandSender.sendMessage(StringUtilities.colorize(string)));
@@ -416,10 +424,12 @@ public class MineCommand extends CommandHandler {
                     mineData.setPrivate(false);
                     this.plugin.getComponentManager().getFileComponent().getConfiguration().getStringList("components.mine.commands.mine.sub-commands.privacy.messages.success.player.not-private").forEach(string -> player.sendMessage(StringUtilities.colorize(string)));
                     player.playSound(player.getLocation(), Sound.valueOf(this.plugin.getComponentManager().getFileComponent().getConfiguration().getString("components.mine.commands.mine.sub-commands.privacy.sounds.success.player.sound")), (float) this.plugin.getComponentManager().getFileComponent().getConfiguration().getDouble("components.mine.commands.mine.sub-commands.privacy.sounds.success.player.volume"), (float) this.plugin.getComponentManager().getFileComponent().getConfiguration().getDouble("components.mine.commands.mine.sub-commands.privacy.sounds.success.player.pitch"));
+                    this.updatePanelManageVisitationMenu(player);
                 } else {
                     mineData.setPrivate(true);
                     this.plugin.getComponentManager().getFileComponent().getConfiguration().getStringList("components.mine.commands.mine.sub-commands.privacy.messages.success.player.now-private").forEach(string -> player.sendMessage(StringUtilities.colorize(string)));
                     player.playSound(player.getLocation(), Sound.valueOf(this.plugin.getComponentManager().getFileComponent().getConfiguration().getString("components.mine.commands.mine.sub-commands.privacy.sounds.success.player.sound")), (float) this.plugin.getComponentManager().getFileComponent().getConfiguration().getDouble("components.mine.commands.mine.sub-commands.privacy.sounds.success.player.volume"), (float) this.plugin.getComponentManager().getFileComponent().getConfiguration().getDouble("components.mine.commands.mine.sub-commands.privacy.sounds.success.player.pitch"));
+                    this.updatePanelManageVisitationMenu(player);
                     Bukkit.getOnlinePlayers().stream().filter(onlinePlayer -> this.plugin.getComponentManager().getMineComponent().isWithin(mineData.getUUID(), onlinePlayer.getLocation()) && !mineData.getWhitelisted().contains(onlinePlayer.getUniqueId()) && onlinePlayer.getUniqueId() != player.getUniqueId()).forEach(onlinePlayer -> {
                         final SelfData selfData = SelfData.getViaCache().get();
                         Bukkit.getScheduler().runTask(this.plugin, () -> onlinePlayer.teleport(selfData.getSpawn()));
@@ -527,7 +537,7 @@ public class MineCommand extends CommandHandler {
                                 final SelfData selfData = SelfData.getViaCache().get();
                                 Bukkit.getScheduler().runTask(this.plugin, () -> target.teleport(selfData.getSpawn()));
                                 this.plugin.getComponentManager().getFileComponent().getConfiguration().getStringList("components.mine.commands.mine.sub-commands.unwhitelist.messages.success.target").forEach(string -> target.sendMessage(StringUtilities.colorize(string.replace("%player%", player.getName()))));
-                                target.playSound(player.getLocation(), Sound.valueOf(this.plugin.getComponentManager().getFileComponent().getConfiguration().getString("components.mine.commands.mine.sub-commands.unwhitelist.sounds.success.target.sound")), (float) this.plugin.getComponentManager().getFileComponent().getConfiguration().getDouble("components.mine.commands.mine.sub-commands.unwhitelist.sounds.success.target.volume"), (float) this.plugin.getComponentManager().getFileComponent().getConfiguration().getDouble("components.mine.commands.mine.sub-commands.unwhitelist.sounds.success.target.pitch"));
+                                target.playSound(target.getLocation(), Sound.valueOf(this.plugin.getComponentManager().getFileComponent().getConfiguration().getString("components.mine.commands.mine.sub-commands.unwhitelist.sounds.success.target.sound")), (float) this.plugin.getComponentManager().getFileComponent().getConfiguration().getDouble("components.mine.commands.mine.sub-commands.unwhitelist.sounds.success.target.volume"), (float) this.plugin.getComponentManager().getFileComponent().getConfiguration().getDouble("components.mine.commands.mine.sub-commands.unwhitelist.sounds.success.target.pitch"));
                             }
                         });
                     });
@@ -549,7 +559,7 @@ public class MineCommand extends CommandHandler {
         final Player player = (Player) commandSender;
         ArrayList<String> tabCompletion = new ArrayList<String>();
         switch (arguments.length) {
-            case 1 -> tabCompletion.addAll(Arrays.asList("help", "create", "reset", "retheme", "go", "privacy", "ban", "unban", "whitelist", "unwhitelist"));
+            case 1 -> tabCompletion.addAll(Arrays.asList("help", "create", "reset", "retheme", "panel", "go", "privacy", "ban", "unban", "whitelist", "unwhitelist"));
             case 2 -> {
                 final String subCommand = arguments[0];
                 final PlayerData playerData = PlayerData.getViaCache(player.getUniqueId()).get();
@@ -560,23 +570,21 @@ public class MineCommand extends CommandHandler {
                             tabCompletion.addAll(Bukkit.getOnlinePlayers().stream().filter(onlinePlayer -> !mineData.getBanned().contains(onlinePlayer.getUniqueId()) && onlinePlayer.getUniqueId() != player.getUniqueId()).map(onlinePlayer -> onlinePlayer.getName()).collect(Collectors.toList()));
                         }
                     }
-                    case "go" -> {
-                        tabCompletion.addAll(Bukkit.getOnlinePlayers().stream().filter(onlinePlayer -> {
-                            if (onlinePlayer.getUniqueId() == player.getUniqueId()) {
-                                return false;
-                            }
-                            final PlayerData onlinePlayerData = PlayerData.getViaCache(onlinePlayer.getUniqueId()).get();
-                            if (onlinePlayerData.getMine().isPresent()) {
-                                final MineData mineData = MineData.getViaCache(onlinePlayerData.getMine().get()).get();
-                                if (mineData.isPrivate()) {
-                                    return mineData.getWhitelisted().contains(player.getUniqueId());
-                                } else {
-                                    return !mineData.getBanned().contains(player.getUniqueId());
-                                }
-                            }
+                    case "go" -> tabCompletion.addAll(Bukkit.getOnlinePlayers().stream().filter(onlinePlayer -> {
+                        if (onlinePlayer.getUniqueId() == player.getUniqueId()) {
                             return false;
-                        }).map(onlinePlayer -> onlinePlayer.getName()).collect(Collectors.toList()));
-                    }
+                        }
+                        final PlayerData onlinePlayerData = PlayerData.getViaCache(onlinePlayer.getUniqueId()).get();
+                        if (onlinePlayerData.getMine().isPresent()) {
+                            final MineData mineData = MineData.getViaCache(onlinePlayerData.getMine().get()).get();
+                            if (mineData.isPrivate()) {
+                                return mineData.getWhitelisted().contains(player.getUniqueId());
+                            } else {
+                                return !mineData.getBanned().contains(player.getUniqueId());
+                            }
+                        }
+                        return false;
+                    }).map(onlinePlayer -> onlinePlayer.getName()).collect(Collectors.toList()));
                     case "unban" -> {
                         if (playerData.getMine().isPresent()) {
                             final MineData mineData = MineData.getViaCache(playerData.getMine().get()).get();
@@ -616,6 +624,7 @@ public class MineCommand extends CommandHandler {
         } else {
             menu = new Menu(this.plugin, player, inventoryType, title);
         }
+        menu.setIdentifier("mine-create-select-theme");
         this.plugin.getComponentManager().getFileComponent().getConfiguration().getConfigurationSection("components.mine.commands.mine.sub-commands.create.menus.theme-selector.inventory.items").getKeys(false).stream().map(key -> Integer.parseInt(key)).collect(Collectors.toList()).forEach(slot -> {
             final Material material = Material.getMaterial(this.plugin.getComponentManager().getFileComponent().getConfiguration().getString("components.mine.commands.mine.sub-commands.create.menus.theme-selector.inventory.items." + slot + ".material"));
             final Optional<String> name = Optional.of(StringUtilities.colorize(this.plugin.getComponentManager().getFileComponent().getConfiguration().getString("components.mine.commands.mine.sub-commands.create.menus.theme-selector.inventory.items." + slot + ".name")));
@@ -631,9 +640,7 @@ public class MineCommand extends CommandHandler {
             if (glowing) {
                 item.glow();
             }
-            final MenuItem menuItem = new MenuItem(item.getItemStack(), inventoryClickEvent -> {
-                inventoryClickEvent.setCancelled(true);
-            });
+            final MenuItem menuItem = new MenuItem(item.getItemStack(), inventoryClickEvent -> inventoryClickEvent.setCancelled(true));
             menu.getItems().put((slot - 1), menuItem);
         });
         final ArrayList<Integer> openSlots = new ArrayList<Integer>();
@@ -709,6 +716,7 @@ public class MineCommand extends CommandHandler {
         } else {
             menu = new Menu(this.plugin, player, inventoryType, title);
         }
+        menu.setIdentifier("mine-retheme-retheme");
         this.plugin.getComponentManager().getFileComponent().getConfiguration().getConfigurationSection("components.mine.commands.mine.sub-commands.retheme.menus.theme-selector.inventory.items").getKeys(false).stream().map(key -> Integer.parseInt(key)).collect(Collectors.toList()).forEach(slot -> {
             final Material material = Material.getMaterial(this.plugin.getComponentManager().getFileComponent().getConfiguration().getString("components.mine.commands.mine.sub-commands.retheme.menus.theme-selector.inventory.items." + slot + ".material"));
             final Optional<String> name = Optional.of(StringUtilities.colorize(this.plugin.getComponentManager().getFileComponent().getConfiguration().getString("components.mine.commands.mine.sub-commands.retheme.menus.theme-selector.inventory.items." + slot + ".name")));
@@ -724,10 +732,40 @@ public class MineCommand extends CommandHandler {
             if (glowing) {
                 item.glow();
             }
-            final MenuItem menuItem = new MenuItem(item.getItemStack(), inventoryClickEvent -> {
-                inventoryClickEvent.setCancelled(true);
-            });
+            final MenuItem menuItem = new MenuItem(item.getItemStack(), inventoryClickEvent -> inventoryClickEvent.setCancelled(true));
             menu.getItems().put((slot - 1), menuItem);
+        });
+        this.plugin.getComponentManager().getFileComponent().getConfiguration().getConfigurationSection("components.mine.commands.mine.sub-commands.retheme.menus.theme-selector.items").getKeys(false).forEach(configurationItem -> {
+            if (this.plugin.getComponentManager().getFileComponent().getConfiguration().isSet("components.mine.commands.mine.sub-commands.retheme.menus.theme-selector.items." + configurationItem + ".slot")) {
+                final int slot = this.plugin.getComponentManager().getFileComponent().getConfiguration().getInt("components.mine.commands.mine.sub-commands.retheme.menus.theme-selector.items." + configurationItem + ".slot");
+                final Material material = Material.getMaterial(this.plugin.getComponentManager().getFileComponent().getConfiguration().getString("components.mine.commands.mine.sub-commands.retheme.menus.theme-selector.items." + configurationItem + ".material"));
+                final Optional<String> name = Optional.of(StringUtilities.colorize(this.plugin.getComponentManager().getFileComponent().getConfiguration().getString("components.mine.commands.mine.sub-commands.retheme.menus.theme-selector.items." + configurationItem + ".name")));
+                final Optional<ArrayList<String>> lore = Optional.of(new ArrayList<String>(this.plugin.getComponentManager().getFileComponent().getConfiguration().getStringList("components.mine.commands.mine.sub-commands.retheme.menus.theme-selector.items." + configurationItem + ".lore").stream().map(loreLine -> StringUtilities.colorize(loreLine)).collect(Collectors.toList())));
+                final boolean glowing = this.plugin.getComponentManager().getFileComponent().getConfiguration().getBoolean("components.mine.commands.mine.sub-commands.retheme.menus.theme-selector.items." + configurationItem + ".glowing");
+                final boolean unbreakable = this.plugin.getComponentManager().getFileComponent().getConfiguration().getBoolean("components.mine.commands.mine.sub-commands.retheme.menus.theme-selector.items." + configurationItem + ".unbreakable");
+                final Item item = new Item(new ItemStack(material));
+                name.ifPresent(presentName -> item.setName(presentName));
+                lore.ifPresent(presentLore -> item.setLore(presentLore));
+                if (unbreakable) {
+                    item.unbreakable();
+                }
+                if (glowing) {
+                    item.glow();
+                }
+                final MenuItem menuItem;
+                switch (configurationItem) {
+                    case "previous-page" -> menuItem = new MenuItem(item.getItemStack(), inventoryClickEvent -> {
+                        inventoryClickEvent.setCancelled(true);
+                        player.playSound(player.getLocation(), Sound.valueOf(this.plugin.getComponentManager().getFileComponent().getConfiguration().getString("components.mine.commands.mine.sub-commands.retheme.menus.theme-selector.sounds.click.sound")), (float) this.plugin.getComponentManager().getFileComponent().getConfiguration().getDouble("components.mine.commands.mine.sub-commands.retheme.menus.theme-selector.sounds.click.volume"), (float) this.plugin.getComponentManager().getFileComponent().getConfiguration().getDouble("components.mine.commands.mine.sub-commands.retheme.menus.theme-selector.sounds.click.pitch"));
+                        this.openPanelHomeMenu(player);
+                    });
+                    default -> menuItem = new MenuItem(item.getItemStack(), inventoryClickEvent -> {
+                        inventoryClickEvent.setCancelled(true);
+                        player.playSound(player.getLocation(), Sound.valueOf(this.plugin.getComponentManager().getFileComponent().getConfiguration().getString("components.mine.commands.mine.sub-commands.retheme.menus.theme-selector.sounds.click.sound")), (float) this.plugin.getComponentManager().getFileComponent().getConfiguration().getDouble("components.mine.commands.mine.sub-commands.retheme.menus.theme-selector.sounds.click.volume"), (float) this.plugin.getComponentManager().getFileComponent().getConfiguration().getDouble("components.mine.commands.mine.sub-commands.retheme.menus.theme-selector.sounds.click.pitch"));
+                    });
+                }
+                menu.getItems().put(slot, menuItem);
+            }
         });
         final ArrayList<Integer> openSlots = new ArrayList<Integer>();
         int size;
@@ -802,5 +840,748 @@ public class MineCommand extends CommandHandler {
         });
         Bukkit.getScheduler().runTask(this.plugin, () -> menu.open());
     }
+
+    /**
+     * Allows you to open the "panel" sub-command's home menu.
+     *
+     * @param player ~ The player to open it for.
+     */
+    private void openPanelHomeMenu(final Player player) {
+        final InventoryType inventoryType = InventoryType.valueOf(this.plugin.getComponentManager().getFileComponent().getConfiguration().getString("components.mine.commands.mine.sub-commands.panel.menus.home.inventory.type"));
+        final String title = StringUtilities.colorize(this.plugin.getComponentManager().getFileComponent().getConfiguration().getString("components.mine.commands.mine.sub-commands.panel.menus.home.inventory.title"));
+        Menu menu;
+        if (inventoryType == InventoryType.CHEST) {
+            final int rows = this.plugin.getComponentManager().getFileComponent().getConfiguration().getInt("components.mine.commands.mine.sub-commands.panel.menus.home.inventory.rows");
+            menu = new Menu(this.plugin, player, rows, title);
+        } else {
+            menu = new Menu(this.plugin, player, inventoryType, title);
+        }
+        menu.setIdentifier("mine-panel-home");
+        this.plugin.getComponentManager().getFileComponent().getConfiguration().getConfigurationSection("components.mine.commands.mine.sub-commands.panel.menus.home.inventory.items").getKeys(false).stream().map(key -> Integer.parseInt(key)).collect(Collectors.toList()).forEach(slot -> {
+            final Material material = Material.getMaterial(this.plugin.getComponentManager().getFileComponent().getConfiguration().getString("components.mine.commands.mine.sub-commands.panel.menus.home.inventory.items." + slot + ".material"));
+            final Optional<String> name = Optional.of(StringUtilities.colorize(this.plugin.getComponentManager().getFileComponent().getConfiguration().getString("components.mine.commands.mine.sub-commands.panel.menus.home.inventory.items." + slot + ".name")));
+            final Optional<ArrayList<String>> lore = Optional.of(new ArrayList<String>(this.plugin.getComponentManager().getFileComponent().getConfiguration().getStringList("components.mine.commands.mine.sub-commands.panel.menus.home.inventory.items." + slot + ".lore").stream().map(loreLine -> StringUtilities.colorize(loreLine)).collect(Collectors.toList())));
+            final boolean glowing = this.plugin.getComponentManager().getFileComponent().getConfiguration().getBoolean("components.mine.commands.mine.sub-commands.panel.menus.home.inventory.items." + slot + ".glowing");
+            final boolean unbreakable = this.plugin.getComponentManager().getFileComponent().getConfiguration().getBoolean("components.mine.commands.mine.sub-commands.panel.menus.home.inventory.items." + slot + ".unbreakable");
+            final Item item = new Item(new ItemStack(material));
+            name.ifPresent(presentName -> item.setName(presentName));
+            lore.ifPresent(presentLore -> item.setLore(presentLore));
+            if (unbreakable) {
+                item.unbreakable();
+            }
+            if (glowing) {
+                item.glow();
+            }
+            final MenuItem menuItem = new MenuItem(item.getItemStack(), inventoryClickEvent -> {
+                inventoryClickEvent.setCancelled(true);
+            });
+            menu.getItems().put((slot - 1), menuItem);
+        });
+        this.plugin.getComponentManager().getFileComponent().getConfiguration().getConfigurationSection("components.mine.commands.mine.sub-commands.panel.menus.home.items").getKeys(false).forEach(configurationItem -> {
+            if (this.plugin.getComponentManager().getFileComponent().getConfiguration().isSet("components.mine.commands.mine.sub-commands.panel.menus.home.items." + configurationItem + ".slot")) {
+                final int slot = this.plugin.getComponentManager().getFileComponent().getConfiguration().getInt("components.mine.commands.mine.sub-commands.panel.menus.home.items." + configurationItem + ".slot");
+                final Material material = Material.getMaterial(this.plugin.getComponentManager().getFileComponent().getConfiguration().getString("components.mine.commands.mine.sub-commands.panel.menus.home.items." + configurationItem + ".material"));
+                final Optional<String> name = Optional.of(StringUtilities.colorize(this.plugin.getComponentManager().getFileComponent().getConfiguration().getString("components.mine.commands.mine.sub-commands.panel.menus.home.items." + configurationItem + ".name")));
+                final Optional<ArrayList<String>> lore = Optional.of(new ArrayList<String>(this.plugin.getComponentManager().getFileComponent().getConfiguration().getStringList("components.mine.commands.mine.sub-commands.panel.menus.home.items." + configurationItem + ".lore").stream().map(loreLine -> StringUtilities.colorize(loreLine)).collect(Collectors.toList())));
+                final boolean glowing = this.plugin.getComponentManager().getFileComponent().getConfiguration().getBoolean("components.mine.commands.mine.sub-commands.panel.menus.home.items." + configurationItem + ".glowing");
+                final boolean unbreakable = this.plugin.getComponentManager().getFileComponent().getConfiguration().getBoolean("components.mine.commands.mine.sub-commands.panel.menus.home.items." + configurationItem + ".unbreakable");
+                final Item item = new Item(new ItemStack(material));
+                name.ifPresent(presentName -> item.setName(presentName));
+                lore.ifPresent(presentLore -> item.setLore(presentLore));
+                if (unbreakable) {
+                    item.unbreakable();
+                }
+                if (glowing) {
+                    item.glow();
+                }
+                final MenuItem menuItem;
+                switch (configurationItem) {
+                    case "go" -> menuItem = new MenuItem(item.getItemStack(), inventoryClickEvent -> {
+                        inventoryClickEvent.setCancelled(true);
+                        player.playSound(player.getLocation(), Sound.valueOf(this.plugin.getComponentManager().getFileComponent().getConfiguration().getString("components.mine.commands.mine.sub-commands.panel.menus.home.sounds.click.sound")), (float) this.plugin.getComponentManager().getFileComponent().getConfiguration().getDouble("components.mine.commands.mine.sub-commands.panel.menus.home.sounds.click.volume"), (float) this.plugin.getComponentManager().getFileComponent().getConfiguration().getDouble("components.mine.commands.mine.sub-commands.panel.menus.home.sounds.click.pitch"));
+                        player.chat("/mine go");
+                    });
+                    case "reset" -> menuItem = new MenuItem(item.getItemStack(), inventoryClickEvent -> {
+                        inventoryClickEvent.setCancelled(true);
+                        player.playSound(player.getLocation(), Sound.valueOf(this.plugin.getComponentManager().getFileComponent().getConfiguration().getString("components.mine.commands.mine.sub-commands.panel.menus.home.sounds.click.sound")), (float) this.plugin.getComponentManager().getFileComponent().getConfiguration().getDouble("components.mine.commands.mine.sub-commands.panel.menus.home.sounds.click.volume"), (float) this.plugin.getComponentManager().getFileComponent().getConfiguration().getDouble("components.mine.commands.mine.sub-commands.panel.menus.home.sounds.click.pitch"));
+                        player.chat("/mine reset");
+                    });
+                    case "retheme" -> menuItem = new MenuItem(item.getItemStack(), inventoryClickEvent -> {
+                        inventoryClickEvent.setCancelled(true);
+                        player.playSound(player.getLocation(), Sound.valueOf(this.plugin.getComponentManager().getFileComponent().getConfiguration().getString("components.mine.commands.mine.sub-commands.panel.menus.home.sounds.click.sound")), (float) this.plugin.getComponentManager().getFileComponent().getConfiguration().getDouble("components.mine.commands.mine.sub-commands.panel.menus.home.sounds.click.volume"), (float) this.plugin.getComponentManager().getFileComponent().getConfiguration().getDouble("components.mine.commands.mine.sub-commands.panel.menus.home.sounds.click.pitch"));
+                        player.chat("/mine retheme");
+                    });
+                    case "manage-visitation" -> menuItem = new MenuItem(item.getItemStack(), inventoryClickEvent -> {
+                        inventoryClickEvent.setCancelled(true);
+                        player.playSound(player.getLocation(), Sound.valueOf(this.plugin.getComponentManager().getFileComponent().getConfiguration().getString("components.mine.commands.mine.sub-commands.panel.menus.home.sounds.click.sound")), (float) this.plugin.getComponentManager().getFileComponent().getConfiguration().getDouble("components.mine.commands.mine.sub-commands.panel.menus.home.sounds.click.volume"), (float) this.plugin.getComponentManager().getFileComponent().getConfiguration().getDouble("components.mine.commands.mine.sub-commands.panel.menus.home.sounds.click.pitch"));
+                        this.openPanelManageVisitationMenu(player);
+                    });
+                    default -> menuItem = new MenuItem(item.getItemStack(), inventoryClickEvent -> {
+                        inventoryClickEvent.setCancelled(true);
+                        player.playSound(player.getLocation(), Sound.valueOf(this.plugin.getComponentManager().getFileComponent().getConfiguration().getString("components.mine.commands.mine.sub-commands.panel.menus.home.sounds.click.sound")), (float) this.plugin.getComponentManager().getFileComponent().getConfiguration().getDouble("components.mine.commands.mine.sub-commands.panel.menus.home.sounds.click.volume"), (float) this.plugin.getComponentManager().getFileComponent().getConfiguration().getDouble("components.mine.commands.mine.sub-commands.panel.menus.home.sounds.click.pitch"));
+                    });
+                }
+                menu.getItems().put(slot, menuItem);
+            }
+        });
+        Bukkit.getScheduler().runTask(this.plugin, () -> menu.open());
+    }
+
+    /**
+     * Allows you to open the "panel" sub-command's manage visitation menu.
+     *
+     * @param player ~ The player to open it for.
+     */
+    private void openPanelManageVisitationMenu(final Player player) {
+        final InventoryType inventoryType = InventoryType.valueOf(this.plugin.getComponentManager().getFileComponent().getConfiguration().getString("components.mine.commands.mine.sub-commands.panel.menus.manage-visitation.inventory.type"));
+        final String title = StringUtilities.colorize(this.plugin.getComponentManager().getFileComponent().getConfiguration().getString("components.mine.commands.mine.sub-commands.panel.menus.manage-visitation.inventory.title"));
+        Menu menu;
+        if (inventoryType == InventoryType.CHEST) {
+            final int rows = this.plugin.getComponentManager().getFileComponent().getConfiguration().getInt("components.mine.commands.mine.sub-commands.panel.menus.manage-visitation.inventory.rows");
+            menu = new Menu(this.plugin, player, rows, title);
+        } else {
+            menu = new Menu(this.plugin, player, inventoryType, title);
+        }
+        menu.setIdentifier("mine-panel-manage-visitation");
+        this.plugin.getComponentManager().getFileComponent().getConfiguration().getConfigurationSection("components.mine.commands.mine.sub-commands.panel.menus.manage-visitation.inventory.items").getKeys(false).stream().map(key -> Integer.parseInt(key)).collect(Collectors.toList()).forEach(slot -> {
+            final Material material = Material.getMaterial(this.plugin.getComponentManager().getFileComponent().getConfiguration().getString("components.mine.commands.mine.sub-commands.panel.menus.manage-visitation.inventory.items." + slot + ".material"));
+            final Optional<String> name = Optional.of(StringUtilities.colorize(this.plugin.getComponentManager().getFileComponent().getConfiguration().getString("components.mine.commands.mine.sub-commands.panel.menus.manage-visitation.inventory.items." + slot + ".name")));
+            final Optional<ArrayList<String>> lore = Optional.of(new ArrayList<String>(this.plugin.getComponentManager().getFileComponent().getConfiguration().getStringList("components.mine.commands.mine.sub-commands.panel.menus.manage-visitation.inventory.items." + slot + ".lore").stream().map(loreLine -> StringUtilities.colorize(loreLine)).collect(Collectors.toList())));
+            final boolean glowing = this.plugin.getComponentManager().getFileComponent().getConfiguration().getBoolean("components.mine.commands.mine.sub-commands.panel.menus.manage-visitation.inventory.items." + slot + ".glowing");
+            final boolean unbreakable = this.plugin.getComponentManager().getFileComponent().getConfiguration().getBoolean("components.mine.commands.mine.sub-commands.panel.menus.manage-visitation.inventory.items." + slot + ".unbreakable");
+            final Item item = new Item(new ItemStack(material));
+            name.ifPresent(presentName -> item.setName(presentName));
+            lore.ifPresent(presentLore -> item.setLore(presentLore));
+            if (unbreakable) {
+                item.unbreakable();
+            }
+            if (glowing) {
+                item.glow();
+            }
+            final MenuItem menuItem = new MenuItem(item.getItemStack(), inventoryClickEvent -> {
+                inventoryClickEvent.setCancelled(true);
+            });
+            menu.getItems().put((slot - 1), menuItem);
+        });
+        this.plugin.getComponentManager().getFileComponent().getConfiguration().getConfigurationSection("components.mine.commands.mine.sub-commands.panel.menus.manage-visitation.items").getKeys(false).forEach(configurationItem -> {
+            if (this.plugin.getComponentManager().getFileComponent().getConfiguration().isSet("components.mine.commands.mine.sub-commands.panel.menus.manage-visitation.items." + configurationItem + ".slot")) {
+                final int slot = this.plugin.getComponentManager().getFileComponent().getConfiguration().getInt("components.mine.commands.mine.sub-commands.panel.menus.manage-visitation.items." + configurationItem + ".slot");
+                final Material material = Material.getMaterial(this.plugin.getComponentManager().getFileComponent().getConfiguration().getString("components.mine.commands.mine.sub-commands.panel.menus.manage-visitation.items." + configurationItem + ".material"));
+                final Optional<String> name = Optional.of(StringUtilities.colorize(this.plugin.getComponentManager().getFileComponent().getConfiguration().getString("components.mine.commands.mine.sub-commands.panel.menus.manage-visitation.items." + configurationItem + ".name")));
+                final Optional<ArrayList<String>> lore = Optional.of(new ArrayList<String>(this.plugin.getComponentManager().getFileComponent().getConfiguration().getStringList("components.mine.commands.mine.sub-commands.panel.menus.manage-visitation.items." + configurationItem + ".lore").stream().map(loreLine -> StringUtilities.colorize(loreLine)).collect(Collectors.toList())));
+                final boolean glowing = this.plugin.getComponentManager().getFileComponent().getConfiguration().getBoolean("components.mine.commands.mine.sub-commands.panel.menus.manage-visitation.items." + configurationItem + ".glowing");
+                final boolean unbreakable = this.plugin.getComponentManager().getFileComponent().getConfiguration().getBoolean("components.mine.commands.mine.sub-commands.panel.menus.manage-visitation.items." + configurationItem + ".unbreakable");
+                final Item item = new Item(new ItemStack(material));
+                name.ifPresent(presentName -> item.setName(presentName));
+                lore.ifPresent(presentLore -> item.setLore(presentLore));
+                if (unbreakable) {
+                    item.unbreakable();
+                }
+                if (glowing) {
+                    item.glow();
+                }
+                final MenuItem menuItem;
+                switch (configurationItem) {
+                    case "privacy" -> {
+                        final PlayerData playerData = PlayerData.getViaCache(player.getUniqueId()).get();
+                        final MineData mineData = MineData.getViaCache(playerData.getMine().get()).get();
+                        String formattedPrivacy = "Enabled";
+                        if (mineData.isPrivate()) {
+                            formattedPrivacy = "Disabled";
+                        }
+                        final Optional<String> optionalPrivaciedName = Optional.of(StringUtilities.colorize(this.plugin.getComponentManager().getFileComponent().getConfiguration().getString("components.mine.commands.mine.sub-commands.panel.menus.manage-visitation.items." + configurationItem + ".name").replace("%privacy%", formattedPrivacy)));
+                        optionalPrivaciedName.ifPresent(privaciedName -> item.setName(privaciedName));
+                        menuItem = new MenuItem(item.getItemStack(), inventoryClickEvent -> {
+                            inventoryClickEvent.setCancelled(true);
+                            player.playSound(player.getLocation(), Sound.valueOf(this.plugin.getComponentManager().getFileComponent().getConfiguration().getString("components.mine.commands.mine.sub-commands.panel.menus.manage-visitation.sounds.click.sound")), (float) this.plugin.getComponentManager().getFileComponent().getConfiguration().getDouble("components.mine.commands.mine.sub-commands.panel.menus.manage-visitation.sounds.click.volume"), (float) this.plugin.getComponentManager().getFileComponent().getConfiguration().getDouble("components.mine.commands.mine.sub-commands.panel.menus.manage-visitation.sounds.click.pitch"));
+                            player.chat("/mine privacy");
+                        });
+                    }
+                    case "bans" -> menuItem = new MenuItem(item.getItemStack(), inventoryClickEvent -> {
+                        inventoryClickEvent.setCancelled(true);
+                        player.playSound(player.getLocation(), Sound.valueOf(this.plugin.getComponentManager().getFileComponent().getConfiguration().getString("components.mine.commands.mine.sub-commands.panel.menus.manage-visitation.sounds.click.sound")), (float) this.plugin.getComponentManager().getFileComponent().getConfiguration().getDouble("components.mine.commands.mine.sub-commands.panel.menus.manage-visitation.sounds.click.volume"), (float) this.plugin.getComponentManager().getFileComponent().getConfiguration().getDouble("components.mine.commands.mine.sub-commands.panel.menus.manage-visitation.sounds.click.pitch"));
+                        this.openPanelBansMenu(player);
+                    });
+                    case "whitelisted" -> menuItem = new MenuItem(item.getItemStack(), inventoryClickEvent -> {
+                        inventoryClickEvent.setCancelled(true);
+                        player.playSound(player.getLocation(), Sound.valueOf(this.plugin.getComponentManager().getFileComponent().getConfiguration().getString("components.mine.commands.mine.sub-commands.panel.menus.manage-visitation.sounds.click.sound")), (float) this.plugin.getComponentManager().getFileComponent().getConfiguration().getDouble("components.mine.commands.mine.sub-commands.panel.menus.manage-visitation.sounds.click.volume"), (float) this.plugin.getComponentManager().getFileComponent().getConfiguration().getDouble("components.mine.commands.mine.sub-commands.panel.menus.manage-visitation.sounds.click.pitch"));
+                        this.openPanelWhitelistedMenu(player);
+                    });
+                    case "previous-page" -> menuItem = new MenuItem(item.getItemStack(), inventoryClickEvent -> {
+                        inventoryClickEvent.setCancelled(true);
+                        player.playSound(player.getLocation(), Sound.valueOf(this.plugin.getComponentManager().getFileComponent().getConfiguration().getString("components.mine.commands.mine.sub-commands.panel.menus.manage-visitation.sounds.click.sound")), (float) this.plugin.getComponentManager().getFileComponent().getConfiguration().getDouble("components.mine.commands.mine.sub-commands.panel.menus.manage-visitation.sounds.click.volume"), (float) this.plugin.getComponentManager().getFileComponent().getConfiguration().getDouble("components.mine.commands.mine.sub-commands.panel.menus.manage-visitation.sounds.click.pitch"));
+                        this.openPanelHomeMenu(player);
+                    });
+                    default -> menuItem = new MenuItem(item.getItemStack(), inventoryClickEvent -> {
+                        inventoryClickEvent.setCancelled(true);
+                        player.playSound(player.getLocation(), Sound.valueOf(this.plugin.getComponentManager().getFileComponent().getConfiguration().getString("components.mine.commands.mine.sub-commands.panel.menus.manage-visitation.sounds.click.sound")), (float) this.plugin.getComponentManager().getFileComponent().getConfiguration().getDouble("components.mine.commands.mine.sub-commands.panel.menus.manage-visitation.sounds.click.volume"), (float) this.plugin.getComponentManager().getFileComponent().getConfiguration().getDouble("components.mine.commands.mine.sub-commands.panel.menus.manage-visitation.sounds.click.pitch"));
+                    });
+                }
+                menu.getItems().put(slot, menuItem);
+            }
+        });
+        Bukkit.getScheduler().runTask(this.plugin, () -> menu.open());
+    }
+
+    /**
+     * Allows you to update the "panel" sub-command's manage visitation menu.
+     * This is used when toggling privacy, and it'll detect if they have a manage visitation menu open, and it'll update it.
+     *
+     * @param player ~ The player to open it for.
+     */
+    private void updatePanelManageVisitationMenu(final Player player) {
+        final PlayerData playerData = PlayerData.getViaCache(player.getUniqueId()).get();
+        final MineData mineData = MineData.getViaCache(playerData.getMine().get()).get();
+        final Optional<Menu> optionalMenu = MenuImplementor.get(this.plugin).getMenus().stream().filter(menu -> menu.getPlayer() == player && menu.getIdentifier().equals("mine-panel-manage-visitation")).findFirst();
+        if (optionalMenu.isEmpty()) {
+            return;
+        }
+        final Menu menu = optionalMenu.get();
+        String formattedPrivacy = "Enabled";
+        if (mineData.isPrivate()) {
+            formattedPrivacy = "Disabled";
+        }
+        final int slot = this.plugin.getComponentManager().getFileComponent().getConfiguration().getInt("components.mine.commands.mine.sub-commands.panel.menus.manage-visitation.items.privacy.slot");
+        final Material material = Material.getMaterial(this.plugin.getComponentManager().getFileComponent().getConfiguration().getString("components.mine.commands.mine.sub-commands.panel.menus.manage-visitation.items.privacy.material"));
+        final Optional<String> name = Optional.of(StringUtilities.colorize(this.plugin.getComponentManager().getFileComponent().getConfiguration().getString("components.mine.commands.mine.sub-commands.panel.menus.manage-visitation.items.privacy.name").replace("%privacy%", formattedPrivacy)));
+        final Optional<ArrayList<String>> lore = Optional.of(new ArrayList<String>(this.plugin.getComponentManager().getFileComponent().getConfiguration().getStringList("components.mine.commands.mine.sub-commands.panel.menus.manage-visitation.items.privacy.lore").stream().map(loreLine -> StringUtilities.colorize(loreLine)).collect(Collectors.toList())));
+        final boolean glowing = this.plugin.getComponentManager().getFileComponent().getConfiguration().getBoolean("components.mine.commands.mine.sub-commands.panel.menus.manage-visitation.items.privacy.glowing");
+        final boolean unbreakable = this.plugin.getComponentManager().getFileComponent().getConfiguration().getBoolean("components.mine.commands.mine.sub-commands.panel.menus.manage-visitation.items.privacy.unbreakable");
+        final Item item = new Item(new ItemStack(material));
+        name.ifPresent(presentName -> item.setName(presentName));
+        lore.ifPresent(presentLore -> item.setLore(presentLore));
+        if (unbreakable) {
+            item.unbreakable();
+        }
+        if (glowing) {
+            item.glow();
+        }
+        final MenuItem menuItem = new MenuItem(item.getItemStack(), inventoryClickEvent -> {
+            inventoryClickEvent.setCancelled(true);
+            player.playSound(player.getLocation(), Sound.valueOf(this.plugin.getComponentManager().getFileComponent().getConfiguration().getString("components.mine.commands.mine.sub-commands.panel.menus.manage-visitation.sounds.click.sound")), (float) this.plugin.getComponentManager().getFileComponent().getConfiguration().getDouble("components.mine.commands.mine.sub-commands.panel.menus.manage-visitation.sounds.click.volume"), (float) this.plugin.getComponentManager().getFileComponent().getConfiguration().getDouble("components.mine.commands.mine.sub-commands.panel.menus.manage-visitation.sounds.click.pitch"));
+            player.chat("/mine privacy");
+        });
+        menu.getItems().put(slot, menuItem);
+        Bukkit.getScheduler().runTask(this.plugin, () -> menu.update());
+    }
+
+    /**
+     * Allows you to open the "panel" sub-command's bans menu.
+     *
+     * @param player ~ The player to open it for.
+     */
+    private void openPanelBansMenu(final Player player) {
+        final PlayerData playerData = PlayerData.getViaCache(player.getUniqueId()).get();
+        final MineData mineData = MineData.getViaCache(playerData.getMine().get()).get();
+        final InventoryType inventoryType = InventoryType.valueOf(this.plugin.getComponentManager().getFileComponent().getConfiguration().getString("components.mine.commands.mine.sub-commands.panel.menus.user-control.inventory.type"));
+        final String title = StringUtilities.colorize(this.plugin.getComponentManager().getFileComponent().getConfiguration().getString("components.mine.commands.mine.sub-commands.panel.menus.user-control.inventory.title").replace("%type%", "Bans"));
+        Menu menu;
+        if (inventoryType == InventoryType.CHEST) {
+            final int rows = this.plugin.getComponentManager().getFileComponent().getConfiguration().getInt("components.mine.commands.mine.sub-commands.panel.menus.user-control.inventory.rows");
+            menu = new Menu(this.plugin, player, rows, title);
+        } else {
+            menu = new Menu(this.plugin, player, inventoryType, title);
+        }
+        menu.setIdentifier("mine-panel-bans");
+        this.plugin.getComponentManager().getFileComponent().getConfiguration().getConfigurationSection("components.mine.commands.mine.sub-commands.panel.menus.user-control.inventory.items").getKeys(false).stream().map(key -> Integer.parseInt(key)).collect(Collectors.toList()).forEach(slot -> {
+            final Material material = Material.getMaterial(this.plugin.getComponentManager().getFileComponent().getConfiguration().getString("components.mine.commands.mine.sub-commands.panel.menus.user-control.inventory.items." + slot + ".material"));
+            final Optional<String> name = Optional.of(StringUtilities.colorize(this.plugin.getComponentManager().getFileComponent().getConfiguration().getString("components.mine.commands.mine.sub-commands.panel.menus.user-control.inventory.items." + slot + ".name")));
+            final Optional<ArrayList<String>> lore = Optional.of(new ArrayList<String>(this.plugin.getComponentManager().getFileComponent().getConfiguration().getStringList("components.mine.commands.mine.sub-commands.panel.menus.user-control.inventory.items." + slot + ".lore").stream().map(loreLine -> StringUtilities.colorize(loreLine)).collect(Collectors.toList())));
+            final boolean glowing = this.plugin.getComponentManager().getFileComponent().getConfiguration().getBoolean("components.mine.commands.mine.sub-commands.panel.menus.user-control.inventory.items." + slot + ".glowing");
+            final boolean unbreakable = this.plugin.getComponentManager().getFileComponent().getConfiguration().getBoolean("components.mine.commands.mine.sub-commands.panel.menus.user-control.inventory.items." + slot + ".unbreakable");
+            final Item item = new Item(new ItemStack(material));
+            name.ifPresent(presentName -> item.setName(presentName));
+            lore.ifPresent(presentLore -> item.setLore(presentLore));
+            if (unbreakable) {
+                item.unbreakable();
+            }
+            if (glowing) {
+                item.glow();
+            }
+            final MenuItem menuItem = new MenuItem(item.getItemStack(), inventoryClickEvent -> {
+                inventoryClickEvent.setCancelled(true);
+            });
+            menu.getItems().put((slot - 1), menuItem);
+        });
+        this.plugin.getComponentManager().getFileComponent().getConfiguration().getConfigurationSection("components.mine.commands.mine.sub-commands.panel.menus.user-control.items").getKeys(false).forEach(configurationItem -> {
+            if (this.plugin.getComponentManager().getFileComponent().getConfiguration().isSet("components.mine.commands.mine.sub-commands.panel.menus.user-control.items." + configurationItem + ".slot")) {
+                final int slot = this.plugin.getComponentManager().getFileComponent().getConfiguration().getInt("components.mine.commands.mine.sub-commands.panel.menus.user-control.items." + configurationItem + ".slot");
+                final Material material = Material.getMaterial(this.plugin.getComponentManager().getFileComponent().getConfiguration().getString("components.mine.commands.mine.sub-commands.panel.menus.user-control.items." + configurationItem + ".material"));
+                final Optional<String> name = Optional.of(StringUtilities.colorize(this.plugin.getComponentManager().getFileComponent().getConfiguration().getString("components.mine.commands.mine.sub-commands.panel.menus.user-control.items." + configurationItem + ".name")));
+                final Optional<ArrayList<String>> lore = Optional.of(new ArrayList<String>(this.plugin.getComponentManager().getFileComponent().getConfiguration().getStringList("components.mine.commands.mine.sub-commands.panel.menus.user-control.items." + configurationItem + ".lore").stream().map(loreLine -> StringUtilities.colorize(loreLine)).collect(Collectors.toList())));
+                final boolean glowing = this.plugin.getComponentManager().getFileComponent().getConfiguration().getBoolean("components.mine.commands.mine.sub-commands.panel.menus.user-control.items." + configurationItem + ".glowing");
+                final boolean unbreakable = this.plugin.getComponentManager().getFileComponent().getConfiguration().getBoolean("components.mine.commands.mine.sub-commands.panel.menus.user-control.items." + configurationItem + ".unbreakable");
+                final Item item = new Item(new ItemStack(material));
+                name.ifPresent(presentName -> item.setName(presentName));
+                lore.ifPresent(presentLore -> item.setLore(presentLore));
+                if (unbreakable) {
+                    item.unbreakable();
+                }
+                if (glowing) {
+                    item.glow();
+                }
+                final MenuItem menuItem;
+                switch (configurationItem) {
+                    case "next-page" -> menuItem = new MenuItem(item.getItemStack(), inventoryClickEvent -> {
+                        inventoryClickEvent.setCancelled(true);
+                        player.playSound(player.getLocation(), Sound.valueOf(this.plugin.getComponentManager().getFileComponent().getConfiguration().getString("components.mine.commands.mine.sub-commands.panel.menus.user-control.sounds.click.sound")), (float) this.plugin.getComponentManager().getFileComponent().getConfiguration().getDouble("components.mine.commands.mine.sub-commands.panel.menus.user-control.sounds.click.volume"), (float) this.plugin.getComponentManager().getFileComponent().getConfiguration().getDouble("components.mine.commands.mine.sub-commands.panel.menus.user-control.sounds.click.pitch"));
+                        this.updatePanelBansMenu(player, 1);
+                    });
+                    case "previous-page" -> menuItem = new MenuItem(item.getItemStack(), inventoryClickEvent -> {
+                        inventoryClickEvent.setCancelled(true);
+                        player.playSound(player.getLocation(), Sound.valueOf(this.plugin.getComponentManager().getFileComponent().getConfiguration().getString("components.mine.commands.mine.sub-commands.panel.menus.user-control.sounds.click.sound")), (float) this.plugin.getComponentManager().getFileComponent().getConfiguration().getDouble("components.mine.commands.mine.sub-commands.panel.menus.user-control.sounds.click.volume"), (float) this.plugin.getComponentManager().getFileComponent().getConfiguration().getDouble("components.mine.commands.mine.sub-commands.panel.menus.user-control.sounds.click.pitch"));
+                        this.openPanelManageVisitationMenu(player);
+                    });
+                    default -> menuItem = new MenuItem(item.getItemStack(), inventoryClickEvent -> {
+                        inventoryClickEvent.setCancelled(true);
+                        player.playSound(player.getLocation(), Sound.valueOf(this.plugin.getComponentManager().getFileComponent().getConfiguration().getString("components.mine.commands.mine.sub-commands.panel.menus.user-control.sounds.click.sound")), (float) this.plugin.getComponentManager().getFileComponent().getConfiguration().getDouble("components.mine.commands.mine.sub-commands.panel.menus.user-control.sounds.click.volume"), (float) this.plugin.getComponentManager().getFileComponent().getConfiguration().getDouble("components.mine.commands.mine.sub-commands.panel.menus.user-control.sounds.click.pitch"));
+                    });
+                }
+                menu.getItems().put(slot, menuItem);
+            }
+        });
+        final ArrayList<ItemStack> bannedPlayerItems = new ArrayList<ItemStack>();
+        mineData.getBanned().forEach(bannedUUID -> {
+            final Material material = Material.getMaterial(this.plugin.getComponentManager().getFileComponent().getConfiguration().getString("components.mine.commands.mine.sub-commands.panel.menus.user-control.items.banned-player.material"));
+            final Optional<String> name = Optional.of(StringUtilities.colorize(this.plugin.getComponentManager().getFileComponent().getConfiguration().getString("components.mine.commands.mine.sub-commands.panel.menus.user-control.items.banned-player.name")));
+            final Optional<ArrayList<String>> lore = Optional.of(new ArrayList<String>(this.plugin.getComponentManager().getFileComponent().getConfiguration().getStringList("components.mine.commands.mine.sub-commands.panel.menus.user-control.items.banned-player.lore").stream().map(loreLine -> StringUtilities.colorize(loreLine)).collect(Collectors.toList())));
+            final boolean glowing = this.plugin.getComponentManager().getFileComponent().getConfiguration().getBoolean("components.mine.commands.mine.sub-commands.panel.menus.user-control.items.banned-player.glowing");
+            final boolean unbreakable = this.plugin.getComponentManager().getFileComponent().getConfiguration().getBoolean("components.mine.commands.mine.sub-commands.panel.menus.user-control.items.banned-player.unbreakable");
+            final Item item;
+            if (material == null) {
+                item = new Item(new ItemStack(Material.PLAYER_HEAD));
+                item.setHeadOwner(Bukkit.getOfflinePlayer(bannedUUID));
+            } else {
+                item = new Item(new ItemStack(material));
+            }
+            name.ifPresent(presentName -> item.setName(presentName));
+            lore.ifPresent(presentLore -> item.setLore(presentLore));
+            if (unbreakable) {
+                item.unbreakable();
+            }
+            if (glowing) {
+                item.glow();
+            }
+            final ItemData itemData = new ItemData(this.plugin, item.getItemStack());
+            itemData.setValue("uuid", bannedUUID.toString(), PersistentDataType.STRING);
+            bannedPlayerItems.add(itemData.getItemStack());
+        });
+        final ArrayList<Integer> openSlots = new ArrayList<Integer>();
+        int size;
+        if (menu.getRows().isPresent()) {
+            size = (menu.getRows().get() * 9);
+        } else {
+            size = (menu.getType().getDefaultSize() * 9);
+        }
+        for (int menuSlot = 0; menuSlot < size; menuSlot++) {
+            if (!menu.getItems().containsKey(menuSlot)) {
+                openSlots.add(menuSlot);
+            }
+        }
+        final HashMap<Integer, ArrayList<ItemStack>> pageItems = new LinkedHashMap<>();
+        int pageIndex = 0;
+        for (int i = 0; i < bannedPlayerItems.size(); i += openSlots.size()) {
+            pageItems.put(pageIndex, new ArrayList<ItemStack>(bannedPlayerItems.subList(Math.min(bannedPlayerItems.size(), i), Math.min(bannedPlayerItems.size(), i + openSlots.size()))));
+            pageIndex++;
+        }
+        for (int slot = openSlots.get(0); slot < pageItems.get(0).size(); slot++) {
+            final ItemStack slotItem = pageItems.get(0).get(slot);
+            final ItemData itemData = new ItemData(this.plugin, slotItem);
+            final UUID bannedUUID = UUID.fromString((String) itemData.getValue("uuid", PersistentDataType.STRING));
+            final MenuItem menuItem = new MenuItem(slotItem, inventoryClickEvent -> {
+                inventoryClickEvent.setCancelled(true);
+                player.playSound(player.getLocation(), Sound.valueOf(this.plugin.getComponentManager().getFileComponent().getConfiguration().getString("components.mine.commands.mine.sub-commands.panel.menus.user-control.sounds.click.sound")), (float) this.plugin.getComponentManager().getFileComponent().getConfiguration().getDouble("components.mine.commands.mine.sub-commands.panel.menus.user-control.sounds.click.volume"), (float) this.plugin.getComponentManager().getFileComponent().getConfiguration().getDouble("components.mine.commands.mine.sub-commands.panel.menus.user-control.sounds.click.pitch"));
+                player.chat("/mine unban " + Bukkit.getOfflinePlayer(bannedUUID).getName());
+                this.updatePanelBansMenu(player, 0);
+            });
+            menu.getItems().put(slot, menuItem);
+        }
+        Bukkit.getScheduler().runTask(this.plugin, () -> menu.open());
+    }
+
+    /**
+     * Allows you to update the "panel" sub-command's bans menu.
+     * This is used for multi-paging and stuff, it's pretty long for no reason, but it works efficiently.
+     *
+     * @param player ~ The player to open it for.
+     * @param page ~ The page to update it for or to.
+     */
+    private void updatePanelBansMenu(final Player player, final int page) {
+        final PlayerData playerData = PlayerData.getViaCache(player.getUniqueId()).get();
+        final MineData mineData = MineData.getViaCache(playerData.getMine().get()).get();
+        final Optional<Menu> optionalMenu = MenuImplementor.get(this.plugin).getMenus().stream().filter(menu -> menu.getPlayer() == player && menu.getIdentifier().equals("mine-panel-bans")).findFirst();
+        if (optionalMenu.isEmpty()) {
+            return;
+        }
+        final Menu menu = optionalMenu.get();
+        this.plugin.getComponentManager().getFileComponent().getConfiguration().getConfigurationSection("components.mine.commands.mine.sub-commands.panel.menus.user-control.inventory.items").getKeys(false).stream().map(key -> Integer.parseInt(key)).collect(Collectors.toList()).forEach(slot -> {
+            final Material material = Material.getMaterial(this.plugin.getComponentManager().getFileComponent().getConfiguration().getString("components.mine.commands.mine.sub-commands.panel.menus.user-control.inventory.items." + slot + ".material"));
+            final Optional<String> name = Optional.of(StringUtilities.colorize(this.plugin.getComponentManager().getFileComponent().getConfiguration().getString("components.mine.commands.mine.sub-commands.panel.menus.user-control.inventory.items." + slot + ".name")));
+            final Optional<ArrayList<String>> lore = Optional.of(new ArrayList<String>(this.plugin.getComponentManager().getFileComponent().getConfiguration().getStringList("components.mine.commands.mine.sub-commands.panel.menus.user-control.inventory.items." + slot + ".lore").stream().map(loreLine -> StringUtilities.colorize(loreLine)).collect(Collectors.toList())));
+            final boolean glowing = this.plugin.getComponentManager().getFileComponent().getConfiguration().getBoolean("components.mine.commands.mine.sub-commands.panel.menus.user-control.inventory.items." + slot + ".glowing");
+            final boolean unbreakable = this.plugin.getComponentManager().getFileComponent().getConfiguration().getBoolean("components.mine.commands.mine.sub-commands.panel.menus.user-control.inventory.items." + slot + ".unbreakable");
+            final Item item = new Item(new ItemStack(material));
+            name.ifPresent(presentName -> item.setName(presentName));
+            lore.ifPresent(presentLore -> item.setLore(presentLore));
+            if (unbreakable) {
+                item.unbreakable();
+            }
+            if (glowing) {
+                item.glow();
+            }
+            final MenuItem menuItem = new MenuItem(item.getItemStack(), inventoryClickEvent -> {
+                inventoryClickEvent.setCancelled(true);
+            });
+            menu.getItems().put((slot - 1), menuItem);
+        });
+        this.plugin.getComponentManager().getFileComponent().getConfiguration().getConfigurationSection("components.mine.commands.mine.sub-commands.panel.menus.user-control.items").getKeys(false).forEach(configurationItem -> {
+            if (this.plugin.getComponentManager().getFileComponent().getConfiguration().isSet("components.mine.commands.mine.sub-commands.panel.menus.user-control.items." + configurationItem + ".slot")) {
+                final int slot = this.plugin.getComponentManager().getFileComponent().getConfiguration().getInt("components.mine.commands.mine.sub-commands.panel.menus.user-control.items." + configurationItem + ".slot");
+                final Material material = Material.getMaterial(this.plugin.getComponentManager().getFileComponent().getConfiguration().getString("components.mine.commands.mine.sub-commands.panel.menus.user-control.items." + configurationItem + ".material"));
+                final Optional<String> name = Optional.of(StringUtilities.colorize(this.plugin.getComponentManager().getFileComponent().getConfiguration().getString("components.mine.commands.mine.sub-commands.panel.menus.user-control.items." + configurationItem + ".name")));
+                final Optional<ArrayList<String>> lore = Optional.of(new ArrayList<String>(this.plugin.getComponentManager().getFileComponent().getConfiguration().getStringList("components.mine.commands.mine.sub-commands.panel.menus.user-control.items." + configurationItem + ".lore").stream().map(loreLine -> StringUtilities.colorize(loreLine)).collect(Collectors.toList())));
+                final boolean glowing = this.plugin.getComponentManager().getFileComponent().getConfiguration().getBoolean("components.mine.commands.mine.sub-commands.panel.menus.user-control.items." + configurationItem + ".glowing");
+                final boolean unbreakable = this.plugin.getComponentManager().getFileComponent().getConfiguration().getBoolean("components.mine.commands.mine.sub-commands.panel.menus.user-control.items." + configurationItem + ".unbreakable");
+                final Item item = new Item(new ItemStack(material));
+                name.ifPresent(presentName -> item.setName(presentName));
+                lore.ifPresent(presentLore -> item.setLore(presentLore));
+                if (unbreakable) {
+                    item.unbreakable();
+                }
+                if (glowing) {
+                    item.glow();
+                }
+                final MenuItem menuItem;
+                switch (configurationItem) {
+                    case "next-page" -> menuItem = new MenuItem(item.getItemStack(), inventoryClickEvent -> {
+                        inventoryClickEvent.setCancelled(true);
+                        player.playSound(player.getLocation(), Sound.valueOf(this.plugin.getComponentManager().getFileComponent().getConfiguration().getString("components.mine.commands.mine.sub-commands.panel.menus.user-control.sounds.click.sound")), (float) this.plugin.getComponentManager().getFileComponent().getConfiguration().getDouble("components.mine.commands.mine.sub-commands.panel.menus.user-control.sounds.click.volume"), (float) this.plugin.getComponentManager().getFileComponent().getConfiguration().getDouble("components.mine.commands.mine.sub-commands.panel.menus.user-control.sounds.click.pitch"));
+                        this.updatePanelBansMenu(player, (page + 1));
+                    });
+                    case "previous-page" -> menuItem = new MenuItem(item.getItemStack(), inventoryClickEvent -> {
+                        inventoryClickEvent.setCancelled(true);
+                        player.playSound(player.getLocation(), Sound.valueOf(this.plugin.getComponentManager().getFileComponent().getConfiguration().getString("components.mine.commands.mine.sub-commands.panel.menus.user-control.sounds.click.sound")), (float) this.plugin.getComponentManager().getFileComponent().getConfiguration().getDouble("components.mine.commands.mine.sub-commands.panel.menus.user-control.sounds.click.volume"), (float) this.plugin.getComponentManager().getFileComponent().getConfiguration().getDouble("components.mine.commands.mine.sub-commands.panel.menus.user-control.sounds.click.pitch"));
+                        if (page == 0) {
+                            this.openPanelManageVisitationMenu(player);
+                        } else {
+                            this.updatePanelBansMenu(player, (page - 1));
+                        }
+                    });
+                    default -> menuItem = new MenuItem(item.getItemStack(), inventoryClickEvent -> {
+                        inventoryClickEvent.setCancelled(true);
+                        player.playSound(player.getLocation(), Sound.valueOf(this.plugin.getComponentManager().getFileComponent().getConfiguration().getString("components.mine.commands.mine.sub-commands.panel.menus.manage-visitation.sounds.click.sound")), (float) this.plugin.getComponentManager().getFileComponent().getConfiguration().getDouble("components.mine.commands.mine.sub-commands.panel.menus.manage-visitation.sounds.click.volume"), (float) this.plugin.getComponentManager().getFileComponent().getConfiguration().getDouble("components.mine.commands.mine.sub-commands.panel.menus.manage-visitation.sounds.click.pitch"));
+                    });
+                }
+                menu.getItems().put(slot, menuItem);
+            }
+        });
+        final ArrayList<ItemStack> bannedPlayerItems = new ArrayList<ItemStack>();
+        mineData.getBanned().forEach(bannedUUID -> {
+            final Material material = Material.getMaterial(this.plugin.getComponentManager().getFileComponent().getConfiguration().getString("components.mine.commands.mine.sub-commands.panel.menus.user-control.items.banned-player.material"));
+            final Optional<String> name = Optional.of(StringUtilities.colorize(this.plugin.getComponentManager().getFileComponent().getConfiguration().getString("components.mine.commands.mine.sub-commands.panel.menus.user-control.items.banned-player.name")));
+            final Optional<ArrayList<String>> lore = Optional.of(new ArrayList<String>(this.plugin.getComponentManager().getFileComponent().getConfiguration().getStringList("components.mine.commands.mine.sub-commands.panel.menus.user-control.items.banned-player.lore").stream().map(loreLine -> StringUtilities.colorize(loreLine)).collect(Collectors.toList())));
+            final boolean glowing = this.plugin.getComponentManager().getFileComponent().getConfiguration().getBoolean("components.mine.commands.mine.sub-commands.panel.menus.user-control.items.banned-player.glowing");
+            final boolean unbreakable = this.plugin.getComponentManager().getFileComponent().getConfiguration().getBoolean("components.mine.commands.mine.sub-commands.panel.menus.user-control.items.banned-player.unbreakable");
+            final Item item;
+            if (material == null) {
+                item = new Item(new ItemStack(Material.PLAYER_HEAD));
+                item.setHeadOwner(Bukkit.getOfflinePlayer(bannedUUID));
+            } else {
+                item = new Item(new ItemStack(material));
+            }
+            name.ifPresent(presentName -> item.setName(presentName));
+            lore.ifPresent(presentLore -> item.setLore(presentLore));
+            if (unbreakable) {
+                item.unbreakable();
+            }
+            if (glowing) {
+                item.glow();
+            }
+            final ItemData itemData = new ItemData(this.plugin, item.getItemStack());
+            itemData.setValue("uuid", bannedUUID.toString(), PersistentDataType.STRING);
+            bannedPlayerItems.add(itemData.getItemStack());
+        });
+        final ArrayList<Integer> openSlots = new ArrayList<Integer>();
+        int size;
+        if (menu.getRows().isPresent()) {
+            size = (menu.getRows().get() * 9);
+        } else {
+            size = (menu.getType().getDefaultSize() * 9);
+        }
+        for (int menuSlot = 0; menuSlot < size; menuSlot++) {
+            if (!menu.getItems().containsKey(menuSlot)) {
+                openSlots.add(menuSlot);
+            }
+        }
+        final HashMap<Integer, ArrayList<ItemStack>> pageItems = new LinkedHashMap<>();
+        int pageIndex = 0;
+        for (int i = 0; i < bannedPlayerItems.size(); i += openSlots.size()) {
+            pageItems.put(pageIndex, new ArrayList<ItemStack>(bannedPlayerItems.subList(Math.min(bannedPlayerItems.size(), i), Math.min(bannedPlayerItems.size(), i + openSlots.size()))));
+            pageIndex++;
+        }
+        for (int slot = openSlots.get(0); slot < pageItems.get(page).size(); slot++) {
+            final ItemStack slotItem = pageItems.get(page).get(slot);
+            final ItemData itemData = new ItemData(this.plugin, slotItem);
+            final UUID bannedUUID = UUID.fromString((String) itemData.getValue("uuid", PersistentDataType.STRING));
+            final MenuItem menuItem = new MenuItem(slotItem, inventoryClickEvent -> {
+                inventoryClickEvent.setCancelled(true);
+                player.playSound(player.getLocation(), Sound.valueOf(this.plugin.getComponentManager().getFileComponent().getConfiguration().getString("components.mine.commands.mine.sub-commands.panel.menus.user-control.sounds.click.sound")), (float) this.plugin.getComponentManager().getFileComponent().getConfiguration().getDouble("components.mine.commands.mine.sub-commands.panel.menus.user-control.sounds.click.volume"), (float) this.plugin.getComponentManager().getFileComponent().getConfiguration().getDouble("components.mine.commands.mine.sub-commands.panel.menus.user-control.sounds.click.pitch"));
+                player.chat("/mine unban " + Bukkit.getOfflinePlayer(bannedUUID).getName());
+                this.updatePanelBansMenu(player, page);
+            });
+            menu.getItems().put(slot, menuItem);
+        }
+        Bukkit.getScheduler().runTask(this.plugin, () -> menu.update());
+    }
+
+    /**
+     * Allows you to open the "panel" sub-command's whitelisted menu.
+     *
+     * @param player ~ The player to open it for.
+     */
+    private void openPanelWhitelistedMenu(final Player player) {
+        final PlayerData playerData = PlayerData.getViaCache(player.getUniqueId()).get();
+        final MineData mineData = MineData.getViaCache(playerData.getMine().get()).get();
+        final InventoryType inventoryType = InventoryType.valueOf(this.plugin.getComponentManager().getFileComponent().getConfiguration().getString("components.mine.commands.mine.sub-commands.panel.menus.user-control.inventory.type"));
+        final String title = StringUtilities.colorize(this.plugin.getComponentManager().getFileComponent().getConfiguration().getString("components.mine.commands.mine.sub-commands.panel.menus.user-control.inventory.title").replace("%type%", "Whitelisted"));
+        Menu menu;
+        if (inventoryType == InventoryType.CHEST) {
+            final int rows = this.plugin.getComponentManager().getFileComponent().getConfiguration().getInt("components.mine.commands.mine.sub-commands.panel.menus.user-control.inventory.rows");
+            menu = new Menu(this.plugin, player, rows, title);
+        } else {
+            menu = new Menu(this.plugin, player, inventoryType, title);
+        }
+        menu.setIdentifier("mine-panel-whitelisted");
+        this.plugin.getComponentManager().getFileComponent().getConfiguration().getConfigurationSection("components.mine.commands.mine.sub-commands.panel.menus.user-control.inventory.items").getKeys(false).stream().map(key -> Integer.parseInt(key)).collect(Collectors.toList()).forEach(slot -> {
+            final Material material = Material.getMaterial(this.plugin.getComponentManager().getFileComponent().getConfiguration().getString("components.mine.commands.mine.sub-commands.panel.menus.user-control.inventory.items." + slot + ".material"));
+            final Optional<String> name = Optional.of(StringUtilities.colorize(this.plugin.getComponentManager().getFileComponent().getConfiguration().getString("components.mine.commands.mine.sub-commands.panel.menus.user-control.inventory.items." + slot + ".name")));
+            final Optional<ArrayList<String>> lore = Optional.of(new ArrayList<String>(this.plugin.getComponentManager().getFileComponent().getConfiguration().getStringList("components.mine.commands.mine.sub-commands.panel.menus.user-control.inventory.items." + slot + ".lore").stream().map(loreLine -> StringUtilities.colorize(loreLine)).collect(Collectors.toList())));
+            final boolean glowing = this.plugin.getComponentManager().getFileComponent().getConfiguration().getBoolean("components.mine.commands.mine.sub-commands.panel.menus.user-control.inventory.items." + slot + ".glowing");
+            final boolean unbreakable = this.plugin.getComponentManager().getFileComponent().getConfiguration().getBoolean("components.mine.commands.mine.sub-commands.panel.menus.user-control.inventory.items." + slot + ".unbreakable");
+            final Item item = new Item(new ItemStack(material));
+            name.ifPresent(presentName -> item.setName(presentName));
+            lore.ifPresent(presentLore -> item.setLore(presentLore));
+            if (unbreakable) {
+                item.unbreakable();
+            }
+            if (glowing) {
+                item.glow();
+            }
+            final MenuItem menuItem = new MenuItem(item.getItemStack(), inventoryClickEvent -> {
+                inventoryClickEvent.setCancelled(true);
+            });
+            menu.getItems().put((slot - 1), menuItem);
+        });
+        this.plugin.getComponentManager().getFileComponent().getConfiguration().getConfigurationSection("components.mine.commands.mine.sub-commands.panel.menus.user-control.items").getKeys(false).forEach(configurationItem -> {
+            if (this.plugin.getComponentManager().getFileComponent().getConfiguration().isSet("components.mine.commands.mine.sub-commands.panel.menus.user-control.items." + configurationItem + ".slot")) {
+                final int slot = this.plugin.getComponentManager().getFileComponent().getConfiguration().getInt("components.mine.commands.mine.sub-commands.panel.menus.user-control.items." + configurationItem + ".slot");
+                final Material material = Material.getMaterial(this.plugin.getComponentManager().getFileComponent().getConfiguration().getString("components.mine.commands.mine.sub-commands.panel.menus.user-control.items." + configurationItem + ".material"));
+                final Optional<String> name = Optional.of(StringUtilities.colorize(this.plugin.getComponentManager().getFileComponent().getConfiguration().getString("components.mine.commands.mine.sub-commands.panel.menus.user-control.items." + configurationItem + ".name")));
+                final Optional<ArrayList<String>> lore = Optional.of(new ArrayList<String>(this.plugin.getComponentManager().getFileComponent().getConfiguration().getStringList("components.mine.commands.mine.sub-commands.panel.menus.user-control.items." + configurationItem + ".lore").stream().map(loreLine -> StringUtilities.colorize(loreLine)).collect(Collectors.toList())));
+                final boolean glowing = this.plugin.getComponentManager().getFileComponent().getConfiguration().getBoolean("components.mine.commands.mine.sub-commands.panel.menus.user-control.items." + configurationItem + ".glowing");
+                final boolean unbreakable = this.plugin.getComponentManager().getFileComponent().getConfiguration().getBoolean("components.mine.commands.mine.sub-commands.panel.menus.user-control.items." + configurationItem + ".unbreakable");
+                final Item item = new Item(new ItemStack(material));
+                name.ifPresent(presentName -> item.setName(presentName));
+                lore.ifPresent(presentLore -> item.setLore(presentLore));
+                if (unbreakable) {
+                    item.unbreakable();
+                }
+                if (glowing) {
+                    item.glow();
+                }
+                final MenuItem menuItem;
+                switch (configurationItem) {
+                    case "next-page" -> menuItem = new MenuItem(item.getItemStack(), inventoryClickEvent -> {
+                        inventoryClickEvent.setCancelled(true);
+                        player.playSound(player.getLocation(), Sound.valueOf(this.plugin.getComponentManager().getFileComponent().getConfiguration().getString("components.mine.commands.mine.sub-commands.panel.menus.user-control.sounds.click.sound")), (float) this.plugin.getComponentManager().getFileComponent().getConfiguration().getDouble("components.mine.commands.mine.sub-commands.panel.menus.user-control.sounds.click.volume"), (float) this.plugin.getComponentManager().getFileComponent().getConfiguration().getDouble("components.mine.commands.mine.sub-commands.panel.menus.user-control.sounds.click.pitch"));
+                        this.updatePanelWhitelistedMenu(player, 1);
+                    });
+                    case "previous-page" -> menuItem = new MenuItem(item.getItemStack(), inventoryClickEvent -> {
+                        inventoryClickEvent.setCancelled(true);
+                        player.playSound(player.getLocation(), Sound.valueOf(this.plugin.getComponentManager().getFileComponent().getConfiguration().getString("components.mine.commands.mine.sub-commands.panel.menus.user-control.sounds.click.sound")), (float) this.plugin.getComponentManager().getFileComponent().getConfiguration().getDouble("components.mine.commands.mine.sub-commands.panel.menus.user-control.sounds.click.volume"), (float) this.plugin.getComponentManager().getFileComponent().getConfiguration().getDouble("components.mine.commands.mine.sub-commands.panel.menus.user-control.sounds.click.pitch"));
+                        this.openPanelManageVisitationMenu(player);
+                    });
+                    default -> menuItem = new MenuItem(item.getItemStack(), inventoryClickEvent -> {
+                        inventoryClickEvent.setCancelled(true);
+                        player.playSound(player.getLocation(), Sound.valueOf(this.plugin.getComponentManager().getFileComponent().getConfiguration().getString("components.mine.commands.mine.sub-commands.panel.menus.user-control.sounds.click.sound")), (float) this.plugin.getComponentManager().getFileComponent().getConfiguration().getDouble("components.mine.commands.mine.sub-commands.panel.menus.user-control.sounds.click.volume"), (float) this.plugin.getComponentManager().getFileComponent().getConfiguration().getDouble("components.mine.commands.mine.sub-commands.panel.menus.user-control.sounds.click.pitch"));
+                    });
+                }
+                menu.getItems().put(slot, menuItem);
+            }
+        });
+        final ArrayList<ItemStack> whitelistedPlayerItems = new ArrayList<ItemStack>();
+        mineData.getWhitelisted().forEach(whitelistedUUID -> {
+            final Material material = Material.getMaterial(this.plugin.getComponentManager().getFileComponent().getConfiguration().getString("components.mine.commands.mine.sub-commands.panel.menus.user-control.items.whitelisted-player.material"));
+            final Optional<String> name = Optional.of(StringUtilities.colorize(this.plugin.getComponentManager().getFileComponent().getConfiguration().getString("components.mine.commands.mine.sub-commands.panel.menus.user-control.items.whitelisted-player.name")));
+            final Optional<ArrayList<String>> lore = Optional.of(new ArrayList<String>(this.plugin.getComponentManager().getFileComponent().getConfiguration().getStringList("components.mine.commands.mine.sub-commands.panel.menus.user-control.items.whitelisted-player.lore").stream().map(loreLine -> StringUtilities.colorize(loreLine)).collect(Collectors.toList())));
+            final boolean glowing = this.plugin.getComponentManager().getFileComponent().getConfiguration().getBoolean("components.mine.commands.mine.sub-commands.panel.menus.user-control.items.whitelisted-player.glowing");
+            final boolean unbreakable = this.plugin.getComponentManager().getFileComponent().getConfiguration().getBoolean("components.mine.commands.mine.sub-commands.panel.menus.user-control.items.whitelisted-player.unbreakable");
+            final Item item;
+            if (material == null) {
+                item = new Item(new ItemStack(Material.PLAYER_HEAD));
+                item.setHeadOwner(Bukkit.getOfflinePlayer(whitelistedUUID));
+            } else {
+                item = new Item(new ItemStack(material));
+            }
+            name.ifPresent(presentName -> item.setName(presentName));
+            lore.ifPresent(presentLore -> item.setLore(presentLore));
+            if (unbreakable) {
+                item.unbreakable();
+            }
+            if (glowing) {
+                item.glow();
+            }
+            final ItemData itemData = new ItemData(this.plugin, item.getItemStack());
+            itemData.setValue("uuid", whitelistedUUID.toString(), PersistentDataType.STRING);
+            whitelistedPlayerItems.add(itemData.getItemStack());
+        });
+        final ArrayList<Integer> openSlots = new ArrayList<Integer>();
+        int size;
+        if (menu.getRows().isPresent()) {
+            size = (menu.getRows().get() * 9);
+        } else {
+            size = (menu.getType().getDefaultSize() * 9);
+        }
+        for (int menuSlot = 0; menuSlot < size; menuSlot++) {
+            if (!menu.getItems().containsKey(menuSlot)) {
+                openSlots.add(menuSlot);
+            }
+        }
+        final HashMap<Integer, ArrayList<ItemStack>> pageItems = new LinkedHashMap<>();
+        int pageIndex = 0;
+        for (int i = 0; i < whitelistedPlayerItems.size(); i += openSlots.size()) {
+            pageItems.put(pageIndex, new ArrayList<ItemStack>(whitelistedPlayerItems.subList(Math.min(whitelistedPlayerItems.size(), i), Math.min(whitelistedPlayerItems.size(), i + openSlots.size()))));
+            pageIndex++;
+        }
+        for (int slot = openSlots.get(0); slot < pageItems.get(0).size(); slot++) {
+            final ItemStack slotItem = pageItems.get(0).get(slot);
+            final ItemData itemData = new ItemData(this.plugin, slotItem);
+            final UUID whitelistedUUID = UUID.fromString((String) itemData.getValue("uuid", PersistentDataType.STRING));
+            final MenuItem menuItem = new MenuItem(slotItem, inventoryClickEvent -> {
+                inventoryClickEvent.setCancelled(true);
+                player.playSound(player.getLocation(), Sound.valueOf(this.plugin.getComponentManager().getFileComponent().getConfiguration().getString("components.mine.commands.mine.sub-commands.panel.menus.user-control.sounds.click.sound")), (float) this.plugin.getComponentManager().getFileComponent().getConfiguration().getDouble("components.mine.commands.mine.sub-commands.panel.menus.user-control.sounds.click.volume"), (float) this.plugin.getComponentManager().getFileComponent().getConfiguration().getDouble("components.mine.commands.mine.sub-commands.panel.menus.user-control.sounds.click.pitch"));
+                player.chat("/mine unwhitelist " + Bukkit.getOfflinePlayer(whitelistedUUID).getName());
+                this.updatePanelWhitelistedMenu(player, 0);
+            });
+            menu.getItems().put(slot, menuItem);
+        }
+        Bukkit.getScheduler().runTask(this.plugin, () -> menu.open());
+    }
+
+    /**
+     * Allows you to update the "panel" sub-command's whitelisted menu.
+     * This is used for multi-paging and stuff, it's pretty long for no reason, but it works efficiently.
+     *
+     * @param player ~ The player to open it for.
+     * @param page ~ The page to update it for or to.
+     */
+    private void updatePanelWhitelistedMenu(final Player player, final int page) {
+        final PlayerData playerData = PlayerData.getViaCache(player.getUniqueId()).get();
+        final MineData mineData = MineData.getViaCache(playerData.getMine().get()).get();
+        final Optional<Menu> optionalMenu = MenuImplementor.get(this.plugin).getMenus().stream().filter(menu -> menu.getPlayer() == player && menu.getIdentifier().equals("mine-panel-whitelisted")).findFirst();
+        if (optionalMenu.isEmpty()) {
+            return;
+        }
+        final Menu menu = optionalMenu.get();
+        this.plugin.getComponentManager().getFileComponent().getConfiguration().getConfigurationSection("components.mine.commands.mine.sub-commands.panel.menus.user-control.items").getKeys(false).forEach(configurationItem -> {
+            if (this.plugin.getComponentManager().getFileComponent().getConfiguration().isSet("components.mine.commands.mine.sub-commands.panel.menus.user-control.items." + configurationItem + ".slot")) {
+                final int slot = this.plugin.getComponentManager().getFileComponent().getConfiguration().getInt("components.mine.commands.mine.sub-commands.panel.menus.user-control.items." + configurationItem + ".slot");
+                final Material material = Material.getMaterial(this.plugin.getComponentManager().getFileComponent().getConfiguration().getString("components.mine.commands.mine.sub-commands.panel.menus.user-control.items." + configurationItem + ".material"));
+                final Optional<String> name = Optional.of(StringUtilities.colorize(this.plugin.getComponentManager().getFileComponent().getConfiguration().getString("components.mine.commands.mine.sub-commands.panel.menus.user-control.items." + configurationItem + ".name")));
+                final Optional<ArrayList<String>> lore = Optional.of(new ArrayList<String>(this.plugin.getComponentManager().getFileComponent().getConfiguration().getStringList("components.mine.commands.mine.sub-commands.panel.menus.user-control.items." + configurationItem + ".lore").stream().map(loreLine -> StringUtilities.colorize(loreLine)).collect(Collectors.toList())));
+                final boolean glowing = this.plugin.getComponentManager().getFileComponent().getConfiguration().getBoolean("components.mine.commands.mine.sub-commands.panel.menus.user-control.items." + configurationItem + ".glowing");
+                final boolean unbreakable = this.plugin.getComponentManager().getFileComponent().getConfiguration().getBoolean("components.mine.commands.mine.sub-commands.panel.menus.user-control.items." + configurationItem + ".unbreakable");
+                final Item item = new Item(new ItemStack(material));
+                name.ifPresent(presentName -> item.setName(presentName));
+                lore.ifPresent(presentLore -> item.setLore(presentLore));
+                if (unbreakable) {
+                    item.unbreakable();
+                }
+                if (glowing) {
+                    item.glow();
+                }
+                final MenuItem menuItem;
+                switch (configurationItem) {
+                    case "next-page" -> menuItem = new MenuItem(item.getItemStack(), inventoryClickEvent -> {
+                        inventoryClickEvent.setCancelled(true);
+                        player.playSound(player.getLocation(), Sound.valueOf(this.plugin.getComponentManager().getFileComponent().getConfiguration().getString("components.mine.commands.mine.sub-commands.panel.menus.user-control.sounds.click.sound")), (float) this.plugin.getComponentManager().getFileComponent().getConfiguration().getDouble("components.mine.commands.mine.sub-commands.panel.menus.user-control.sounds.click.volume"), (float) this.plugin.getComponentManager().getFileComponent().getConfiguration().getDouble("components.mine.commands.mine.sub-commands.panel.menus.user-control.sounds.click.pitch"));
+                        this.updatePanelWhitelistedMenu(player, (page + 1));
+                    });
+                    case "previous-page" -> menuItem = new MenuItem(item.getItemStack(), inventoryClickEvent -> {
+                        inventoryClickEvent.setCancelled(true);
+                        player.playSound(player.getLocation(), Sound.valueOf(this.plugin.getComponentManager().getFileComponent().getConfiguration().getString("components.mine.commands.mine.sub-commands.panel.menus.user-control.sounds.click.sound")), (float) this.plugin.getComponentManager().getFileComponent().getConfiguration().getDouble("components.mine.commands.mine.sub-commands.panel.menus.user-control.sounds.click.volume"), (float) this.plugin.getComponentManager().getFileComponent().getConfiguration().getDouble("components.mine.commands.mine.sub-commands.panel.menus.user-control.sounds.click.pitch"));
+                        if (page == 0) {
+                            this.openPanelManageVisitationMenu(player);
+                        } else {
+                            this.updatePanelWhitelistedMenu(player, (page - 1));
+                        }
+                    });
+                    default -> menuItem = new MenuItem(item.getItemStack(), inventoryClickEvent -> {
+                        inventoryClickEvent.setCancelled(true);
+                        player.playSound(player.getLocation(), Sound.valueOf(this.plugin.getComponentManager().getFileComponent().getConfiguration().getString("components.mine.commands.mine.sub-commands.panel.menus.user-control.sounds.click.sound")), (float) this.plugin.getComponentManager().getFileComponent().getConfiguration().getDouble("components.mine.commands.mine.sub-commands.panel.menus.user-control.sounds.click.volume"), (float) this.plugin.getComponentManager().getFileComponent().getConfiguration().getDouble("components.mine.commands.mine.sub-commands.panel.menus.user-control.sounds.click.pitch"));
+                    });
+                }
+                menu.getItems().put(slot, menuItem);
+            }
+        });
+        final ArrayList<ItemStack> whitelistedPlayerItems = new ArrayList<ItemStack>();
+        mineData.getWhitelisted().forEach(whitelistedUUID -> {
+            final Material material = Material.getMaterial(this.plugin.getComponentManager().getFileComponent().getConfiguration().getString("components.mine.commands.mine.sub-commands.panel.menus.user-control.items.whitelisted-player.material"));
+            final Optional<String> name = Optional.of(StringUtilities.colorize(this.plugin.getComponentManager().getFileComponent().getConfiguration().getString("components.mine.commands.mine.sub-commands.panel.menus.user-control.items.whitelisted-player.name")));
+            final Optional<ArrayList<String>> lore = Optional.of(new ArrayList<String>(this.plugin.getComponentManager().getFileComponent().getConfiguration().getStringList("components.mine.commands.mine.sub-commands.panel.menus.user-control.items.whitelisted-player.lore").stream().map(loreLine -> StringUtilities.colorize(loreLine)).collect(Collectors.toList())));
+            final boolean glowing = this.plugin.getComponentManager().getFileComponent().getConfiguration().getBoolean("components.mine.commands.mine.sub-commands.panel.menus.user-control.items.whitelisted-player.glowing");
+            final boolean unbreakable = this.plugin.getComponentManager().getFileComponent().getConfiguration().getBoolean("components.mine.commands.mine.sub-commands.panel.menus.user-control.items.whitelisted-player.unbreakable");
+            final Item item;
+            if (material == null) {
+                item = new Item(new ItemStack(Material.PLAYER_HEAD));
+                item.setHeadOwner(Bukkit.getOfflinePlayer(whitelistedUUID));
+            } else {
+                item = new Item(new ItemStack(material));
+            }
+            name.ifPresent(presentName -> item.setName(presentName));
+            lore.ifPresent(presentLore -> item.setLore(presentLore));
+            if (unbreakable) {
+                item.unbreakable();
+            }
+            if (glowing) {
+                item.glow();
+            }
+            final ItemData itemData = new ItemData(this.plugin, item.getItemStack());
+            itemData.setValue("uuid", whitelistedUUID.toString(), PersistentDataType.STRING);
+            whitelistedPlayerItems.add(itemData.getItemStack());
+        });
+        final ArrayList<Integer> openSlots = new ArrayList<Integer>();
+        int size;
+        if (menu.getRows().isPresent()) {
+            size = (menu.getRows().get() * 9);
+        } else {
+            size = (menu.getType().getDefaultSize() * 9);
+        }
+        for (int menuSlot = 0; menuSlot < size; menuSlot++) {
+            if (!menu.getItems().containsKey(menuSlot)) {
+                openSlots.add(menuSlot);
+            }
+        }
+        final HashMap<Integer, ArrayList<ItemStack>> pageItems = new LinkedHashMap<>();
+        int pageIndex = 0;
+        for (int i = 0; i < whitelistedPlayerItems.size(); i += openSlots.size()) {
+            pageItems.put(pageIndex, new ArrayList<ItemStack>(whitelistedPlayerItems.subList(Math.min(whitelistedPlayerItems.size(), i), Math.min(whitelistedPlayerItems.size(), i + openSlots.size()))));
+            pageIndex++;
+        }
+        for (int slot = openSlots.get(0); slot < pageItems.get(page).size(); slot++) {
+            final ItemStack slotItem = pageItems.get(page).get(slot);
+            final ItemData itemData = new ItemData(this.plugin, slotItem);
+            final UUID whitelistedUUID = UUID.fromString((String) itemData.getValue("uuid", PersistentDataType.STRING));
+            final MenuItem menuItem = new MenuItem(slotItem, inventoryClickEvent -> {
+                inventoryClickEvent.setCancelled(true);
+                player.playSound(player.getLocation(), Sound.valueOf(this.plugin.getComponentManager().getFileComponent().getConfiguration().getString("components.mine.commands.mine.sub-commands.panel.menus.user-control.sounds.click.sound")), (float) this.plugin.getComponentManager().getFileComponent().getConfiguration().getDouble("components.mine.commands.mine.sub-commands.panel.menus.user-control.sounds.click.volume"), (float) this.plugin.getComponentManager().getFileComponent().getConfiguration().getDouble("components.mine.commands.mine.sub-commands.panel.menus.user-control.sounds.click.pitch"));
+                player.chat("/mine unwhitelist " + Bukkit.getOfflinePlayer(whitelistedUUID).getName());
+                this.updatePanelWhitelistedMenu(player, 0);
+            });
+            menu.getItems().put(slot, menuItem);
+        }
+        Bukkit.getScheduler().runTask(this.plugin, () -> menu.open());
+    }
+
 
 }

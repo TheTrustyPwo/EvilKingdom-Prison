@@ -628,7 +628,7 @@ components:
     commands:
 
       #The "/mine" command.
-      #If the player does not have a mine, it will root to the "/mine create" sub-command- if they do have a mine, it will root to the "/mine go" sub-command.
+      #If the player does not have a mine, it will root to the "/mine create" sub-command- if they do have a mine, it will root to the "/mine panel" sub-command.
       mine:
 
         #The command's sub-commands.
@@ -655,6 +655,7 @@ components:
                 - "&6 » &e/mine help &7| &fAllows you to view this beautiful message."
                 - "&6 » &e/mine create &7| &fAllows you to create a mine."
                 - "&6 » &e/mine reset &7| &fAllows you to reset your mine."
+                - "&6 » &e/mine panel &7| &fAllows you to open your mine panel."
                 - "&6 » &e/mine retheme &7| &fAllows you to retheme your mine."
                 - "&6 » &e/mine go &7| &fAllows you to go to your mine."
                 - "&6 » &e/mine privacy &7| &fAllows you to toggle your mine's privacy state."
@@ -944,6 +945,22 @@ components:
               #The theme selector menu.
               theme-selector:
 
+                #The menu's sounds.
+                sounds:
+
+                  #The sound sent when there is a menu item clicked.
+                  click:
+
+                    #The sound.
+                    #Use the SpigotMC 1.18.2's API's sound list, which can be found at https://hub.spigotmc.org/javadocs/spigot/org/bukkit/Sound.html.
+                    sound: "UI_BUTTON_CLICK"
+
+                    #The sound's pitch.
+                    pitch: 2
+
+                    #The sound's volume.
+                    volume: 1.0
+
                 #The menu's items.
                 items:
 
@@ -992,7 +1009,7 @@ components:
                   rows: 3
 
                   #The menu's title
-                  title: "Mine | Theme Selector"
+                  title: "Mine | Create"
 
                   #The inventory's items.
                   items:
@@ -1811,6 +1828,1596 @@ components:
                   #The sound's volume.
                   volume: 1.0
 
+          #The "/mine panel" sub-command.
+          panel:
+
+            #The sub-command's sounds.
+            sounds:
+
+              #The sound sent when there is an error.
+              error:
+
+                #The sound.
+                #Use the SpigotMC 1.18.2's API's sound list, which can be found at https://hub.spigotmc.org/javadocs/spigot/org/bukkit/Sound.html.
+                sound: "BLOCK_NOTE_BLOCK_BIT"
+
+                #The sound's pitch.
+                pitch: 0.5
+
+                #The sound's volume.
+                volume: 1.0
+
+            #The sub-command's messages.
+            messages:
+
+              #The message sent when the executor is not a player.
+              invalid-executor:
+                - "&6&lPrison &7» &eInvalid executor, &eyou must be a &6player&e."
+
+              #The message sent when the player enters an invalid usage.
+              invalid-usage:
+                - "&6&lPrison &7» &eInvalid usage, &etry &6/mine retheme&e."
+
+              #The message sent when the panel is invalid.
+              invalid-panel:
+
+                #The message sent when the player does not have a mine.
+                has-no-mine:
+                  - "&6&lPrison &7» &eInvalid panel, &eyou &6do not&e have a mine."
+
+            #The sub-command's menus.
+            menus:
+
+              #The manage visitation menu.
+              manage-visitation:
+
+                #The menu's sounds.
+                sounds:
+
+                  #The sound sent when there is a menu item clicked.
+                  click:
+
+                    #The sound.
+                    #Use the SpigotMC 1.18.2's API's sound list, which can be found at https://hub.spigotmc.org/javadocs/spigot/org/bukkit/Sound.html.
+                    sound: "UI_BUTTON_CLICK"
+
+                    #The sound's pitch.
+                    pitch: 2
+
+                    #The sound's volume.
+                    volume: 1.0
+
+                #The menu's items.
+                items:
+
+                  #The privacy item (just executes "/mine privacy").
+                  privacy:
+
+                    #The slot of the item.
+                    slot: 12
+
+                    #The material of the item.
+                    #Use the SpigotMC 1.18.2's API's material list, which can be found at https://hub.spigotmc.org/javadocs/spigot/org/bukkit/Material.html.
+                    material: "TOTEM_OF_UNDYING"
+
+                    #The name of the item.
+                    #Variables:
+                    # - %privacy% ~ The mine's privacy state (Enabled/Disabled).
+                    name: "&6&lPrivacy &7| &6%privacy%"
+
+                    #The lore of the item.
+                    lore:
+                      - ""
+                      - "&6&lInformation"
+                      - " &6» &eAllows you to toggle your mine's privacy state."
+                      - ""
+                      - "&7Toggle your mine's privacy state by using &nLeft Click&7."
+
+                    #The item's glowing state.
+                    glowing: false
+
+                    #The item's unbreakable state.
+                    unbreakable: true
+
+                  #The bans item (opens the bans menu).
+                  bans:
+
+                    #The slot of the item.
+                    slot: 15
+
+                    #The material of the item.
+                    #Use the SpigotMC 1.18.2's API's material list, which can be found at https://hub.spigotmc.org/javadocs/spigot/org/bukkit/Material.html.
+                    material: "REDSTONE"
+
+                    #The name of the item.
+                    name: "&6&lBans"
+
+                    #The lore of the item.
+                    lore:
+                      - ""
+                      - "&6&lInformation"
+                      - " &6» &eAllows you to manage the mine's bans."
+                      - ""
+                      - "&7Manage the mine's bans by using &nLeft Click&7."
+
+                    #The item's glowing state.
+                    glowing: false
+
+                    #The item's unbreakable state.
+                    unbreakable: true
+
+                  #The whitelisted item (opens the whitelisted menu).
+                  whitelisted:
+
+                    #The slot of the item.
+                    slot: 16
+
+                    #The material of the item.
+                    #Use the SpigotMC 1.18.2's API's material list, which can be found at https://hub.spigotmc.org/javadocs/spigot/org/bukkit/Material.html.
+                    material: "GLISTERING_MELON_SLICE"
+
+                    #The name of the item.
+                    name: "&6&lWhitelisted"
+
+                    #The lore of the item.
+                    lore:
+                      - ""
+                      - "&6&lInformation"
+                      - " &6» &eAllows you to manage the mine's whitelisted."
+                      - ""
+                      - "&7Manage the mine's whitelisted by using &nLeft Click&7."
+
+                    #The item's glowing state.
+                    glowing: false
+
+                    #The item's unbreakable state.
+                    unbreakable: true
+
+                  #The previous page item (goes to the previous menu).
+                  previous-page:
+
+                    #The slot of the item.
+                    slot: 19
+
+                    #The material of the item.
+                    #Use the SpigotMC 1.18.2's API's material list, which can be found at https://hub.spigotmc.org/javadocs/spigot/org/bukkit/Material.html.
+                    material: "SHIELD"
+
+                    #The name of the item.
+                    name: "&6Previous Page"
+
+                    #The item's glowing state.
+                    glowing: false
+
+                    #The item's unbreakable state.
+                    unbreakable: true
+
+                #The menu's inventory.
+                inventory:
+
+                  #The menu's type.
+                  #Use the SpigotMC 1.18.2's API's inventory type list, which can be found at https://hub.spigotmc.org/javadocs/spigot/org/bukkit/event/inventory/InventoryType.html.
+                  type: "CHEST"
+
+                  #The menu's rows.
+                  #This should only be used if the menu's type is CHEST.
+                  rows: 3
+
+                  #The menu's title
+                  title: "Mine | Visitation Manager"
+
+                  #The inventory's items.
+                  items:
+
+                    #The item's slot.
+                    1:
+
+                      #The material of the item.
+                      #Use the SpigotMC 1.18.2's API's material list, which can be found at https://hub.spigotmc.org/javadocs/spigot/org/bukkit/Material.html.
+                      material: "BLACK_STAINED_GLASS_PANE"
+
+                      #The name of the item.
+                      name: "&0"
+
+                      #The item's glowing state.
+                      glowing: false
+
+                      #The item's unbreakable state.
+                      unbreakable: true
+
+                    #The item's slot.
+                    2:
+
+                      #The material of the item.
+                      #Use the SpigotMC 1.18.2's API's material list, which can be found at https://hub.spigotmc.org/javadocs/spigot/org/bukkit/Material.html.
+                      material: "BLACK_STAINED_GLASS_PANE"
+
+                      #The name of the item.
+                      name: "&0"
+
+                      #The item's glowing state.
+                      glowing: false
+
+                      #The item's unbreakable state.
+                      unbreakable: true
+
+                    #The item's slot.
+                    3:
+
+                      #The material of the item.
+                      #Use the SpigotMC 1.18.2's API's material list, which can be found at https://hub.spigotmc.org/javadocs/spigot/org/bukkit/Material.html.
+                      material: "BLACK_STAINED_GLASS_PANE"
+
+                      #The name of the item.
+                      name: "&0"
+
+                      #The item's glowing state.
+                      glowing: false
+
+                      #The item's unbreakable state.
+                      unbreakable: true
+
+                    #The item's slot.
+                    4:
+
+                      #The material of the item.
+                      #Use the SpigotMC 1.18.2's API's material list, which can be found at https://hub.spigotmc.org/javadocs/spigot/org/bukkit/Material.html.
+                      material: "BLACK_STAINED_GLASS_PANE"
+
+                      #The name of the item.
+                      name: "&0"
+
+                      #The item's glowing state.
+                      glowing: false
+
+                      #The item's unbreakable state.
+                      unbreakable: true
+
+                    #The item's slot.
+                    5:
+
+                      #The material of the item.
+                      #Use the SpigotMC 1.18.2's API's material list, which can be found at https://hub.spigotmc.org/javadocs/spigot/org/bukkit/Material.html.
+                      material: "BLACK_STAINED_GLASS_PANE"
+
+                      #The name of the item.
+                      name: "&0"
+
+                      #The item's glowing state.
+                      glowing: false
+
+                      #The item's unbreakable state.
+                      unbreakable: true
+
+                    #The item's slot.
+                    6:
+
+                      #The material of the item.
+                      #Use the SpigotMC 1.18.2's API's material list, which can be found at https://hub.spigotmc.org/javadocs/spigot/org/bukkit/Material.html.
+                      material: "BLACK_STAINED_GLASS_PANE"
+
+                      #The name of the item.
+                      name: "&0"
+
+                      #The item's glowing state.
+                      glowing: false
+
+                      #The item's unbreakable state.
+                      unbreakable: true
+
+                    #The item's slot.
+                    7:
+
+                      #The material of the item.
+                      #Use the SpigotMC 1.18.2's API's material list, which can be found at https://hub.spigotmc.org/javadocs/spigot/org/bukkit/Material.html.
+                      material: "BLACK_STAINED_GLASS_PANE"
+
+                      #The name of the item.
+                      name: "&0"
+
+                      #The item's glowing state.
+                      glowing: false
+
+                      #The item's unbreakable state.
+                      unbreakable: true
+
+                    #The item's slot.
+                    8:
+
+                      #The material of the item.
+                      #Use the SpigotMC 1.18.2's API's material list, which can be found at https://hub.spigotmc.org/javadocs/spigot/org/bukkit/Material.html.
+                      material: "BLACK_STAINED_GLASS_PANE"
+
+                      #The name of the item.
+                      name: "&0"
+
+                      #The item's glowing state.
+                      glowing: false
+
+                      #The item's unbreakable state.
+                      unbreakable: true
+
+                    #The item's slot.
+                    9:
+
+                      #The material of the item.
+                      #Use the SpigotMC 1.18.2's API's material list, which can be found at https://hub.spigotmc.org/javadocs/spigot/org/bukkit/Material.html.
+                      material: "BLACK_STAINED_GLASS_PANE"
+
+                      #The name of the item.
+                      name: "&0"
+
+                      #The item's glowing state.
+                      glowing: false
+
+                      #The item's unbreakable state.
+                      unbreakable: true
+
+                    #The item's slot.
+                    10:
+
+                      #The material of the item.
+                      #Use the SpigotMC 1.18.2's API's material list, which can be found at https://hub.spigotmc.org/javadocs/spigot/org/bukkit/Material.html.
+                      material: "BLACK_STAINED_GLASS_PANE"
+
+                      #The name of the item.
+                      name: "&0"
+
+                      #The item's glowing state.
+                      glowing: false
+
+                      #The item's unbreakable state.
+                      unbreakable: true
+
+                    #The item's slot.
+                    11:
+
+                      #The material of the item.
+                      #Use the SpigotMC 1.18.2's API's material list, which can be found at https://hub.spigotmc.org/javadocs/spigot/org/bukkit/Material.html.
+                      material: "BLACK_STAINED_GLASS_PANE"
+
+                      #The name of the item.
+                      name: "&0"
+
+                      #The item's glowing state.
+                      glowing: false
+
+                      #The item's unbreakable state.
+                      unbreakable: true
+
+                    #The item's slot.
+                    13:
+
+                      #The material of the item.
+                      #Use the SpigotMC 1.18.2's API's material list, which can be found at https://hub.spigotmc.org/javadocs/spigot/org/bukkit/Material.html.
+                      material: "BLACK_STAINED_GLASS_PANE"
+
+                      #The name of the item.
+                      name: "&0"
+
+                      #The item's glowing state.
+                      glowing: false
+
+                      #The item's unbreakable state.
+                      unbreakable: true
+
+                    #The item's slot.
+                    14:
+
+                      #The material of the item.
+                      #Use the SpigotMC 1.18.2's API's material list, which can be found at https://hub.spigotmc.org/javadocs/spigot/org/bukkit/Material.html.
+                      material: "BLACK_STAINED_GLASS_PANE"
+
+                      #The name of the item.
+                      name: "&0"
+
+                      #The item's glowing state.
+                      glowing: false
+
+                      #The item's unbreakable state.
+                      unbreakable: true
+
+                    #The item's slot.
+                    17:
+
+                      #The material of the item.
+                      #Use the SpigotMC 1.18.2's API's material list, which can be found at https://hub.spigotmc.org/javadocs/spigot/org/bukkit/Material.html.
+                      material: "BLACK_STAINED_GLASS_PANE"
+
+                      #The name of the item.
+                      name: "&0"
+
+                      #The item's glowing state.
+                      glowing: false
+
+                      #The item's unbreakable state.
+                      unbreakable: true
+
+                    #The item's slot.
+                    18:
+
+                      #The material of the item.
+                      #Use the SpigotMC 1.18.2's API's material list, which can be found at https://hub.spigotmc.org/javadocs/spigot/org/bukkit/Material.html.
+                      material: "BLACK_STAINED_GLASS_PANE"
+
+                      #The name of the item.
+                      name: "&0"
+
+                      #The item's glowing state.
+                      glowing: false
+
+                      #The item's unbreakable state.
+                      unbreakable: true
+
+                    #The item's slot.
+                    20:
+
+                      #The material of the item.
+                      #Use the SpigotMC 1.18.2's API's material list, which can be found at https://hub.spigotmc.org/javadocs/spigot/org/bukkit/Material.html.
+                      material: "BLACK_STAINED_GLASS_PANE"
+
+                      #The name of the item.
+                      name: "&0"
+
+                      #The item's glowing state.
+                      glowing: false
+
+                      #The item's unbreakable state.
+                      unbreakable: true
+
+                    #The item's slot.
+                    21:
+
+                      #The material of the item.
+                      #Use the SpigotMC 1.18.2's API's material list, which can be found at https://hub.spigotmc.org/javadocs/spigot/org/bukkit/Material.html.
+                      material: "BLACK_STAINED_GLASS_PANE"
+
+                      #The name of the item.
+                      name: "&0"
+
+                      #The item's glowing state.
+                      glowing: false
+
+                      #The item's unbreakable state.
+                      unbreakable: true
+
+                    #The item's slot.
+                    22:
+
+                      #The material of the item.
+                      #Use the SpigotMC 1.18.2's API's material list, which can be found at https://hub.spigotmc.org/javadocs/spigot/org/bukkit/Material.html.
+                      material: "BLACK_STAINED_GLASS_PANE"
+
+                      #The name of the item.
+                      name: "&0"
+
+                      #The item's glowing state.
+                      glowing: false
+
+                      #The item's unbreakable state.
+                      unbreakable: true
+
+                    #The item's slot.
+                    23:
+
+                      #The material of the item.
+                      #Use the SpigotMC 1.18.2's API's material list, which can be found at https://hub.spigotmc.org/javadocs/spigot/org/bukkit/Material.html.
+                      material: "BLACK_STAINED_GLASS_PANE"
+
+                      #The name of the item.
+                      name: "&0"
+
+                      #The item's glowing state.
+                      glowing: false
+
+                      #The item's unbreakable state.
+                      unbreakable: true
+
+                    #The item's slot.
+                    24:
+
+                      #The material of the item.
+                      #Use the SpigotMC 1.18.2's API's material list, which can be found at https://hub.spigotmc.org/javadocs/spigot/org/bukkit/Material.html.
+                      material: "BLACK_STAINED_GLASS_PANE"
+
+                      #The name of the item.
+                      name: "&0"
+
+                      #The item's glowing state.
+                      glowing: false
+
+                      #The item's unbreakable state.
+                      unbreakable: true
+
+                    #The item's slot.
+                    25:
+
+                      #The material of the item.
+                      #Use the SpigotMC 1.18.2's API's material list, which can be found at https://hub.spigotmc.org/javadocs/spigot/org/bukkit/Material.html.
+                      material: "BLACK_STAINED_GLASS_PANE"
+
+                      #The name of the item.
+                      name: "&0"
+
+                      #The item's glowing state.
+                      glowing: false
+
+                      #The item's unbreakable state.
+                      unbreakable: true
+
+                    #The item's slot.
+                    26:
+
+                      #The material of the item.
+                      #Use the SpigotMC 1.18.2's API's material list, which can be found at https://hub.spigotmc.org/javadocs/spigot/org/bukkit/Material.html.
+                      material: "BLACK_STAINED_GLASS_PANE"
+
+                      #The name of the item.
+                      name: "&0"
+
+                      #The item's glowing state.
+                      glowing: false
+
+                      #The item's unbreakable state.
+                      unbreakable: true
+
+                    #The item's slot.
+                    27:
+
+                      #The material of the item.
+                      #Use the SpigotMC 1.18.2's API's material list, which can be found at https://hub.spigotmc.org/javadocs/spigot/org/bukkit/Material.html.
+                      material: "BLACK_STAINED_GLASS_PANE"
+
+                      #The name of the item.
+                      name: "&0"
+
+                      #The item's glowing state.
+                      glowing: false
+
+                      #The item's unbreakable state.
+                      unbreakable: true
+
+              #The home menu.
+              home:
+
+                #The menu's sounds.
+                sounds:
+
+                  #The sound sent when there is a menu item clicked.
+                  click:
+
+                    #The sound.
+                    #Use the SpigotMC 1.18.2's API's sound list, which can be found at https://hub.spigotmc.org/javadocs/spigot/org/bukkit/Sound.html.
+                    sound: "UI_BUTTON_CLICK"
+
+                    #The sound's pitch.
+                    pitch: 2
+
+                    #The sound's volume.
+                    volume: 1.0
+
+                #The menu's items.
+                items:
+
+                  #The go item (just executes "/mine go").
+                  go:
+
+                    #The slot of the item.
+                    slot: 12
+
+                    #The material of the item.
+                    #Use the SpigotMC 1.18.2's API's material list, which can be found at https://hub.spigotmc.org/javadocs/spigot/org/bukkit/Material.html.
+                    material: "ELYTRA"
+
+                    #The name of the item.
+                    name: "&6&lGo"
+
+                    #The lore of the item.
+                    lore:
+                      - ""
+                      - "&6&lInformation"
+                      - " &6» &eAllows you to teleport to your mine."
+                      - ""
+                      - "&7Go to your mine by using &nLeft Click&7."
+
+                    #The item's glowing state.
+                    glowing: false
+
+                    #The item's unbreakable state.
+                    unbreakable: true
+
+                  #The reset item (just executes "/mine reset").
+                  reset:
+
+                    #The slot of the item.
+                    slot: 14
+
+                    #The material of the item.
+                    #Use the SpigotMC 1.18.2's API's material list, which can be found at https://hub.spigotmc.org/javadocs/spigot/org/bukkit/Material.html.
+                    material: "ENDER_EYE"
+
+                    #The name of the item.
+                    name: "&6&lReset"
+
+                    #The lore of the item.
+                    lore:
+                      - ""
+                      - "&6&lInformation"
+                      - " &6» &eAllows you to reset your mine."
+                      - ""
+                      - "&7Reset your mine by using &nLeft Click&7."
+
+                    #The item's glowing state.
+                    glowing: false
+
+                    #The item's unbreakable state.
+                    unbreakable: true
+
+                  #The retheme item (just executes "/mine retheme").
+                  retheme:
+
+                    #The slot of the item.
+                    slot: 15
+
+                    #The material of the item.
+                    #Use the SpigotMC 1.18.2's API's material list, which can be found at https://hub.spigotmc.org/javadocs/spigot/org/bukkit/Material.html.
+                    material: "MAP"
+
+                    #The name of the item.
+                    name: "&6&lRetheme"
+
+                    #The lore of the item.
+                    lore:
+                      - ""
+                      - "&6&lInformation"
+                      - " &6» &eAllows you to retheme your mine."
+                      - ""
+                      - "&7Retheme your mine by using &nLeft Click&7."
+
+                    #The item's glowing state.
+                    glowing: false
+
+                    #The item's unbreakable state.
+                    unbreakable: true
+
+                  #The manage visitation item (opens the manage visitation menu).
+                  manage-visitation:
+
+                    #The slot of the item.
+                    slot: 16
+
+                    #The material of the item.
+                    #Use the SpigotMC 1.18.2's API's material list, which can be found at https://hub.spigotmc.org/javadocs/spigot/org/bukkit/Material.html.
+                    material: "SPYGLASS"
+
+                    #The name of the item.
+                    name: "&6&lManage Visitation"
+
+                    #The lore of the item.
+                    lore:
+                      - ""
+                      - "&6&lInformation"
+                      - " &6» &eAllows you to manage your mines visitation."
+                      - ""
+                      - "&7Retheme your mine by using &nLeft Click&7."
+
+                    #The item's glowing state.
+                    glowing: false
+
+                    #The item's unbreakable state.
+                    unbreakable: true
+
+                #The menu's inventory.
+                inventory:
+
+                  #The menu's type.
+                  #Use the SpigotMC 1.18.2's API's inventory type list, which can be found at https://hub.spigotmc.org/javadocs/spigot/org/bukkit/event/inventory/InventoryType.html.
+                  type: "CHEST"
+
+                  #The menu's rows.
+                  #This should only be used if the menu's type is CHEST.
+                  rows: 3
+
+                  #The menu's title
+                  title: "Mine | Home"
+
+                  #The inventory's items.
+                  items:
+
+                    #The item's slot.
+                    1:
+
+                      #The material of the item.
+                      #Use the SpigotMC 1.18.2's API's material list, which can be found at https://hub.spigotmc.org/javadocs/spigot/org/bukkit/Material.html.
+                      material: "BLACK_STAINED_GLASS_PANE"
+
+                      #The name of the item.
+                      name: "&0"
+
+                      #The item's glowing state.
+                      glowing: false
+
+                      #The item's unbreakable state.
+                      unbreakable: true
+
+                    #The item's slot.
+                    2:
+
+                      #The material of the item.
+                      #Use the SpigotMC 1.18.2's API's material list, which can be found at https://hub.spigotmc.org/javadocs/spigot/org/bukkit/Material.html.
+                      material: "BLACK_STAINED_GLASS_PANE"
+
+                      #The name of the item.
+                      name: "&0"
+
+                      #The item's glowing state.
+                      glowing: false
+
+                      #The item's unbreakable state.
+                      unbreakable: true
+
+                    #The item's slot.
+                    3:
+
+                      #The material of the item.
+                      #Use the SpigotMC 1.18.2's API's material list, which can be found at https://hub.spigotmc.org/javadocs/spigot/org/bukkit/Material.html.
+                      material: "BLACK_STAINED_GLASS_PANE"
+
+                      #The name of the item.
+                      name: "&0"
+
+                      #The item's glowing state.
+                      glowing: false
+
+                      #The item's unbreakable state.
+                      unbreakable: true
+
+                    #The item's slot.
+                    4:
+
+                      #The material of the item.
+                      #Use the SpigotMC 1.18.2's API's material list, which can be found at https://hub.spigotmc.org/javadocs/spigot/org/bukkit/Material.html.
+                      material: "BLACK_STAINED_GLASS_PANE"
+
+                      #The name of the item.
+                      name: "&0"
+
+                      #The item's glowing state.
+                      glowing: false
+
+                      #The item's unbreakable state.
+                      unbreakable: true
+
+                    #The item's slot.
+                    5:
+
+                      #The material of the item.
+                      #Use the SpigotMC 1.18.2's API's material list, which can be found at https://hub.spigotmc.org/javadocs/spigot/org/bukkit/Material.html.
+                      material: "BLACK_STAINED_GLASS_PANE"
+
+                      #The name of the item.
+                      name: "&0"
+
+                      #The item's glowing state.
+                      glowing: false
+
+                      #The item's unbreakable state.
+                      unbreakable: true
+
+                    #The item's slot.
+                    6:
+
+                      #The material of the item.
+                      #Use the SpigotMC 1.18.2's API's material list, which can be found at https://hub.spigotmc.org/javadocs/spigot/org/bukkit/Material.html.
+                      material: "BLACK_STAINED_GLASS_PANE"
+
+                      #The name of the item.
+                      name: "&0"
+
+                      #The item's glowing state.
+                      glowing: false
+
+                      #The item's unbreakable state.
+                      unbreakable: true
+
+                    #The item's slot.
+                    7:
+
+                      #The material of the item.
+                      #Use the SpigotMC 1.18.2's API's material list, which can be found at https://hub.spigotmc.org/javadocs/spigot/org/bukkit/Material.html.
+                      material: "BLACK_STAINED_GLASS_PANE"
+
+                      #The name of the item.
+                      name: "&0"
+
+                      #The item's glowing state.
+                      glowing: false
+
+                      #The item's unbreakable state.
+                      unbreakable: true
+
+                    #The item's slot.
+                    8:
+
+                      #The material of the item.
+                      #Use the SpigotMC 1.18.2's API's material list, which can be found at https://hub.spigotmc.org/javadocs/spigot/org/bukkit/Material.html.
+                      material: "BLACK_STAINED_GLASS_PANE"
+
+                      #The name of the item.
+                      name: "&0"
+
+                      #The item's glowing state.
+                      glowing: false
+
+                      #The item's unbreakable state.
+                      unbreakable: true
+
+                    #The item's slot.
+                    9:
+
+                      #The material of the item.
+                      #Use the SpigotMC 1.18.2's API's material list, which can be found at https://hub.spigotmc.org/javadocs/spigot/org/bukkit/Material.html.
+                      material: "BLACK_STAINED_GLASS_PANE"
+
+                      #The name of the item.
+                      name: "&0"
+
+                      #The item's glowing state.
+                      glowing: false
+
+                      #The item's unbreakable state.
+                      unbreakable: true
+
+                    #The item's slot.
+                    10:
+
+                      #The material of the item.
+                      #Use the SpigotMC 1.18.2's API's material list, which can be found at https://hub.spigotmc.org/javadocs/spigot/org/bukkit/Material.html.
+                      material: "BLACK_STAINED_GLASS_PANE"
+
+                      #The name of the item.
+                      name: "&0"
+
+                      #The item's glowing state.
+                      glowing: false
+
+                      #The item's unbreakable state.
+                      unbreakable: true
+
+                    #The item's slot.
+                    11:
+
+                      #The material of the item.
+                      #Use the SpigotMC 1.18.2's API's material list, which can be found at https://hub.spigotmc.org/javadocs/spigot/org/bukkit/Material.html.
+                      material: "BLACK_STAINED_GLASS_PANE"
+
+                      #The name of the item.
+                      name: "&0"
+
+                      #The item's glowing state.
+                      glowing: false
+
+                      #The item's unbreakable state.
+                      unbreakable: true
+
+                    #The item's slot.
+                    13:
+
+                      #The material of the item.
+                      #Use the SpigotMC 1.18.2's API's material list, which can be found at https://hub.spigotmc.org/javadocs/spigot/org/bukkit/Material.html.
+                      material: "BLACK_STAINED_GLASS_PANE"
+
+                      #The name of the item.
+                      name: "&0"
+
+                      #The item's glowing state.
+                      glowing: false
+
+                      #The item's unbreakable state.
+                      unbreakable: true
+
+                    #The item's slot.
+                    17:
+
+                      #The material of the item.
+                      #Use the SpigotMC 1.18.2's API's material list, which can be found at https://hub.spigotmc.org/javadocs/spigot/org/bukkit/Material.html.
+                      material: "BLACK_STAINED_GLASS_PANE"
+
+                      #The name of the item.
+                      name: "&0"
+
+                      #The item's glowing state.
+                      glowing: false
+
+                      #The item's unbreakable state.
+                      unbreakable: true
+
+                    #The item's slot.
+                    18:
+
+                      #The material of the item.
+                      #Use the SpigotMC 1.18.2's API's material list, which can be found at https://hub.spigotmc.org/javadocs/spigot/org/bukkit/Material.html.
+                      material: "BLACK_STAINED_GLASS_PANE"
+
+                      #The name of the item.
+                      name: "&0"
+
+                      #The item's glowing state.
+                      glowing: false
+
+                      #The item's unbreakable state.
+                      unbreakable: true
+
+                    #The item's slot.
+                    19:
+
+                      #The material of the item.
+                      #Use the SpigotMC 1.18.2's API's material list, which can be found at https://hub.spigotmc.org/javadocs/spigot/org/bukkit/Material.html.
+                      material: "BLACK_STAINED_GLASS_PANE"
+
+                      #The name of the item.
+                      name: "&0"
+
+                      #The item's glowing state.
+                      glowing: false
+
+                      #The item's unbreakable state.
+                      unbreakable: true
+
+                    #The item's slot.
+                    20:
+
+                      #The material of the item.
+                      #Use the SpigotMC 1.18.2's API's material list, which can be found at https://hub.spigotmc.org/javadocs/spigot/org/bukkit/Material.html.
+                      material: "BLACK_STAINED_GLASS_PANE"
+
+                      #The name of the item.
+                      name: "&0"
+
+                      #The item's glowing state.
+                      glowing: false
+
+                      #The item's unbreakable state.
+                      unbreakable: true
+
+                    #The item's slot.
+                    21:
+
+                      #The material of the item.
+                      #Use the SpigotMC 1.18.2's API's material list, which can be found at https://hub.spigotmc.org/javadocs/spigot/org/bukkit/Material.html.
+                      material: "BLACK_STAINED_GLASS_PANE"
+
+                      #The name of the item.
+                      name: "&0"
+
+                      #The item's glowing state.
+                      glowing: false
+
+                      #The item's unbreakable state.
+                      unbreakable: true
+
+                    #The item's slot.
+                    22:
+
+                      #The material of the item.
+                      #Use the SpigotMC 1.18.2's API's material list, which can be found at https://hub.spigotmc.org/javadocs/spigot/org/bukkit/Material.html.
+                      material: "BLACK_STAINED_GLASS_PANE"
+
+                      #The name of the item.
+                      name: "&0"
+
+                      #The item's glowing state.
+                      glowing: false
+
+                      #The item's unbreakable state.
+                      unbreakable: true
+
+                    #The item's slot.
+                    23:
+
+                      #The material of the item.
+                      #Use the SpigotMC 1.18.2's API's material list, which can be found at https://hub.spigotmc.org/javadocs/spigot/org/bukkit/Material.html.
+                      material: "BLACK_STAINED_GLASS_PANE"
+
+                      #The name of the item.
+                      name: "&0"
+
+                      #The item's glowing state.
+                      glowing: false
+
+                      #The item's unbreakable state.
+                      unbreakable: true
+
+                    #The item's slot.
+                    24:
+
+                      #The material of the item.
+                      #Use the SpigotMC 1.18.2's API's material list, which can be found at https://hub.spigotmc.org/javadocs/spigot/org/bukkit/Material.html.
+                      material: "BLACK_STAINED_GLASS_PANE"
+
+                      #The name of the item.
+                      name: "&0"
+
+                      #The item's glowing state.
+                      glowing: false
+
+                      #The item's unbreakable state.
+                      unbreakable: true
+
+                    #The item's slot.
+                    25:
+
+                      #The material of the item.
+                      #Use the SpigotMC 1.18.2's API's material list, which can be found at https://hub.spigotmc.org/javadocs/spigot/org/bukkit/Material.html.
+                      material: "BLACK_STAINED_GLASS_PANE"
+
+                      #The name of the item.
+                      name: "&0"
+
+                      #The item's glowing state.
+                      glowing: false
+
+                      #The item's unbreakable state.
+                      unbreakable: true
+
+                    #The item's slot.
+                    26:
+
+                      #The material of the item.
+                      #Use the SpigotMC 1.18.2's API's material list, which can be found at https://hub.spigotmc.org/javadocs/spigot/org/bukkit/Material.html.
+                      material: "BLACK_STAINED_GLASS_PANE"
+
+                      #The name of the item.
+                      name: "&0"
+
+                      #The item's glowing state.
+                      glowing: false
+
+                      #The item's unbreakable state.
+                      unbreakable: true
+
+                    #The item's slot.
+                    27:
+
+                      #The material of the item.
+                      #Use the SpigotMC 1.18.2's API's material list, which can be found at https://hub.spigotmc.org/javadocs/spigot/org/bukkit/Material.html.
+                      material: "BLACK_STAINED_GLASS_PANE"
+
+                      #The name of the item.
+                      name: "&0"
+
+                      #The item's glowing state.
+                      glowing: false
+
+                      #The item's unbreakable state.
+                      unbreakable: true
+
+              #The user control menu (used for ban and whitelist menus).
+              user-control:
+
+                #The menu's sounds.
+                sounds:
+
+                  #The sound sent when there is a menu item clicked.
+                  click:
+
+                    #The sound.
+                    #Use the SpigotMC 1.18.2's API's sound list, which can be found at https://hub.spigotmc.org/javadocs/spigot/org/bukkit/Sound.html.
+                    sound: "UI_BUTTON_CLICK"
+
+                    #The sound's pitch.
+                    pitch: 2
+
+                    #The sound's volume.
+                    volume: 1.0
+
+                #The menu's items.
+                items:
+
+                  #The banned player item.
+                  #It will automatically fill empty slots using it (in the banned menu).
+                  banned-player:
+
+                    #The material of the item.
+                    #It is suggested you use set this to the "%player_head%" variable which retrieves the player's head.
+                    #Use the SpigotMC 1.18.2's API's material list, which can be found at https://hub.spigotmc.org/javadocs/spigot/org/bukkit/Material.html.
+                    #Variables:
+                    # - %player_head% ~ The player's head.
+                    material: "%player_head%"
+
+                    #The name of the item.
+                    #Variables:
+                    # - %player% ~ The player.
+                    name: "&6&l%player%"
+
+                    #The lore of the item.
+                    lore:
+                      - ""
+                      - "&6&lInformation"
+                      - " &6» &eThis player currently cannot access",
+                      - "&eyour mine whatsoever."
+                      - ""
+                      - "&7Remove this ban by using &nLeft Click&7."
+
+                    #The item's glowing state.
+                    glowing: false
+
+                    #The item's unbreakable state.
+                    unbreakable: true
+
+                  #The whitelisted player item.
+                  #It will automatically fill empty slots using it (in the whitelisted menu).
+                  whitelisted-player:
+
+                    #The material of the item.
+                    #It is suggested you use set this to the "%player_head%" variable which retrieves the player's head.
+                    #Use the SpigotMC 1.18.2's API's material list, which can be found at https://hub.spigotmc.org/javadocs/spigot/org/bukkit/Material.html.
+                    #Variables:
+                    # - %player_head% ~ The player's head.
+                    material: "%player_head%"
+
+                    #The name of the item.
+                    #Variables:
+                    # - %player% ~ The player.
+                    name: "&6&l%player%"
+
+                    #The lore of the item.
+                    lore:
+                      - ""
+                      - "&6&lInformation"
+                      - " &6» &eThis player can access your mine",
+                      - "&eat any time &7&o(even if it's private)&e."
+                      - ""
+                      - "&7Remove this whitelist by using &nLeft Click&7."
+
+                    #The item's glowing state.
+                    glowing: false
+
+                    #The item's unbreakable state.
+                    unbreakable: true
+
+                  #The previous page item (goes to the previous menu).
+                  previous-page:
+
+                    #The slot of the item.
+                    slot: 39
+
+                    #The material of the item.
+                    #Use the SpigotMC 1.18.2's API's material list, which can be found at https://hub.spigotmc.org/javadocs/spigot/org/bukkit/Material.html.
+                    material: "SHIELD"
+
+                    #The name of the item.
+                    name: "&6Previous Page"
+
+                    #The item's glowing state.
+                    glowing: false
+
+                    #The item's unbreakable state.
+                    unbreakable: true
+
+                  #The next page item (goes to the next menu).
+                  #This will appear depending on if there is a next page.
+                  next-page:
+
+                    #The slot of the item.
+                    slot: 48
+
+                    #The material of the item.
+                    #Use the SpigotMC 1.18.2's API's material list, which can be found at https://hub.spigotmc.org/javadocs/spigot/org/bukkit/Material.html.
+                    material: "SHIELD"
+
+                    #The name of the item.
+                    name: "&6Next Page"
+
+                    #The item's glowing state.
+                    glowing: false
+
+                    #The item's unbreakable state.
+                    unbreakable: true
+
+                #The menu's inventory.
+                inventory:
+
+                  #The menu's type.
+                  #Use the SpigotMC 1.18.2's API's inventory type list, which can be found at https://hub.spigotmc.org/javadocs/spigot/org/bukkit/event/inventory/InventoryType.html.
+                  type: "CHEST"
+
+                  #The menu's rows.
+                  #This should only be used if the menu's type is CHEST.
+                  rows: 5
+
+                  #The menu's title
+                  #Variables:
+                  # - %type% ~ The type of user management (Whitelists/Bans).
+                  title: "Mine | %type%"
+
+                  #The inventory's items.
+                  items:
+
+                    #The item's slot.
+                    1:
+
+                      #The material of the item.
+                      #Use the SpigotMC 1.18.2's API's material list, which can be found at https://hub.spigotmc.org/javadocs/spigot/org/bukkit/Material.html.
+                      material: "BLACK_STAINED_GLASS_PANE"
+
+                      #The name of the item.
+                      name: "&0"
+
+                      #The item's glowing state.
+                      glowing: false
+
+                      #The item's unbreakable state.
+                      unbreakable: true
+
+                    #The item's slot.
+                    2:
+
+                      #The material of the item.
+                      #Use the SpigotMC 1.18.2's API's material list, which can be found at https://hub.spigotmc.org/javadocs/spigot/org/bukkit/Material.html.
+                      material: "BLACK_STAINED_GLASS_PANE"
+
+                      #The name of the item.
+                      name: "&0"
+
+                      #The item's glowing state.
+                      glowing: false
+
+                      #The item's unbreakable state.
+                      unbreakable: true
+
+                    #The item's slot.
+                    3:
+
+                      #The material of the item.
+                      #Use the SpigotMC 1.18.2's API's material list, which can be found at https://hub.spigotmc.org/javadocs/spigot/org/bukkit/Material.html.
+                      material: "BLACK_STAINED_GLASS_PANE"
+
+                      #The name of the item.
+                      name: "&0"
+
+                      #The item's glowing state.
+                      glowing: false
+
+                      #The item's unbreakable state.
+                      unbreakable: true
+
+                    #The item's slot.
+                    4:
+
+                      #The material of the item.
+                      #Use the SpigotMC 1.18.2's API's material list, which can be found at https://hub.spigotmc.org/javadocs/spigot/org/bukkit/Material.html.
+                      material: "BLACK_STAINED_GLASS_PANE"
+
+                      #The name of the item.
+                      name: "&0"
+
+                      #The item's glowing state.
+                      glowing: false
+
+                      #The item's unbreakable state.
+                      unbreakable: true
+
+                    #The item's slot.
+                    5:
+
+                      #The material of the item.
+                      #Use the SpigotMC 1.18.2's API's material list, which can be found at https://hub.spigotmc.org/javadocs/spigot/org/bukkit/Material.html.
+                      material: "BLACK_STAINED_GLASS_PANE"
+
+                      #The name of the item.
+                      name: "&0"
+
+                      #The item's glowing state.
+                      glowing: false
+
+                      #The item's unbreakable state.
+                      unbreakable: true
+
+                    #The item's slot.
+                    6:
+
+                      #The material of the item.
+                      #Use the SpigotMC 1.18.2's API's material list, which can be found at https://hub.spigotmc.org/javadocs/spigot/org/bukkit/Material.html.
+                      material: "BLACK_STAINED_GLASS_PANE"
+
+                      #The name of the item.
+                      name: "&0"
+
+                      #The item's glowing state.
+                      glowing: false
+
+                      #The item's unbreakable state.
+                      unbreakable: true
+
+                    #The item's slot.
+                    7:
+
+                      #The material of the item.
+                      #Use the SpigotMC 1.18.2's API's material list, which can be found at https://hub.spigotmc.org/javadocs/spigot/org/bukkit/Material.html.
+                      material: "BLACK_STAINED_GLASS_PANE"
+
+                      #The name of the item.
+                      name: "&0"
+
+                      #The item's glowing state.
+                      glowing: false
+
+                      #The item's unbreakable state.
+                      unbreakable: true
+
+                    #The item's slot.
+                    8:
+
+                      #The material of the item.
+                      #Use the SpigotMC 1.18.2's API's material list, which can be found at https://hub.spigotmc.org/javadocs/spigot/org/bukkit/Material.html.
+                      material: "BLACK_STAINED_GLASS_PANE"
+
+                      #The name of the item.
+                      name: "&0"
+
+                      #The item's glowing state.
+                      glowing: false
+
+                      #The item's unbreakable state.
+                      unbreakable: true
+
+                    #The item's slot.
+                    9:
+
+                      #The material of the item.
+                      #Use the SpigotMC 1.18.2's API's material list, which can be found at https://hub.spigotmc.org/javadocs/spigot/org/bukkit/Material.html.
+                      material: "BLACK_STAINED_GLASS_PANE"
+
+                      #The name of the item.
+                      name: "&0"
+
+                      #The item's glowing state.
+                      glowing: false
+
+                      #The item's unbreakable state.
+                      unbreakable: true
+
+                    #The item's slot.
+                    10:
+
+                      #The material of the item.
+                      #Use the SpigotMC 1.18.2's API's material list, which can be found at https://hub.spigotmc.org/javadocs/spigot/org/bukkit/Material.html.
+                      material: "BLACK_STAINED_GLASS_PANE"
+
+                      #The name of the item.
+                      name: "&0"
+
+                      #The item's glowing state.
+                      glowing: false
+
+                      #The item's unbreakable state.
+                      unbreakable: true
+
+                    #The item's slot.
+                    18:
+
+                      #The material of the item.
+                      #Use the SpigotMC 1.18.2's API's material list, which can be found at https://hub.spigotmc.org/javadocs/spigot/org/bukkit/Material.html.
+                      material: "BLACK_STAINED_GLASS_PANE"
+
+                      #The name of the item.
+                      name: "&0"
+
+                      #The item's glowing state.
+                      glowing: false
+
+                      #The item's unbreakable state.
+                      unbreakable: true
+
+                    #The item's slot.
+                    19:
+
+                      #The material of the item.
+                      #Use the SpigotMC 1.18.2's API's material list, which can be found at https://hub.spigotmc.org/javadocs/spigot/org/bukkit/Material.html.
+                      material: "BLACK_STAINED_GLASS_PANE"
+
+                      #The name of the item.
+                      name: "&0"
+
+                      #The item's glowing state.
+                      glowing: false
+
+                      #The item's unbreakable state.
+                      unbreakable: true
+
+                    #The item's slot.
+                    28:
+
+                      #The material of the item.
+                      #Use the SpigotMC 1.18.2's API's material list, which can be found at https://hub.spigotmc.org/javadocs/spigot/org/bukkit/Material.html.
+                      material: "BLACK_STAINED_GLASS_PANE"
+
+                      #The name of the item.
+                      name: "&0"
+
+                      #The item's glowing state.
+                      glowing: false
+
+                      #The item's unbreakable state.
+                      unbreakable: true
+
+                    #The item's slot.
+                    29:
+
+                      #The material of the item.
+                      #Use the SpigotMC 1.18.2's API's material list, which can be found at https://hub.spigotmc.org/javadocs/spigot/org/bukkit/Material.html.
+                      material: "BLACK_STAINED_GLASS_PANE"
+
+                      #The name of the item.
+                      name: "&0"
+
+                      #The item's glowing state.
+                      glowing: false
+
+                      #The item's unbreakable state.
+                      unbreakable: true
+
+                    #The item's slot.
+                    38:
+
+                      #The material of the item.
+                      #Use the SpigotMC 1.18.2's API's material list, which can be found at https://hub.spigotmc.org/javadocs/spigot/org/bukkit/Material.html.
+                      material: "BLACK_STAINED_GLASS_PANE"
+
+                      #The name of the item.
+                      name: "&0"
+
+                      #The item's glowing state.
+                      glowing: false
+
+                      #The item's unbreakable state.
+                      unbreakable: true
+
+                    #The item's slot.
+                    40:
+
+                      #The material of the item.
+                      #Use the SpigotMC 1.18.2's API's material list, which can be found at https://hub.spigotmc.org/javadocs/spigot/org/bukkit/Material.html.
+                      material: "BLACK_STAINED_GLASS_PANE"
+
+                      #The name of the item.
+                      name: "&0"
+
+                      #The item's glowing state.
+                      glowing: false
+
+                      #The item's unbreakable state.
+                      unbreakable: true
+
+                    #The item's slot.
+                    41:
+
+                      #The material of the item.
+                      #Use the SpigotMC 1.18.2's API's material list, which can be found at https://hub.spigotmc.org/javadocs/spigot/org/bukkit/Material.html.
+                      material: "BLACK_STAINED_GLASS_PANE"
+
+                      #The name of the item.
+                      name: "&0"
+
+                      #The item's glowing state.
+                      glowing: false
+
+                      #The item's unbreakable state.
+                      unbreakable: true
+
+                    #The item's slot.
+                    42:
+
+                      #The material of the item.
+                      #Use the SpigotMC 1.18.2's API's material list, which can be found at https://hub.spigotmc.org/javadocs/spigot/org/bukkit/Material.html.
+                      material: "BLACK_STAINED_GLASS_PANE"
+
+                      #The name of the item.
+                      name: "&0"
+
+                      #The item's glowing state.
+                      glowing: false
+
+                      #The item's unbreakable state.
+                      unbreakable: true
+
+                    #The item's slot.
+                    43:
+
+                      #The material of the item.
+                      #Use the SpigotMC 1.18.2's API's material list, which can be found at https://hub.spigotmc.org/javadocs/spigot/org/bukkit/Material.html.
+                      material: "BLACK_STAINED_GLASS_PANE"
+
+                      #The name of the item.
+                      name: "&0"
+
+                      #The item's glowing state.
+                      glowing: false
+
+                      #The item's unbreakable state.
+                      unbreakable: true
+
+                    #The item's slot.
+                    44:
+
+                      #The material of the item.
+                      #Use the SpigotMC 1.18.2's API's material list, which can be found at https://hub.spigotmc.org/javadocs/spigot/org/bukkit/Material.html.
+                      material: "BLACK_STAINED_GLASS_PANE"
+
+                      #The name of the item.
+                      name: "&0"
+
+                      #The item's glowing state.
+                      glowing: false
+
+                      #The item's unbreakable state.
+                      unbreakable: true
+
+                    #The item's slot.
+                    45:
+
+                      #The material of the item.
+                      #Use the SpigotMC 1.18.2's API's material list, which can be found at https://hub.spigotmc.org/javadocs/spigot/org/bukkit/Material.html.
+                      material: "BLACK_STAINED_GLASS_PANE"
+
+                      #The name of the item.
+                      name: "&0"
+
+                      #The item's glowing state.
+                      glowing: false
+
+                      #The item's unbreakable state.
+                      unbreakable: true
+
+                    #The item's slot.
+                    46:
+
+                      #The material of the item.
+                      #Use the SpigotMC 1.18.2's API's material list, which can be found at https://hub.spigotmc.org/javadocs/spigot/org/bukkit/Material.html.
+                      material: "BLACK_STAINED_GLASS_PANE"
+
+                      #The name of the item.
+                      name: "&0"
+
+                      #The item's glowing state.
+                      glowing: false
+
+                      #The item's unbreakable state.
+                      unbreakable: true
+
+                    #The item's slot.
+                    47:
+
+                      #The material of the item.
+                      #Use the SpigotMC 1.18.2's API's material list, which can be found at https://hub.spigotmc.org/javadocs/spigot/org/bukkit/Material.html.
+                      material: "BLACK_STAINED_GLASS_PANE"
+
+                      #The name of the item.
+                      name: "&0"
+
+                      #The item's glowing state.
+                      glowing: false
+
+                      #The item's unbreakable state.
+                      unbreakable: true
+
+                    #The item's slot.
+                    48:
+
+                      #The material of the item.
+                      #Use the SpigotMC 1.18.2's API's material list, which can be found at https://hub.spigotmc.org/javadocs/spigot/org/bukkit/Material.html.
+                      material: "BLACK_STAINED_GLASS_PANE"
+
+                      #The name of the item.
+                      name: "&0"
+
+                      #The item's glowing state.
+                      glowing: false
+
+                      #The item's unbreakable state.
+                      unbreakable: true
+
           #The "/mine retheme" sub-command.
           retheme:
 
@@ -1923,6 +3530,22 @@ components:
               #The theme selector menu.
               theme-selector:
 
+                #The menu's sounds.
+                sounds:
+
+                  #The sound sent when there is a menu item clicked.
+                  click:
+
+                    #The sound.
+                    #Use the SpigotMC 1.18.2's API's sound list, which can be found at https://hub.spigotmc.org/javadocs/spigot/org/bukkit/Sound.html.
+                    sound: "UI_BUTTON_CLICK"
+
+                    #The sound's pitch.
+                    pitch: 2
+
+                    #The sound's volume.
+                    volume: 1.0
+
                 #The menu's items.
                 items:
 
@@ -1959,6 +3582,25 @@ components:
                     #The item's unbreakable state.
                     unbreakable: true
 
+                  #The previous page item (goes to the previous menu).
+                  previous-page:
+
+                    #The slot of the item.
+                    slot: 20
+
+                    #The material of the item.
+                    #Use the SpigotMC 1.18.2's API's material list, which can be found at https://hub.spigotmc.org/javadocs/spigot/org/bukkit/Material.html.
+                    material: "SHIELD"
+
+                    #The name of the item.
+                    name: "&6Previous Page"
+
+                    #The item's glowing state.
+                    glowing: false
+
+                    #The item's unbreakable state.
+                    unbreakable: true
+
                 #The menu's inventory.
                 inventory:
 
@@ -1971,7 +3613,7 @@ components:
                   rows: 3
 
                   #The menu's title
-                  title: "Mine | Theme Selector"
+                  title: "Mine | Retheme"
 
                   #The inventory's items.
                   items:
@@ -2218,22 +3860,6 @@ components:
 
                     #The item's slot.
                     19:
-
-                      #The material of the item.
-                      #Use the SpigotMC 1.18.2's API's material list, which can be found at https://hub.spigotmc.org/javadocs/spigot/org/bukkit/Material.html.
-                      material: "BLACK_STAINED_GLASS_PANE"
-
-                      #The name of the item.
-                      name: "&0"
-
-                      #The item's glowing state.
-                      glowing: false
-
-                      #The item's unbreakable state.
-                      unbreakable: true
-
-                    #The item's slot.
-                    20:
 
                       #The material of the item.
                       #Use the SpigotMC 1.18.2's API's material list, which can be found at https://hub.spigotmc.org/javadocs/spigot/org/bukkit/Material.html.

@@ -42,7 +42,7 @@ public class ItemListener implements Listener {
      * The listener for item clicks.
      */
     @EventHandler
-    public void onInventoryClick(final PlayerInteractEvent playerInteractEvent) {
+    public void onItemInteract(final PlayerInteractEvent playerInteractEvent) {
         if (playerInteractEvent.getItem() == null) {
             return;
         }
@@ -50,7 +50,7 @@ public class ItemListener implements Listener {
             return;
         }
         final Player player = playerInteractEvent.getPlayer();
-        final ItemStack item = playerInteractEvent.getItem();
+        final ItemStack item = playerInteractEvent.getItem().clone();
         final ItemData itemData = new ItemData(this.plugin, item);
         if (!itemData.hasKey("note", PersistentDataType.STRING)) {
             return;

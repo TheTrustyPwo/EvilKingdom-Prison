@@ -58,15 +58,14 @@ public class DataCommand extends CommandHandler {
             return false;
         }
         final String subCommand = arguments[0].toLowerCase();
-        if (!Arrays.asList("help", "modify").contains(subCommand)) {
-            this.plugin.getComponentManager().getFileComponent().getConfiguration().getStringList("components.data.commands.data.sub-commands.help.messages.invalid-usage").forEach(string -> commandSender.sendMessage(StringUtilities.colorize(string)));
-            if (commandSender instanceof Player) {
-                final Player player = (Player) commandSender;
-                player.playSound(player.getLocation(), Sound.valueOf(this.plugin.getComponentManager().getFileComponent().getConfiguration().getString("components.data.commands.data.sub-commands.help.sounds.error.sound")), (float) this.plugin.getComponentManager().getFileComponent().getConfiguration().getDouble("components.data.commands.data.sub-commands.help.sounds.error.volume"), (float) this.plugin.getComponentManager().getFileComponent().getConfiguration().getDouble("components.data.commands.data.sub-commands.help.sounds.error.pitch"));
-            }
-            return false;
-        }
         switch (subCommand) {
+            default -> {
+                this.plugin.getComponentManager().getFileComponent().getConfiguration().getStringList("components.data.commands.data.sub-commands.help.messages.invalid-usage").forEach(string -> commandSender.sendMessage(StringUtilities.colorize(string)));
+                if (commandSender instanceof Player) {
+                    final Player player = (Player) commandSender;
+                    player.playSound(player.getLocation(), Sound.valueOf(this.plugin.getComponentManager().getFileComponent().getConfiguration().getString("components.data.commands.data.sub-commands.help.sounds.error.sound")), (float) this.plugin.getComponentManager().getFileComponent().getConfiguration().getDouble("components.data.commands.data.sub-commands.help.sounds.error.volume"), (float) this.plugin.getComponentManager().getFileComponent().getConfiguration().getDouble("components.data.commands.data.sub-commands.help.sounds.error.pitch"));
+                }
+            }
             case "help" -> {
                 if (!(commandSender instanceof Player)) {
                     this.plugin.getComponentManager().getFileComponent().getConfiguration().getStringList("components.data.commands.data.sub-commands.help.messages.invalid-executor").forEach(string -> commandSender.sendMessage(StringUtilities.colorize(string)));
