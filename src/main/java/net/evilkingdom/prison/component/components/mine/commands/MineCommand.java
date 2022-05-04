@@ -211,7 +211,7 @@ public class MineCommand extends CommandHandler {
                     player.playSound(player.getLocation(), Sound.valueOf(this.plugin.getComponentManager().getFileComponent().getConfiguration().getString("components.mine.commands.mine.sub-commands.create.sounds.error.sound")), (float) this.plugin.getComponentManager().getFileComponent().getConfiguration().getDouble("components.mine.commands.mine.sub-commands.create.sounds.error.volume"), (float) this.plugin.getComponentManager().getFileComponent().getConfiguration().getDouble("components.mine.commands.mine.sub-commands.create.sounds.error.pitch"));
                     return false;
                 }
-                this.openCreateSelectThemeMenu(player);
+                this.openCreateCreateMenu(player);
             }
             case "reset" -> {
                 if (!(commandSender instanceof Player)) {
@@ -610,11 +610,11 @@ public class MineCommand extends CommandHandler {
     }
 
     /**
-     * Allows you to open the "create" sub-command's select theme menu.
+     * Allows you to open the "create" sub-command's create menu.
      *
      * @param player ~ The player to open it for.
      */
-    private void openCreateSelectThemeMenu(final Player player) {
+    private void openCreateCreateMenu(final Player player) {
         final InventoryType inventoryType = InventoryType.valueOf(this.plugin.getComponentManager().getFileComponent().getConfiguration().getString("components.mine.commands.mine.sub-commands.create.menus.create.inventory.type"));
         final String title = StringUtilities.colorize(this.plugin.getComponentManager().getFileComponent().getConfiguration().getString("components.mine.commands.mine.sub-commands.create.menus.create.inventory.title"));
         Menu menu;
@@ -662,7 +662,7 @@ public class MineCommand extends CommandHandler {
             themeSlots.put(slot, theme);
         }
         themeSlots.forEach((slot, theme) -> {
-            final Material material = Material.getMaterial(this.plugin.getComponentManager().getFileComponent().getConfiguration().getString("components.mine.commands.mine.sub-commands.create.menus.tcreate.items.theme.material").replace("%related_material%", this.plugin.getComponentManager().getFileComponent().getConfiguration().getString("components.mine.themes." + theme + ".related-material")));
+            final Material material = Material.getMaterial(this.plugin.getComponentManager().getFileComponent().getConfiguration().getString("components.mine.commands.mine.sub-commands.create.menus.create.items.theme.material").replace("%related_material%", this.plugin.getComponentManager().getFileComponent().getConfiguration().getString("components.mine.themes." + theme + ".related-material")));
             final Optional<String> name = Optional.of(StringUtilities.colorize(this.plugin.getComponentManager().getFileComponent().getConfiguration().getString("components.mine.commands.mine.sub-commands.create.menus.create.items.theme.name").replace("%name%", this.plugin.getComponentManager().getFileComponent().getConfiguration().getString("components.mine.themes." + theme + ".prettified-name"))));
             final Optional<ArrayList<String>> lore = Optional.of(new ArrayList<String>(this.plugin.getComponentManager().getFileComponent().getConfiguration().getStringList("components.mine.commands.mine.sub-commands.create.menus.create.items.theme.lore").stream().map(loreLine -> StringUtilities.colorize(loreLine.replace("%name%", this.plugin.getComponentManager().getFileComponent().getConfiguration().getString("components.mine.themes." + theme + ".prettified-name")).replace("%description%", this.plugin.getComponentManager().getFileComponent().getConfiguration().getString("components.mine.themes." + theme + ".description")))).collect(Collectors.toList())));
             final boolean glowing = this.plugin.getComponentManager().getFileComponent().getConfiguration().getBoolean("components.mine.commands.mine.sub-commands.create.menus.create.items.theme.glowing");
