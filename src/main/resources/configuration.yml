@@ -942,8 +942,8 @@ components:
             #The sub-command's menus.
             menus:
 
-              #The theme selector menu.
-              theme-selector:
+              #The create menu.
+              create:
 
                 #The menu's sounds.
                 sounds:

@@ -615,22 +615,22 @@ public class MineCommand extends CommandHandler {
      * @param player ~ The player to open it for.
      */
     private void openCreateSelectThemeMenu(final Player player) {
-        final InventoryType inventoryType = InventoryType.valueOf(this.plugin.getComponentManager().getFileComponent().getConfiguration().getString("components.mine.commands.mine.sub-commands.create.menus.theme-selector.inventory.type"));
-        final String title = StringUtilities.colorize(this.plugin.getComponentManager().getFileComponent().getConfiguration().getString("components.mine.commands.mine.sub-commands.create.menus.theme-selector.inventory.title"));
+        final InventoryType inventoryType = InventoryType.valueOf(this.plugin.getComponentManager().getFileComponent().getConfiguration().getString("components.mine.commands.mine.sub-commands.create.menus.create.inventory.type"));
+        final String title = StringUtilities.colorize(this.plugin.getComponentManager().getFileComponent().getConfiguration().getString("components.mine.commands.mine.sub-commands.create.menus.create.inventory.title"));
         Menu menu;
         if (inventoryType == InventoryType.CHEST) {
-            final int rows = this.plugin.getComponentManager().getFileComponent().getConfiguration().getInt("components.mine.commands.mine.sub-commands.create.menus.theme-selector.inventory.rows");
+            final int rows = this.plugin.getComponentManager().getFileComponent().getConfiguration().getInt("components.mine.commands.mine.sub-commands.create.menus.create.inventory.rows");
             menu = new Menu(this.plugin, player, rows, title);
         } else {
             menu = new Menu(this.plugin, player, inventoryType, title);
         }
-        menu.setIdentifier("mine-create-select-theme");
-        this.plugin.getComponentManager().getFileComponent().getConfiguration().getConfigurationSection("components.mine.commands.mine.sub-commands.create.menus.theme-selector.inventory.items").getKeys(false).stream().map(key -> Integer.parseInt(key)).collect(Collectors.toList()).forEach(slot -> {
-            final Material material = Material.getMaterial(this.plugin.getComponentManager().getFileComponent().getConfiguration().getString("components.mine.commands.mine.sub-commands.create.menus.theme-selector.inventory.items." + slot + ".material"));
-            final Optional<String> name = Optional.of(StringUtilities.colorize(this.plugin.getComponentManager().getFileComponent().getConfiguration().getString("components.mine.commands.mine.sub-commands.create.menus.theme-selector.inventory.items." + slot + ".name")));
-            final Optional<ArrayList<String>> lore = Optional.of(new ArrayList<String>(this.plugin.getComponentManager().getFileComponent().getConfiguration().getStringList("components.mine.commands.mine.sub-commands.create.menus.theme-selector.inventory.items." + slot + ".lore").stream().map(loreLine -> StringUtilities.colorize(loreLine)).collect(Collectors.toList())));
-            final boolean glowing = this.plugin.getComponentManager().getFileComponent().getConfiguration().getBoolean("components.mine.commands.mine.sub-commands.create.menus.theme-selector.inventory.items." + slot + ".glowing");
-            final boolean unbreakable = this.plugin.getComponentManager().getFileComponent().getConfiguration().getBoolean("components.mine.commands.mine.sub-commands.create.menus.theme-selector.inventory.items." + slot + ".unbreakable");
+        menu.setIdentifier("mine-create");
+        this.plugin.getComponentManager().getFileComponent().getConfiguration().getConfigurationSection("components.mine.commands.mine.sub-commands.create.menus.create.inventory.items").getKeys(false).stream().map(key -> Integer.parseInt(key)).collect(Collectors.toList()).forEach(slot -> {
+            final Material material = Material.getMaterial(this.plugin.getComponentManager().getFileComponent().getConfiguration().getString("components.mine.commands.mine.sub-commands.create.menus.create.inventory.items." + slot + ".material"));
+            final Optional<String> name = Optional.of(StringUtilities.colorize(this.plugin.getComponentManager().getFileComponent().getConfiguration().getString("components.mine.commands.mine.sub-commands.create.menus.create.inventory.items." + slot + ".name")));
+            final Optional<ArrayList<String>> lore = Optional.of(new ArrayList<String>(this.plugin.getComponentManager().getFileComponent().getConfiguration().getStringList("components.mine.commands.mine.sub-commands.create.menus.create.inventory.items." + slot + ".lore").stream().map(loreLine -> StringUtilities.colorize(loreLine)).collect(Collectors.toList())));
+            final boolean glowing = this.plugin.getComponentManager().getFileComponent().getConfiguration().getBoolean("components.mine.commands.mine.sub-commands.create.menus.create.inventory.items." + slot + ".glowing");
+            final boolean unbreakable = this.plugin.getComponentManager().getFileComponent().getConfiguration().getBoolean("components.mine.commands.mine.sub-commands.create.menus.create.inventory.items." + slot + ".unbreakable");
             final Item item = new Item(new ItemStack(material));
             name.ifPresent(presentName -> item.setName(presentName));
             lore.ifPresent(presentLore -> item.setLore(presentLore));
@@ -662,11 +662,11 @@ public class MineCommand extends CommandHandler {
             themeSlots.put(slot, theme);
         }
         themeSlots.forEach((slot, theme) -> {
-            final Material material = Material.getMaterial(this.plugin.getComponentManager().getFileComponent().getConfiguration().getString("components.mine.commands.mine.sub-commands.create.menus.theme-selector.items.theme.material").replace("%related_material%", this.plugin.getComponentManager().getFileComponent().getConfiguration().getString("components.mine.themes." + theme + ".related-material")));
-            final Optional<String> name = Optional.of(StringUtilities.colorize(this.plugin.getComponentManager().getFileComponent().getConfiguration().getString("components.mine.commands.mine.sub-commands.create.menus.theme-selector.items.theme.name").replace("%name%", this.plugin.getComponentManager().getFileComponent().getConfiguration().getString("components.mine.themes." + theme + ".prettified-name"))));
-            final Optional<ArrayList<String>> lore = Optional.of(new ArrayList<String>(this.plugin.getComponentManager().getFileComponent().getConfiguration().getStringList("components.mine.commands.mine.sub-commands.create.menus.theme-selector.items.theme.lore").stream().map(loreLine -> StringUtilities.colorize(loreLine.replace("%name%", this.plugin.getComponentManager().getFileComponent().getConfiguration().getString("components.mine.themes." + theme + ".prettified-name")).replace("%description%", this.plugin.getComponentManager().getFileComponent().getConfiguration().getString("components.mine.themes." + theme + ".description")))).collect(Collectors.toList())));
-            final boolean glowing = this.plugin.getComponentManager().getFileComponent().getConfiguration().getBoolean("components.mine.commands.mine.sub-commands.create.menus.theme-selector.items.theme.glowing");
-            final boolean unbreakable = this.plugin.getComponentManager().getFileComponent().getConfiguration().getBoolean("components.mine.commands.mine.sub-commands.create.menus.theme-selector.items.theme.unbreakable");
+            final Material material = Material.getMaterial(this.plugin.getComponentManager().getFileComponent().getConfiguration().getString("components.mine.commands.mine.sub-commands.create.menus.tcreate.items.theme.material").replace("%related_material%", this.plugin.getComponentManager().getFileComponent().getConfiguration().getString("components.mine.themes." + theme + ".related-material")));
+            final Optional<String> name = Optional.of(StringUtilities.colorize(this.plugin.getComponentManager().getFileComponent().getConfiguration().getString("components.mine.commands.mine.sub-commands.create.menus.create.items.theme.name").replace("%name%", this.plugin.getComponentManager().getFileComponent().getConfiguration().getString("components.mine.themes." + theme + ".prettified-name"))));
+            final Optional<ArrayList<String>> lore = Optional.of(new ArrayList<String>(this.plugin.getComponentManager().getFileComponent().getConfiguration().getStringList("components.mine.commands.mine.sub-commands.create.menus.create.items.theme.lore").stream().map(loreLine -> StringUtilities.colorize(loreLine.replace("%name%", this.plugin.getComponentManager().getFileComponent().getConfiguration().getString("components.mine.themes." + theme + ".prettified-name")).replace("%description%", this.plugin.getComponentManager().getFileComponent().getConfiguration().getString("components.mine.themes." + theme + ".description")))).collect(Collectors.toList())));
+            final boolean glowing = this.plugin.getComponentManager().getFileComponent().getConfiguration().getBoolean("components.mine.commands.mine.sub-commands.create.menus.create.items.theme.glowing");
+            final boolean unbreakable = this.plugin.getComponentManager().getFileComponent().getConfiguration().getBoolean("components.mine.commands.mine.sub-commands.create.menus.create.items.theme.unbreakable");
             final Item item = new Item(new ItemStack(material));
             name.ifPresent(presentName -> item.setName(presentName));
             lore.ifPresent(presentLore -> item.setLore(presentLore));
