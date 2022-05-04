@@ -2965,7 +2965,7 @@ components:
                     lore:
                       - ""
                       - "&6&lInformation"
-                      - " &6» &eThis player can access your mine",
+                      - " &6» &eThis player can access your mine"
                       - "&eat any time &7&o(even if it's private)&e."
                       - ""
                       - "&7Remove this whitelist by using &nLeft Click&7."
