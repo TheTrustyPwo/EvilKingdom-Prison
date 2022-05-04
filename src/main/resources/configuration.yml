@@ -2934,7 +2934,7 @@ components:
                     lore:
                       - ""
                       - "&6&lInformation"
-                      - " &6» &eThis player currently cannot access",
+                      - " &6» &eThis player currently cannot access"
                       - "&eyour mine whatsoever."
                       - ""
                       - "&7Remove this ban by using &nLeft Click&7."

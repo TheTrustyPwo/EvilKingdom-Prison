@@ -4,6 +4,7 @@ import net.minecraft.world.level.block.SoundType;
 import org.bukkit.Sound;
 import org.bukkit.craftbukkit.v1_18_R2.CraftSound;
 
+@Deprecated(forRemoval = true)
 public class CraftBlockSoundGroup implements BlockSoundGroup {
     private final SoundType soundEffectType;
 

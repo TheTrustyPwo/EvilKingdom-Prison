@@ -1982,7 +1982,7 @@
 +        // Paper start
 +        this.setRespawnPosition(dimension, pos, angle, forced, sendMessage, com.destroystokyo.paper.event.player.PlayerSetSpawnEvent.Cause.UNKNOWN);
 +    }
-+    public void setRespawnPosition(ResourceKey<Level> dimension, @Nullable BlockPos pos, float angle, boolean forced, boolean sendMessage, com.destroystokyo.paper.event.player.PlayerSetSpawnEvent.Cause cause) {
++    public boolean setRespawnPosition(ResourceKey<Level> dimension, @Nullable BlockPos pos, float angle, boolean forced, boolean sendMessage, com.destroystokyo.paper.event.player.PlayerSetSpawnEvent.Cause cause) {
 +        Location spawnLoc = null;
 +        boolean willNotify = false;
          if (pos != null) {
@@ -1996,7 +1996,7 @@
 +        }
 +        com.destroystokyo.paper.event.player.PlayerSetSpawnEvent event = new com.destroystokyo.paper.event.player.PlayerSetSpawnEvent(this.getBukkitEntity(), cause, spawnLoc, forced, willNotify, willNotify ? net.kyori.adventure.text.Component.translatable("block.minecraft.set_spawn") : null);
 +        if (!event.callEvent()) {
-+            return;
++            return false;
 +        }
 +        if (event.getLocation() != null) {
 +            dimension = event.getLocation().getWorld() != null ? ((CraftWorld) event.getLocation().getWorld()).getHandle().dimension() : dimension;
@@ -2010,7 +2010,12 @@
              }
  
              this.respawnPosition = pos;
-@@ -1475,11 +2165,21 @@
+@@ -1471,15 +2161,26 @@
+             this.respawnForced = false;
+         }
+ 
++        return true; // Paper
+     }
  
      public void trackChunk(ChunkPos chunkPos, Packet<?> chunkDataPacket) {
          this.connection.send(chunkDataPacket);
@@ -2032,7 +2037,7 @@
          }
  
      }
-@@ -1504,21 +2204,23 @@
+@@ -1504,21 +2205,23 @@
  
      @Override
      public ItemEntity drop(ItemStack stack, boolean throwRandomly, boolean retainOwnership) {
@@ -2063,7 +2068,7 @@
          }
      }
  
-@@ -1537,23 +2239,31 @@
+@@ -1537,23 +2240,31 @@
      }
  
      private GameType calculateGameModeForNewPlayer(@Nullable GameType backupGameMode) {
@@ -2105,7 +2110,7 @@
          }
  
      }
-@@ -1563,11 +2273,7 @@
+@@ -1563,11 +2274,7 @@
      }
  
      public boolean shouldFilterMessageTo(ServerPlayer player) {
@@ -2118,7 +2123,7 @@
      }
  
      @Override
-@@ -1582,15 +2288,160 @@
+@@ -1582,15 +2289,160 @@
      }
  
      public boolean drop(boolean entireStack) {

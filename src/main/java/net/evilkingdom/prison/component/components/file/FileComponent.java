@@ -82,7 +82,7 @@ public class FileComponent {
         try {
             this.configuration.load(configurationFile);
         } catch (final IOException | InvalidConfigurationException ioException) {
-            Bukkit.getConsoleSender().sendMessage(StringUtilities.colorize("[Prison » Component » Components » File] Failed to load configuration file, terminating to prevent a shitshow."));
+            Bukkit.getConsoleSender().sendMessage(StringUtilities.colorize("&4[Prison » Component » Components » File] &cFailed to load configuration file, terminating to prevent a shitshow."));
             this.plugin.getPluginLoader().disablePlugin(this.plugin);
         }
         Bukkit.getConsoleSender().sendMessage(StringUtilities.colorize("&2[Prison » Component » Components » File] &aConfiguration file loaded."));
