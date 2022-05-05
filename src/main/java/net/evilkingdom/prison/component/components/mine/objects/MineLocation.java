@@ -14,7 +14,7 @@ public class MineLocation {
      *
      * @param x ~ The mine location's x coordinate.
      * @param z ~ The mine location's z coordinate.
-     * @param used ~ The mine location's use state.
+     * @param used ~ The mine location's usage state.
      */
     public MineLocation(final int x, final int z, final boolean used) {
         this.x = x;

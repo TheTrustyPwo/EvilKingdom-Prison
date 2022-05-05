@@ -1858,12 +1858,9 @@ components:
               invalid-usage:
                 - "&6&lPrison &7» &eInvalid usage, &etry &6/mine retheme&e."
 
-              #The message sent when the panel is invalid.
+              #The message sent when the panel is invalid (player has no mine).
               invalid-panel:
-
-                #The message sent when the player does not have a mine.
-                has-no-mine:
-                  - "&6&lPrison &7» &eInvalid panel, &eyou &6do not&e have a mine."
+                - "&6&lPrison &7» &eInvalid panel, &eyou &6do not&e have a mine."
 
             #The sub-command's menus.
             menus:

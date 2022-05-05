@@ -544,7 +544,23 @@ public class MineCommand extends CommandHandler {
                 });
             }
             case "panel" -> {
-                //code dummbabsbasbs
+                if (!(commandSender instanceof Player)) {
+                    this.plugin.getComponentManager().getFileComponent().getConfiguration().getStringList("components.mine.commands.mine.sub-commands.panel.messages.invalid-executor").forEach(string -> commandSender.sendMessage(StringUtilities.colorize(string)));
+                    return false;
+                }
+                final Player player = (Player) commandSender;
+                if (arguments.length != 1) {
+                    this.plugin.getComponentManager().getFileComponent().getConfiguration().getStringList("components.mine.commands.mine.sub-commands.panel.messages.invalid-usage").forEach(string -> player.sendMessage(StringUtilities.colorize(string)));
+                    player.playSound(player.getLocation(), Sound.valueOf(this.plugin.getComponentManager().getFileComponent().getConfiguration().getString("components.mine.commands.mine.sub-commands.panel.sounds.error.sound")), (float) this.plugin.getComponentManager().getFileComponent().getConfiguration().getDouble("components.mine.commands.mine.sub-commands.panel.sounds.error.volume"), (float) this.plugin.getComponentManager().getFileComponent().getConfiguration().getDouble("components.mine.commands.mine.sub-commands.panel.sounds.error.pitch"));
+                    return false;
+                }
+                final PlayerData playerData = PlayerData.getViaCache(player.getUniqueId()).get();
+                if (playerData.getMine().isEmpty()) {
+                    this.plugin.getComponentManager().getFileComponent().getConfiguration().getStringList("components.mine.commands.mine.sub-commands.panel.messages.invalid-panel").forEach(string -> player.sendMessage(StringUtilities.colorize(string)));
+                    player.playSound(player.getLocation(), Sound.valueOf(this.plugin.getComponentManager().getFileComponent().getConfiguration().getString("components.mine.commands.mine.sub-commands.panel.sounds.error.sound")), (float) this.plugin.getComponentManager().getFileComponent().getConfiguration().getDouble("components.mine.commands.mine.sub-commands.panel.sounds.error.volume"), (float) this.plugin.getComponentManager().getFileComponent().getConfiguration().getDouble("components.mine.commands.mine.sub-commands.panel.sounds.error.pitch"));
+                    return false;
+                }
+                this.openPanelHomeMenu(player);
             }
         }
         return true;
