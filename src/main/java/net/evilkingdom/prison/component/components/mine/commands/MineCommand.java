@@ -857,13 +857,7 @@ public class MineCommand extends CommandHandler {
             });
             menu.getItems().put(slot, menuItem);
         });
-        final MenuImplementor menuImplementor = MenuImplementor.get(this.plugin);
-        final Optional<Menu> previousMenu = menuImplementor.getMenus().stream().filter(innerMenu -> innerMenu.getPlayer() == player).findFirst();
-        if (previousMenu.isEmpty()) {
-            menu.open();
-        } else {
-            previousMenu.get().swap(menu);
-        }
+        menu.open();
     }
 
     /**
@@ -949,13 +943,7 @@ public class MineCommand extends CommandHandler {
                 menu.getItems().put((slot - 1), menuItem);
             }
         });
-        final MenuImplementor menuImplementor = MenuImplementor.get(this.plugin);
-        final Optional<Menu> previousMenu = menuImplementor.getMenus().stream().filter(innerMenu -> innerMenu.getPlayer() == player).findFirst();
-        if (previousMenu.isEmpty()) {
-            menu.open();
-        } else {
-            previousMenu.get().swap(menu);
-        }
+        menu.open();
     }
 
     /**
@@ -1051,14 +1039,7 @@ public class MineCommand extends CommandHandler {
                 menu.getItems().put((slot - 1), menuItem);
             }
         });
-        final MenuImplementor menuImplementor = MenuImplementor.get(this.plugin);
-        final Optional<Menu> previousMenu = menuImplementor.getMenus().stream().filter(innerMenu -> innerMenu.getPlayer() == player).findFirst();
-        System.out.println("previous ");
-        if (previousMenu.isEmpty()) {
-            menu.open();
-        } else {
-            previousMenu.get().swap(menu);
-        }
+        menu.open();
     }
 
     /**
@@ -1252,13 +1233,7 @@ public class MineCommand extends CommandHandler {
             });
             menu.getItems().put((slot - 1), menuItem);
         }
-        final MenuImplementor menuImplementor = MenuImplementor.get(this.plugin);
-        final Optional<Menu> previousMenu = menuImplementor.getMenus().stream().filter(innerMenu -> innerMenu.getPlayer() == player).findFirst();
-        if (previousMenu.isEmpty()) {
-            menu.open();
-        } else {
-            previousMenu.get().swap(menu);
-        }
+        menu.open();
     }
 
     /**
@@ -1563,13 +1538,7 @@ public class MineCommand extends CommandHandler {
             });
             menu.getItems().put((slot - 1), menuItem);
         }
-        final MenuImplementor menuImplementor = MenuImplementor.get(this.plugin);
-        final Optional<Menu> previousMenu = menuImplementor.getMenus().stream().filter(innerMenu -> innerMenu.getPlayer() == player).findFirst();
-        if (previousMenu.isEmpty()) {
-            menu.open();
-        } else {
-            previousMenu.get().swap(menu);
-        }
+        menu.open();
     }
 
     /**
