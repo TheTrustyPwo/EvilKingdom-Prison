@@ -986,7 +986,7 @@ components:
                     # - %description% ~ The description of the theme.
                     lore:
                       - ""
-                      - "&6&lDescription"
+                      - "&6Description"
                       - " &6» &e%description%"
                       - ""
                       - "&7Select this theme by using &nLeft Click&7."
@@ -1905,7 +1905,7 @@ components:
                     #The lore of the item.
                     lore:
                       - ""
-                      - "&6&lInformation"
+                      - "&6Information"
                       - " &6» &eAllows you to toggle your mine's privacy state."
                       - ""
                       - "&7Toggle your mine's privacy state by using &nLeft Click&7."
@@ -1932,7 +1932,7 @@ components:
                     #The lore of the item.
                     lore:
                       - ""
-                      - "&6&lInformation"
+                      - "&6Information"
                       - " &6» &eAllows you to manage the mine's bans."
                       - ""
                       - "&7Manage the mine's bans by using &nLeft Click&7."
@@ -1959,7 +1959,7 @@ components:
                     #The lore of the item.
                     lore:
                       - ""
-                      - "&6&lInformation"
+                      - "&6Information"
                       - " &6» &eAllows you to manage the mine's whitelisted."
                       - ""
                       - "&7Manage the mine's whitelisted by using &nLeft Click&7."
@@ -2412,7 +2412,7 @@ components:
                     #The lore of the item.
                     lore:
                       - ""
-                      - "&6&lInformation"
+                      - "&6Information"
                       - " &6» &eAllows you to teleport to your mine."
                       - ""
                       - "&7Go to your mine by using &nLeft Click&7."
@@ -2439,7 +2439,7 @@ components:
                     #The lore of the item.
                     lore:
                       - ""
-                      - "&6&lInformation"
+                      - "&6Information"
                       - " &6» &eAllows you to reset your mine."
                       - ""
                       - "&7Reset your mine by using &nLeft Click&7."
@@ -2466,7 +2466,7 @@ components:
                     #The lore of the item.
                     lore:
                       - ""
-                      - "&6&lInformation"
+                      - "&6Information"
                       - " &6» &eAllows you to retheme your mine."
                       - ""
                       - "&7Retheme your mine by using &nLeft Click&7."
@@ -2493,10 +2493,10 @@ components:
                     #The lore of the item.
                     lore:
                       - ""
-                      - "&6&lInformation"
-                      - " &6» &eAllows you to manage your mines visitation."
+                      - "&6Information"
+                      - " &6» &eAllows you to manage your mine's visitation."
                       - ""
-                      - "&7Retheme your mine by using &nLeft Click&7."
+                      - "&7mManage your mine's visitation by using &nLeft Click&7."
 
                     #The item's glowing state.
                     glowing: false
@@ -2930,7 +2930,7 @@ components:
                     #The lore of the item.
                     lore:
                       - ""
-                      - "&6&lInformation"
+                      - "&6Information"
                       - " &6» &eThis player currently cannot access"
                       - "&eyour mine whatsoever."
                       - ""
@@ -2961,7 +2961,7 @@ components:
                     #The lore of the item.
                     lore:
                       - ""
-                      - "&6&lInformation"
+                      - "&6Information"
                       - " &6» &eThis player can access your mine"
                       - "&eat any time &7&o(even if it's private)&e."
                       - ""
@@ -3568,7 +3568,7 @@ components:
                     # - %description% ~ The description of the theme.
                     lore:
                       - ""
-                      - "&6&lDescription"
+                      - "&6Description"
                       - " &6» &e%description%"
                       - ""
                       - "&7Select this theme by using &nLeft Click&7."
