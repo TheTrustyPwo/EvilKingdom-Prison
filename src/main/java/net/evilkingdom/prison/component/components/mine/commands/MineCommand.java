@@ -1199,7 +1199,7 @@ public class MineCommand extends CommandHandler {
             pageItems.put(pageIndex, new ArrayList<ItemStack>(bannedPlayerItems.subList(i, Math.min(bannedPlayerItems.size(), i + openSlots.size()))));
             pageIndex++;
         }
-        if (!pageItems.get(0).isEmpty()) {
+        if (!pageItems.getOrDefault(0, new ArrayList<ItemStack>()).isEmpty()) {
             for (int slot = openSlots.get(0); slot < pageItems.get(0).size(); slot++) {
                 final ItemStack slotItem = pageItems.get(0).get(slot);
                 final ItemData itemData = new ItemData(this.plugin, slotItem);
@@ -1213,7 +1213,7 @@ public class MineCommand extends CommandHandler {
                 menu.getItems().put(slot, menuItem);
             }
         }
-        if (!pageItems.get(1).isEmpty()) {
+        if (!pageItems.getOrDefault(1, new ArrayList<ItemStack>()).isEmpty()) {
             final int slot = this.plugin.getComponentManager().getFileComponent().getConfiguration().getInt("components.mine.commands.mine.sub-commands.panel.menus.user-control.items.next-page.slot");
             final Material material = Material.getMaterial(this.plugin.getComponentManager().getFileComponent().getConfiguration().getString("components.mine.commands.mine.sub-commands.panel.menus.user-control.items.next-page.material"));
             final Optional<String> name = Optional.of(StringUtilities.colorize(this.plugin.getComponentManager().getFileComponent().getConfiguration().getString("components.mine.commands.mine.sub-commands.panel.menus.user-control.items.next-page.name")));
@@ -1354,7 +1354,7 @@ public class MineCommand extends CommandHandler {
             pageItems.put(pageIndex, new ArrayList<ItemStack>(bannedPlayerItems.subList(i, Math.min(bannedPlayerItems.size(), i + openSlots.size()))));
             pageIndex++;
         }
-        if (!pageItems.get(page).isEmpty()) {
+        if (!pageItems.getOrDefault(page, new ArrayList<ItemStack>()).isEmpty()) {
             for (int slot = openSlots.get(0); slot < pageItems.get(page).size(); slot++) {
                 final ItemStack slotItem = pageItems.get(page).get(slot);
                 final ItemData itemData = new ItemData(this.plugin, slotItem);
@@ -1368,7 +1368,7 @@ public class MineCommand extends CommandHandler {
                 menu.getItems().put(slot, menuItem);
             }
         }
-        if (!pageItems.get((page + 1)).isEmpty()) {
+        if (!pageItems.getOrDefault(page + 1, new ArrayList<ItemStack>()).isEmpty()) {
             final int slot = this.plugin.getComponentManager().getFileComponent().getConfiguration().getInt("components.mine.commands.mine.sub-commands.panel.menus.user-control.items.next-page.slot");
             final Material material = Material.getMaterial(this.plugin.getComponentManager().getFileComponent().getConfiguration().getString("components.mine.commands.mine.sub-commands.panel.menus.user-control.items.next-page.material"));
             final Optional<String> name = Optional.of(StringUtilities.colorize(this.plugin.getComponentManager().getFileComponent().getConfiguration().getString("components.mine.commands.mine.sub-commands.panel.menus.user-control.items.next-page.name")));
@@ -1508,7 +1508,7 @@ public class MineCommand extends CommandHandler {
             pageItems.put(pageIndex, new ArrayList<ItemStack>(whitelistedPlayerItems.subList(Math.min(whitelistedPlayerItems.size(), i), Math.min(whitelistedPlayerItems.size(), i + openSlots.size()))));
             pageIndex++;
         }
-        if (!pageItems.get(0).isEmpty()) {
+        if (!pageItems.getOrDefault(0, new ArrayList<ItemStack>()).isEmpty()) {
             for (int slot = openSlots.get(0); slot < pageItems.get(0).size(); slot++) {
                 final ItemStack slotItem = pageItems.get(0).get(slot);
                 final ItemData itemData = new ItemData(this.plugin, slotItem);
@@ -1522,7 +1522,7 @@ public class MineCommand extends CommandHandler {
                 menu.getItems().put(slot, menuItem);
             }
         }
-        if (!pageItems.get(1).isEmpty()) {
+        if (!pageItems.getOrDefault(1, new ArrayList<ItemStack>()).isEmpty()) {
             final int slot = this.plugin.getComponentManager().getFileComponent().getConfiguration().getInt("components.mine.commands.mine.sub-commands.panel.menus.user-control.items.next-page.slot");
             final Material material = Material.getMaterial(this.plugin.getComponentManager().getFileComponent().getConfiguration().getString("components.mine.commands.mine.sub-commands.panel.menus.user-control.items.next-page.material"));
             final Optional<String> name = Optional.of(StringUtilities.colorize(this.plugin.getComponentManager().getFileComponent().getConfiguration().getString("components.mine.commands.mine.sub-commands.panel.menus.user-control.items.next-page.name")));
@@ -1643,7 +1643,7 @@ public class MineCommand extends CommandHandler {
             pageItems.put(pageIndex, new ArrayList<ItemStack>(whitelistedPlayerItems.subList(Math.min(whitelistedPlayerItems.size(), i), Math.min(whitelistedPlayerItems.size(), i + openSlots.size()))));
             pageIndex++;
         }
-        if (!pageItems.get(page).isEmpty()) {
+        if (!pageItems.getOrDefault(page, new ArrayList<ItemStack>()).isEmpty()) {
             for (int slot = openSlots.get(0); slot < pageItems.get(page).size(); slot++) {
                 final ItemStack slotItem = pageItems.get(page).get(slot);
                 final ItemData itemData = new ItemData(this.plugin, slotItem);
@@ -1657,7 +1657,7 @@ public class MineCommand extends CommandHandler {
                 menu.getItems().put(slot, menuItem);
             }
         }
-        if (!pageItems.get(page + 1).isEmpty()) {
+        if (!pageItems.getOrDefault(page + 1, new ArrayList<ItemStack>()).isEmpty()) {
             final int slot = this.plugin.getComponentManager().getFileComponent().getConfiguration().getInt("components.mine.commands.mine.sub-commands.panel.menus.user-control.items.next-page.slot");
             final Material material = Material.getMaterial(this.plugin.getComponentManager().getFileComponent().getConfiguration().getString("components.mine.commands.mine.sub-commands.panel.menus.user-control.items.next-page.material"));
             final Optional<String> name = Optional.of(StringUtilities.colorize(this.plugin.getComponentManager().getFileComponent().getConfiguration().getString("components.mine.commands.mine.sub-commands.panel.menus.user-control.items.next-page.name")));
