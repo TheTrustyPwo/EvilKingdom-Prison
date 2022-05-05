@@ -1049,13 +1049,14 @@ public class MineCommand extends CommandHandler {
      * @param player ~ The player to open it for.
      */
     private void updatePanelManageVisitationMenu(final Player player) {
-        final PlayerData playerData = PlayerData.getViaCache(player.getUniqueId()).get();
-        final MineData mineData = MineData.getViaCache(playerData.getMine().get()).get();
         final Optional<Menu> optionalMenu = MenuImplementor.get(this.plugin).getMenus().stream().filter(menu -> menu.getPlayer() == player && menu.getIdentifier().equals("mine-panel-manage-visitation")).findFirst();
         if (optionalMenu.isEmpty()) {
             return;
         }
+        System.out.println("updatign af");
         final Menu menu = optionalMenu.get();
+        final PlayerData playerData = PlayerData.getViaCache(player.getUniqueId()).get();
+        final MineData mineData = MineData.getViaCache(playerData.getMine().get()).get();
         String formattedPrivacy = "Enabled";
         if (mineData.isPrivate()) {
             formattedPrivacy = "Disabled";
@@ -1192,23 +1193,25 @@ public class MineCommand extends CommandHandler {
                 openSlots.add(menuSlot);
             }
         }
-        final HashMap<Integer, ArrayList<ItemStack>> pageItems = new LinkedHashMap<>();
+        final HashMap<Integer, ArrayList<ItemStack>> pageItems = new HashMap<Integer, ArrayList<ItemStack>>();
         int pageIndex = 0;
         for (int i = 0; i < bannedPlayerItems.size(); i += openSlots.size()) {
-            pageItems.put(pageIndex, new ArrayList<ItemStack>(bannedPlayerItems.subList(Math.min(bannedPlayerItems.size(), i), Math.min(bannedPlayerItems.size(), i + openSlots.size()))));
+            pageItems.put(pageIndex, new ArrayList<ItemStack>(bannedPlayerItems.subList(i, Math.min(bannedPlayerItems.size(), i + openSlots.size()))));
             pageIndex++;
         }
-        for (int slot = openSlots.get(0); slot < pageItems.get(0).size(); slot++) {
-            final ItemStack slotItem = pageItems.get(0).get(slot);
-            final ItemData itemData = new ItemData(this.plugin, slotItem);
-            final UUID bannedUUID = UUID.fromString((String) itemData.getValue("uuid", PersistentDataType.STRING));
-            final MenuItem menuItem = new MenuItem(slotItem, inventoryClickEvent -> {
-                inventoryClickEvent.setCancelled(true);
-                player.playSound(player.getLocation(), Sound.valueOf(this.plugin.getComponentManager().getFileComponent().getConfiguration().getString("components.mine.commands.mine.sub-commands.panel.menus.user-control.sounds.click.sound")), (float) this.plugin.getComponentManager().getFileComponent().getConfiguration().getDouble("components.mine.commands.mine.sub-commands.panel.menus.user-control.sounds.click.volume"), (float) this.plugin.getComponentManager().getFileComponent().getConfiguration().getDouble("components.mine.commands.mine.sub-commands.panel.menus.user-control.sounds.click.pitch"));
-                player.chat("/mine unban " + Bukkit.getOfflinePlayer(bannedUUID).getName());
-                this.updatePanelBansMenu(player, 0);
-            });
-            menu.getItems().put(slot, menuItem);
+        if (!pageItems.get(0).isEmpty()) {
+            for (int slot = openSlots.get(0); slot < pageItems.get(0).size(); slot++) {
+                final ItemStack slotItem = pageItems.get(0).get(slot);
+                final ItemData itemData = new ItemData(this.plugin, slotItem);
+                final UUID bannedUUID = UUID.fromString((String) itemData.getValue("uuid", PersistentDataType.STRING));
+                final MenuItem menuItem = new MenuItem(slotItem, inventoryClickEvent -> {
+                    inventoryClickEvent.setCancelled(true);
+                    player.playSound(player.getLocation(), Sound.valueOf(this.plugin.getComponentManager().getFileComponent().getConfiguration().getString("components.mine.commands.mine.sub-commands.panel.menus.user-control.sounds.click.sound")), (float) this.plugin.getComponentManager().getFileComponent().getConfiguration().getDouble("components.mine.commands.mine.sub-commands.panel.menus.user-control.sounds.click.volume"), (float) this.plugin.getComponentManager().getFileComponent().getConfiguration().getDouble("components.mine.commands.mine.sub-commands.panel.menus.user-control.sounds.click.pitch"));
+                    player.chat("/mine unban " + Bukkit.getOfflinePlayer(bannedUUID).getName());
+                    this.updatePanelBansMenu(player, 0);
+                });
+                menu.getItems().put(slot, menuItem);
+            }
         }
         if (!pageItems.get(1).isEmpty()) {
             final int slot = this.plugin.getComponentManager().getFileComponent().getConfiguration().getInt("components.mine.commands.mine.sub-commands.panel.menus.user-control.items.next-page.slot");
@@ -1345,23 +1348,25 @@ public class MineCommand extends CommandHandler {
                 openSlots.add(menuSlot);
             }
         }
-        final HashMap<Integer, ArrayList<ItemStack>> pageItems = new LinkedHashMap<>();
+        final HashMap<Integer, ArrayList<ItemStack>> pageItems = new HashMap<Integer, ArrayList<ItemStack>>();
         int pageIndex = 0;
         for (int i = 0; i < bannedPlayerItems.size(); i += openSlots.size()) {
-            pageItems.put(pageIndex, new ArrayList<ItemStack>(bannedPlayerItems.subList(Math.min(bannedPlayerItems.size(), i), Math.min(bannedPlayerItems.size(), i + openSlots.size()))));
+            pageItems.put(pageIndex, new ArrayList<ItemStack>(bannedPlayerItems.subList(i, Math.min(bannedPlayerItems.size(), i + openSlots.size()))));
             pageIndex++;
         }
-        for (int slot = openSlots.get(0); slot < pageItems.get(page).size(); slot++) {
-            final ItemStack slotItem = pageItems.get(page).get(slot);
-            final ItemData itemData = new ItemData(this.plugin, slotItem);
-            final UUID bannedUUID = UUID.fromString((String) itemData.getValue("uuid", PersistentDataType.STRING));
-            final MenuItem menuItem = new MenuItem(slotItem, inventoryClickEvent -> {
-                inventoryClickEvent.setCancelled(true);
-                player.playSound(player.getLocation(), Sound.valueOf(this.plugin.getComponentManager().getFileComponent().getConfiguration().getString("components.mine.commands.mine.sub-commands.panel.menus.user-control.sounds.click.sound")), (float) this.plugin.getComponentManager().getFileComponent().getConfiguration().getDouble("components.mine.commands.mine.sub-commands.panel.menus.user-control.sounds.click.volume"), (float) this.plugin.getComponentManager().getFileComponent().getConfiguration().getDouble("components.mine.commands.mine.sub-commands.panel.menus.user-control.sounds.click.pitch"));
-                player.chat("/mine unban " + Bukkit.getOfflinePlayer(bannedUUID).getName());
-                this.updatePanelBansMenu(player, page);
-            });
-            menu.getItems().put(slot, menuItem);
+        if (!pageItems.get(page).isEmpty()) {
+            for (int slot = openSlots.get(0); slot < pageItems.get(page).size(); slot++) {
+                final ItemStack slotItem = pageItems.get(page).get(slot);
+                final ItemData itemData = new ItemData(this.plugin, slotItem);
+                final UUID bannedUUID = UUID.fromString((String) itemData.getValue("uuid", PersistentDataType.STRING));
+                final MenuItem menuItem = new MenuItem(slotItem, inventoryClickEvent -> {
+                    inventoryClickEvent.setCancelled(true);
+                    player.playSound(player.getLocation(), Sound.valueOf(this.plugin.getComponentManager().getFileComponent().getConfiguration().getString("components.mine.commands.mine.sub-commands.panel.menus.user-control.sounds.click.sound")), (float) this.plugin.getComponentManager().getFileComponent().getConfiguration().getDouble("components.mine.commands.mine.sub-commands.panel.menus.user-control.sounds.click.volume"), (float) this.plugin.getComponentManager().getFileComponent().getConfiguration().getDouble("components.mine.commands.mine.sub-commands.panel.menus.user-control.sounds.click.pitch"));
+                    player.chat("/mine unban " + Bukkit.getOfflinePlayer(bannedUUID).getName());
+                    this.updatePanelBansMenu(player, page);
+                });
+                menu.getItems().put(slot, menuItem);
+            }
         }
         if (!pageItems.get((page + 1)).isEmpty()) {
             final int slot = this.plugin.getComponentManager().getFileComponent().getConfiguration().getInt("components.mine.commands.mine.sub-commands.panel.menus.user-control.items.next-page.slot");
@@ -1497,23 +1502,25 @@ public class MineCommand extends CommandHandler {
                 openSlots.add(menuSlot);
             }
         }
-        final HashMap<Integer, ArrayList<ItemStack>> pageItems = new LinkedHashMap<>();
+        final HashMap<Integer, ArrayList<ItemStack>> pageItems = new HashMap<Integer, ArrayList<ItemStack>>();
         int pageIndex = 0;
         for (int i = 0; i < whitelistedPlayerItems.size(); i += openSlots.size()) {
             pageItems.put(pageIndex, new ArrayList<ItemStack>(whitelistedPlayerItems.subList(Math.min(whitelistedPlayerItems.size(), i), Math.min(whitelistedPlayerItems.size(), i + openSlots.size()))));
             pageIndex++;
         }
-        for (int slot = openSlots.get(0); slot < pageItems.get(0).size(); slot++) {
-            final ItemStack slotItem = pageItems.get(0).get(slot);
-            final ItemData itemData = new ItemData(this.plugin, slotItem);
-            final UUID whitelistedUUID = UUID.fromString((String) itemData.getValue("uuid", PersistentDataType.STRING));
-            final MenuItem menuItem = new MenuItem(slotItem, inventoryClickEvent -> {
-                inventoryClickEvent.setCancelled(true);
-                player.playSound(player.getLocation(), Sound.valueOf(this.plugin.getComponentManager().getFileComponent().getConfiguration().getString("components.mine.commands.mine.sub-commands.panel.menus.user-control.sounds.click.sound")), (float) this.plugin.getComponentManager().getFileComponent().getConfiguration().getDouble("components.mine.commands.mine.sub-commands.panel.menus.user-control.sounds.click.volume"), (float) this.plugin.getComponentManager().getFileComponent().getConfiguration().getDouble("components.mine.commands.mine.sub-commands.panel.menus.user-control.sounds.click.pitch"));
-                player.chat("/mine unwhitelist " + Bukkit.getOfflinePlayer(whitelistedUUID).getName());
-                this.updatePanelWhitelistedMenu(player, 0);
-            });
-            menu.getItems().put(slot, menuItem);
+        if (!pageItems.get(0).isEmpty()) {
+            for (int slot = openSlots.get(0); slot < pageItems.get(0).size(); slot++) {
+                final ItemStack slotItem = pageItems.get(0).get(slot);
+                final ItemData itemData = new ItemData(this.plugin, slotItem);
+                final UUID whitelistedUUID = UUID.fromString((String) itemData.getValue("uuid", PersistentDataType.STRING));
+                final MenuItem menuItem = new MenuItem(slotItem, inventoryClickEvent -> {
+                    inventoryClickEvent.setCancelled(true);
+                    player.playSound(player.getLocation(), Sound.valueOf(this.plugin.getComponentManager().getFileComponent().getConfiguration().getString("components.mine.commands.mine.sub-commands.panel.menus.user-control.sounds.click.sound")), (float) this.plugin.getComponentManager().getFileComponent().getConfiguration().getDouble("components.mine.commands.mine.sub-commands.panel.menus.user-control.sounds.click.volume"), (float) this.plugin.getComponentManager().getFileComponent().getConfiguration().getDouble("components.mine.commands.mine.sub-commands.panel.menus.user-control.sounds.click.pitch"));
+                    player.chat("/mine unwhitelist " + Bukkit.getOfflinePlayer(whitelistedUUID).getName());
+                    this.updatePanelWhitelistedMenu(player, 0);
+                });
+                menu.getItems().put(slot, menuItem);
+            }
         }
         if (!pageItems.get(1).isEmpty()) {
             final int slot = this.plugin.getComponentManager().getFileComponent().getConfiguration().getInt("components.mine.commands.mine.sub-commands.panel.menus.user-control.items.next-page.slot");
@@ -1630,23 +1637,25 @@ public class MineCommand extends CommandHandler {
                 openSlots.add(menuSlot);
             }
         }
-        final HashMap<Integer, ArrayList<ItemStack>> pageItems = new LinkedHashMap<>();
+        final HashMap<Integer, ArrayList<ItemStack>> pageItems = new HashMap<Integer, ArrayList<ItemStack>>();
         int pageIndex = 0;
         for (int i = 0; i < whitelistedPlayerItems.size(); i += openSlots.size()) {
             pageItems.put(pageIndex, new ArrayList<ItemStack>(whitelistedPlayerItems.subList(Math.min(whitelistedPlayerItems.size(), i), Math.min(whitelistedPlayerItems.size(), i + openSlots.size()))));
             pageIndex++;
         }
-        for (int slot = openSlots.get(0); slot < pageItems.get(page).size(); slot++) {
-            final ItemStack slotItem = pageItems.get(page).get(slot);
-            final ItemData itemData = new ItemData(this.plugin, slotItem);
-            final UUID whitelistedUUID = UUID.fromString((String) itemData.getValue("uuid", PersistentDataType.STRING));
-            final MenuItem menuItem = new MenuItem(slotItem, inventoryClickEvent -> {
-                inventoryClickEvent.setCancelled(true);
-                player.playSound(player.getLocation(), Sound.valueOf(this.plugin.getComponentManager().getFileComponent().getConfiguration().getString("components.mine.commands.mine.sub-commands.panel.menus.user-control.sounds.click.sound")), (float) this.plugin.getComponentManager().getFileComponent().getConfiguration().getDouble("components.mine.commands.mine.sub-commands.panel.menus.user-control.sounds.click.volume"), (float) this.plugin.getComponentManager().getFileComponent().getConfiguration().getDouble("components.mine.commands.mine.sub-commands.panel.menus.user-control.sounds.click.pitch"));
-                player.chat("/mine unwhitelist " + Bukkit.getOfflinePlayer(whitelistedUUID).getName());
-                this.updatePanelWhitelistedMenu(player, 0);
-            });
-            menu.getItems().put(slot, menuItem);
+        if (!pageItems.get(page).isEmpty()) {
+            for (int slot = openSlots.get(0); slot < pageItems.get(page).size(); slot++) {
+                final ItemStack slotItem = pageItems.get(page).get(slot);
+                final ItemData itemData = new ItemData(this.plugin, slotItem);
+                final UUID whitelistedUUID = UUID.fromString((String) itemData.getValue("uuid", PersistentDataType.STRING));
+                final MenuItem menuItem = new MenuItem(slotItem, inventoryClickEvent -> {
+                    inventoryClickEvent.setCancelled(true);
+                    player.playSound(player.getLocation(), Sound.valueOf(this.plugin.getComponentManager().getFileComponent().getConfiguration().getString("components.mine.commands.mine.sub-commands.panel.menus.user-control.sounds.click.sound")), (float) this.plugin.getComponentManager().getFileComponent().getConfiguration().getDouble("components.mine.commands.mine.sub-commands.panel.menus.user-control.sounds.click.volume"), (float) this.plugin.getComponentManager().getFileComponent().getConfiguration().getDouble("components.mine.commands.mine.sub-commands.panel.menus.user-control.sounds.click.pitch"));
+                    player.chat("/mine unwhitelist " + Bukkit.getOfflinePlayer(whitelistedUUID).getName());
+                    this.updatePanelWhitelistedMenu(player, 0);
+                });
+                menu.getItems().put(slot, menuItem);
+            }
         }
         if (!pageItems.get(page + 1).isEmpty()) {
             final int slot = this.plugin.getComponentManager().getFileComponent().getConfiguration().getInt("components.mine.commands.mine.sub-commands.panel.menus.user-control.items.next-page.slot");
