@@ -1004,9 +1004,9 @@ public class MineCommand extends CommandHandler {
                     case "privacy" -> {
                         final PlayerData playerData = PlayerData.getViaCache(player.getUniqueId()).get();
                         final MineData mineData = MineData.getViaCache(playerData.getMine().get()).get();
-                        String formattedPrivacy = "Enabled";
+                        String formattedPrivacy = "Disabled";
                         if (mineData.isPrivate()) {
-                            formattedPrivacy = "Disabled";
+                            formattedPrivacy = "Enabled";
                         }
                         final Optional<String> optionalPrivaciedName = Optional.of(StringUtilities.colorize(this.plugin.getComponentManager().getFileComponent().getConfiguration().getString("components.mine.commands.mine.sub-commands.panel.menus.manage-visitation.items." + configurationItem + ".name").replace("%privacy%", formattedPrivacy)));
                         optionalPrivaciedName.ifPresent(privaciedName -> item.setName(privaciedName));
@@ -1053,13 +1053,12 @@ public class MineCommand extends CommandHandler {
         if (optionalMenu.isEmpty()) {
             return;
         }
-        System.out.println("updatign af");
         final Menu menu = optionalMenu.get();
         final PlayerData playerData = PlayerData.getViaCache(player.getUniqueId()).get();
         final MineData mineData = MineData.getViaCache(playerData.getMine().get()).get();
-        String formattedPrivacy = "Enabled";
+        String formattedPrivacy = "Disabled";
         if (mineData.isPrivate()) {
-            formattedPrivacy = "Disabled";
+            formattedPrivacy = "Enabled";
         }
         final int slot = this.plugin.getComponentManager().getFileComponent().getConfiguration().getInt("components.mine.commands.mine.sub-commands.panel.menus.manage-visitation.items.privacy.slot");
         final Material material = Material.getMaterial(this.plugin.getComponentManager().getFileComponent().getConfiguration().getString("components.mine.commands.mine.sub-commands.panel.menus.manage-visitation.items.privacy.material"));
