@@ -3528,7 +3528,7 @@ components:
             menus:
 
               #The theme selector menu.
-              theme-selector:
+              retheme:
 
                 #The menu's sounds.
                 sounds:
@@ -3586,7 +3586,7 @@ components:
                   previous-page:
 
                     #The slot of the item.
-                    slot: 20
+                    slot: 19
 
                     #The material of the item.
                     #Use the SpigotMC 1.18.2's API's material list, which can be found at https://hub.spigotmc.org/javadocs/spigot/org/bukkit/Material.html.
@@ -3859,7 +3859,7 @@ components:
                       unbreakable: true
 
                     #The item's slot.
-                    19:
+                    20:
 
                       #The material of the item.
                       #Use the SpigotMC 1.18.2's API's material list, which can be found at https://hub.spigotmc.org/javadocs/spigot/org/bukkit/Material.html.
