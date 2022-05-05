@@ -1039,7 +1039,9 @@ public class MineCommand extends CommandHandler {
                 menu.getItems().put((slot - 1), menuItem);
             }
         });
-        menu.open();
+        final MenuImplementor menuImplementor = MenuImplementor.get(this.plugin);
+        final Optional<Menu> previousMenu = menuImplementor.getMenus().stream().filter(innerMenu -> innerMenu.getPlayer() == player).findFirst();
+        previousMenu.get().swap(menu);
     }
 
     /**
@@ -1233,7 +1235,9 @@ public class MineCommand extends CommandHandler {
             });
             menu.getItems().put((slot - 1), menuItem);
         }
-        menu.open();
+        final MenuImplementor menuImplementor = MenuImplementor.get(this.plugin);
+        final Optional<Menu> previousMenu = menuImplementor.getMenus().stream().filter(innerMenu -> innerMenu.getPlayer() == player).findFirst();
+        previousMenu.get().swap(menu);
     }
 
     /**
@@ -1538,7 +1542,9 @@ public class MineCommand extends CommandHandler {
             });
             menu.getItems().put((slot - 1), menuItem);
         }
-        menu.open();
+        final MenuImplementor menuImplementor = MenuImplementor.get(this.plugin);
+        final Optional<Menu> previousMenu = menuImplementor.getMenus().stream().filter(innerMenu -> innerMenu.getPlayer() == player).findFirst();
+        previousMenu.get().swap(menu);
     }
 
     /**
