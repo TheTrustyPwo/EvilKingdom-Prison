@@ -68,7 +68,11 @@ public class ScoreboardComponent {
         final Scoreboard scoreboard = new Scoreboard(this.plugin, player);
         scoreboard.setRunnable(Optional.of(() -> {
             final SelfData selfData = SelfData.getViaCache().get();
-            final PlayerData playerData = PlayerData.getViaCache(player.getUniqueId()).get();
+            final Optional<PlayerData> optionalPlayerData = PlayerData.getViaCache(player.getUniqueId());
+            if (optionalPlayerData.isEmpty()) {
+                return;
+            }
+            final PlayerData playerData = optionalPlayerData.get();
             final String gems = this.plugin.getComponentManager().getFileComponent().getConfiguration().getString("components.currency.symbols.gems") + NumberUtilities.format(playerData.getGems(), NumberFormatType.LETTERS);
             final String tokens = this.plugin.getComponentManager().getFileComponent().getConfiguration().getString("components.currency.symbols.tokens") + NumberUtilities.format(playerData.getTokens(), NumberFormatType.LETTERS);
             final String blocksMined = NumberUtilities.format(playerData.getBlocksMined(), NumberFormatType.LETTERS);
@@ -91,7 +95,7 @@ public class ScoreboardComponent {
             final String title = StringUtilities.colorize(this.plugin.getComponentManager().getFileComponent().getConfiguration().getString("components.scoreboard.title"));
             scoreboard.setTitle(title);
             scoreboard.setLines(lines);
-            Bukkit.getScheduler().runTask(this.plugin, () -> scoreboard.update());
+            scoreboard.update();
         }));
         final SelfData selfData = SelfData.getViaCache().get();
         final PlayerData playerData = PlayerData.getViaCache(player.getUniqueId()).get();
@@ -117,7 +121,7 @@ public class ScoreboardComponent {
         final String title = StringUtilities.colorize(this.plugin.getComponentManager().getFileComponent().getConfiguration().getString("components.scoreboard.title"));
         scoreboard.setTitle(title);
         scoreboard.setLines(lines);
-        Bukkit.getScheduler().runTask(this.plugin, () -> scoreboard.show());
+        scoreboard.show();
     }
 
 }
