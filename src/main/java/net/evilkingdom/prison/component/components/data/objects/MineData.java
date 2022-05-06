@@ -67,8 +67,8 @@ public class MineData {
             return CompletableFuture.supplyAsync(() -> true);
         } else {
             final DataImplementor dataImplementor = DataImplementor.get(this.plugin);
-            final Datasite datasite = dataImplementor.getDatasites().stream().filter(innerDatasite -> innerDatasite.getPlugin() == this.plugin).findFirst().get();
-            final Datapoint datapoint = datasite.getDatapoints().stream().filter(innerDatapoint -> innerDatapoint.getName().equals("prison_mines")).findFirst().get();
+            final Datasite datasite = dataImplementor.getSites().stream().filter(innerDatasite -> innerDatasite.getPlugin() == this.plugin).findFirst().get();
+            final Datapoint datapoint = datasite.getPoints().stream().filter(innerDatapoint -> innerDatapoint.getName().equals("prison_mines")).findFirst().get();
             return datapoint.exists(this.uuid.toString());
         }
     }
@@ -80,8 +80,8 @@ public class MineData {
      */
     private CompletableFuture<Boolean> load() {
         final DataImplementor dataImplementor = DataImplementor.get(this.plugin);
-        final Datasite datasite = dataImplementor.getDatasites().stream().filter(innerDatasite -> innerDatasite.getPlugin() == this.plugin).findFirst().get();
-        final Datapoint datapoint = datasite.getDatapoints().stream().filter(innerDatapoint -> innerDatapoint.getName().equals("prison_mines")).findFirst().get();
+        final Datasite datasite = dataImplementor.getSites().stream().filter(innerDatasite -> innerDatasite.getPlugin() == this.plugin).findFirst().get();
+        final Datapoint datapoint = datasite.getPoints().stream().filter(innerDatapoint -> innerDatapoint.getName().equals("prison_mines")).findFirst().get();
         return datapoint.get(this.uuid.toString()).thenApply(optionalDatapointModel -> {
             if (optionalDatapointModel.isEmpty()) {
                 return false;
@@ -165,8 +165,8 @@ public class MineData {
         }
         datapointModel.getObjects().put("cooldowns", cooldownsDatapointObject);
         final DataImplementor dataImplementor = DataImplementor.get(this.plugin);
-        final Datasite datasite = dataImplementor.getDatasites().stream().filter(innerDatasite -> innerDatasite.getPlugin() == this.plugin).findFirst().get();
-        final Datapoint datapoint = datasite.getDatapoints().stream().filter(innerDatapoint -> innerDatapoint.getName().equals("prison_mines")).findFirst().get();
+        final Datasite datasite = dataImplementor.getSites().stream().filter(innerDatasite -> innerDatasite.getPlugin() == this.plugin).findFirst().get();
+        final Datapoint datapoint = datasite.getPoints().stream().filter(innerDatapoint -> innerDatapoint.getName().equals("prison_mines")).findFirst().get();
         datapoint.save(datapointModel, asynchronous);
     }
 

@@ -794,50 +794,72 @@ public class PaperWorldConfig {
     }
 
     public boolean altItemDespawnRateEnabled;
-    public java.util.Map<org.bukkit.Material, Integer> altItemDespawnRateMap;
+    public java.util.Map<net.minecraft.resources.ResourceLocation, Integer> altItemDespawnRateMap = new HashMap<>();
     private void altItemDespawnRate() {
         String path = "alt-item-despawn-rate";
+        // Migrate from bukkit material to Mojang item ids
+        if (PaperConfig.version < 26) {
+            String world = worldName;
+            try {
+                org.bukkit.configuration.ConfigurationSection mapSection = config.getConfigurationSection("world-settings." + world + "." + path + ".items");
+                if (mapSection == null) {
+                    world = "default";
+                    mapSection = config.getConfigurationSection("world-settings." + world + "." + path + ".items");
+                }
+                if (mapSection != null) {
+                    for (String key : mapSection.getKeys(false)) {
+                        int val = mapSection.getInt(key);
+                        try {
+                            // Ignore options that are already valid mojang wise, otherwise we might try to migrate the same config twice and fail.
+                            boolean isMojangMaterial = net.minecraft.core.Registry.ITEM.getOptional(new net.minecraft.resources.ResourceLocation(key.toLowerCase())).isPresent();
+                            mapSection.set(key, null);
+                            String newKey = isMojangMaterial ? key.toLowerCase() : org.bukkit.Material.valueOf(key).getKey().getKey().toLowerCase();
+                            mapSection.set(newKey, val);
+                        } catch (Exception e) {
+                            logError("Could not add item " + key + " to altItemDespawnRateMap: " + e.getMessage());
+                        }
+                    }
+                    config.set("world-settings." + world + "." + path + ".items", mapSection);
+                }
+            } catch (Exception e) {
+                logError("alt-item-despawn-rate was malformatted");
+                return;
+            }
+        }
 
         altItemDespawnRateEnabled = getBoolean(path + ".enabled", false);
 
-        java.util.Map<org.bukkit.Material, Integer> altItemDespawnRateMapDefault = new java.util.EnumMap<>(org.bukkit.Material.class);
-        altItemDespawnRateMapDefault.put(org.bukkit.Material.COBBLESTONE, 300);
-        for (org.bukkit.Material key : altItemDespawnRateMapDefault.keySet()) {
-            config.addDefault("world-settings.default." + path + ".items." + key, altItemDespawnRateMapDefault.get(key));
+        if (config.getConfigurationSection("world-settings.default." + path + ".items") == null) {
+            // Initialize default
+            config.addDefault("world-settings.default." + path + ".items.cobblestone", 300);
         }
 
-        java.util.Map<String, Integer> rawMap = new java.util.HashMap<>();
-        try {
-            org.bukkit.configuration.ConfigurationSection mapSection = config.getConfigurationSection("world-settings." + worldName + "." + path + ".items");
-            if (mapSection == null) {
-                mapSection = config.getConfigurationSection("world-settings.default." + path + ".items");
-            }
-            for (String key : mapSection.getKeys(false)) {
-                int val = mapSection.getInt(key);
-                rawMap.put(key, val);
-            }
-        }
-        catch (Exception e) {
-            logError("alt-item-despawn-rate was malformatted");
-            altItemDespawnRateEnabled = false;
-        }
-
-        altItemDespawnRateMap = new java.util.EnumMap<>(org.bukkit.Material.class);
         if (!altItemDespawnRateEnabled) {
             return;
         }
 
-        for(String key : rawMap.keySet()) {
-            try {
-                altItemDespawnRateMap.put(org.bukkit.Material.valueOf(key), rawMap.get(key));
-            } catch (Exception e) {
-                logError("Could not add item " + key + " to altItemDespawnRateMap: " + e.getMessage());
+        org.bukkit.configuration.ConfigurationSection mapSection = config.getConfigurationSection("world-settings." + worldName + "." + path + ".items");
+        if (mapSection == null) {
+            mapSection = config.getConfigurationSection("world-settings.default." + path + ".items");
+        }
+        if (mapSection != null) {
+            for (String key : mapSection.getKeys(false)) {
+                try {
+                    int val = mapSection.getInt(key);
+                    net.minecraft.resources.ResourceLocation keyLocation = new net.minecraft.resources.ResourceLocation(key);
+                    if (net.minecraft.core.Registry.ITEM.getOptional(keyLocation).isPresent()) {
+                        altItemDespawnRateMap.put(keyLocation, val);
+                    } else {
+                        logError("Could not add item " + key + " to altItemDespawnRateMap: not a valid item");
+                    }
+                } catch (Exception e) {
+                    logError("Could not add item " + key + " to altItemDespawnRateMap: " + e.getMessage());
+                }
             }
         }
-        if(altItemDespawnRateEnabled) {
-            for(org.bukkit.Material key : altItemDespawnRateMap.keySet()) {
-                log("Alternative item despawn rate of " + key + ": " + altItemDespawnRateMap.get(key));
-            }
+
+        for (net.minecraft.resources.ResourceLocation key : altItemDespawnRateMap.keySet()) {
+            log("Alternative item despawn rate of " + key.getPath() + ": " + altItemDespawnRateMap.get(key));
         }
     }
 

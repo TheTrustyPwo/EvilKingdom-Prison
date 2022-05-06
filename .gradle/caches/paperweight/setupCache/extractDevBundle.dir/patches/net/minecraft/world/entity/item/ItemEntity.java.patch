@@ -21,7 +21,7 @@
  import net.minecraft.world.damagesource.DamageSource;
  import net.minecraft.world.entity.Entity;
  import net.minecraft.world.entity.EntityType;
-@@ -29,24 +25,40 @@
+@@ -29,24 +25,41 @@
  import net.minecraft.world.level.Level;
  import net.minecraft.world.level.gameevent.GameEvent;
  import net.minecraft.world.phys.Vec3;
@@ -55,6 +55,7 @@
      public final float bobOffs;
 +    private int lastTick = MinecraftServer.currentTick - 1; // CraftBukkit
 +    public boolean canMobPickup = true; // Paper
++    private int despawnRate = -1; // Paper
  
      public ItemEntity(EntityType<? extends ItemEntity> type, Level world) {
          super(type, world);
@@ -64,7 +65,7 @@
          this.setYRot(this.random.nextFloat() * 360.0F);
      }
  
-@@ -63,6 +75,7 @@
+@@ -63,6 +76,7 @@
  
      private ItemEntity(ItemEntity entity) {
          super(entity.getType(), entity.level);
@@ -72,7 +73,7 @@
          this.setItem(entity.getItem().copy());
          this.copyPosition(entity);
          this.age = entity.age;
-@@ -81,7 +94,7 @@
+@@ -81,7 +95,7 @@
  
      @Override
      protected void defineSynchedData() {
@@ -81,7 +82,7 @@
      }
  
      @Override
-@@ -90,18 +103,23 @@
+@@ -90,18 +104,23 @@
              this.discard();
          } else {
              super.tick();
@@ -111,7 +112,7 @@
                  this.setUnderLavaMovement();
              } else if (!this.isNoGravity()) {
                  this.setDeltaMovement(this.getDeltaMovement().add(0.0D, -0.04D, 0.0D));
-@@ -116,64 +134,121 @@
+@@ -116,64 +135,121 @@
                  }
              }
  
@@ -167,7 +168,7 @@
              }
  
 -            if (!this.level.isClientSide && this.age >= 6000) {
-+            if (!this.level.isClientSide && this.age >= this.getDespawnRate()) { // Spigot // Paper
++            if (!this.level.isClientSide && this.age >= this.despawnRate) { // Spigot // Paper
 +                // CraftBukkit start - fire ItemDespawnEvent
 +                if (org.bukkit.craftbukkit.v1_18_R2.event.CraftEventFactory.callItemDespawnEvent(this).isCancelled()) {
 +                    this.age = 0;
@@ -191,7 +192,7 @@
 +        this.lastTick = MinecraftServer.currentTick;
 +        // CraftBukkit end
 +
-+        if (!this.level.isClientSide && this.age >= this.getDespawnRate()) { // Spigot // Paper
++        if (!this.level.isClientSide && this.age >= this.despawnRate) { // Spigot // Paper
 +            // CraftBukkit start - fire ItemDespawnEvent
 +            if (org.bukkit.craftbukkit.v1_18_R2.event.CraftEventFactory.callItemDespawnEvent(this).isCancelled()) {
 +                this.age = 0;
@@ -254,7 +255,7 @@
                      if (this.isRemoved()) {
                          break;
                      }
-@@ -184,50 +259,47 @@
+@@ -184,50 +260,47 @@
      }
  
      private boolean isMergable() {
@@ -262,7 +263,7 @@
 -        return this.isAlive() && this.pickupDelay != 32767 && this.age != -32768 && this.age < 6000 && itemStack.getCount() < itemStack.getMaxStackSize();
 +        ItemStack itemstack = this.getItem();
 +
-+        return this.isAlive() && this.pickupDelay != 32767 && this.age != -32768 && this.age < this.getDespawnRate() && itemstack.getCount() < itemstack.getMaxStackSize(); // Paper - respect despawn rate in pickup check.
++        return this.isAlive() && this.pickupDelay != 32767 && this.age != -32768 && this.age < this.despawnRate && itemstack.getCount() < itemstack.getMaxStackSize(); // Paper - respect despawn rate in pickup check.
      }
  
      private void tryToMerge(ItemEntity other) {
@@ -327,7 +328,7 @@
          targetEntity.pickupDelay = Math.max(targetEntity.pickupDelay, sourceEntity.pickupDelay);
          targetEntity.age = Math.min(targetEntity.age, sourceEntity.age);
          if (sourceStack.isEmpty()) {
-@@ -252,8 +324,13 @@
+@@ -252,8 +325,13 @@
          } else if (this.level.isClientSide) {
              return true;
          } else {
@@ -342,7 +343,7 @@
              this.gameEvent(GameEvent.ENTITY_DAMAGED, source.getEntity());
              if (this.health <= 0) {
                  this.getItem().onDestroyed(this);
-@@ -266,9 +343,9 @@
+@@ -266,9 +344,9 @@
  
      @Override
      public void addAdditionalSaveData(CompoundTag nbt) {
@@ -355,7 +356,7 @@
          if (this.getThrower() != null) {
              nbt.putUUID("Thrower", this.getThrower());
          }
-@@ -299,8 +376,9 @@
+@@ -299,8 +377,9 @@
              this.thrower = nbt.getUUID("Thrower");
          }
  
@@ -367,7 +368,7 @@
          if (this.getItem().isEmpty()) {
              this.discard();
          }
-@@ -310,14 +388,82 @@
+@@ -310,14 +389,82 @@
      @Override
      public void playerTouch(Player player) {
          if (!this.level.isClientSide) {
@@ -457,7 +458,7 @@
                  }
  
                  player.awardStat(Stats.ITEM_PICKED_UP.get(item), i);
-@@ -329,8 +475,9 @@
+@@ -329,8 +476,9 @@
  
      @Override
      public Component getName() {
@@ -469,7 +470,7 @@
      }
  
      @Override
-@@ -342,25 +489,28 @@
+@@ -342,25 +490,30 @@
      @Override
      public Entity changeDimension(ServerLevel destination) {
          Entity entity = super.changeDimension(destination);
@@ -492,6 +493,8 @@
 +        com.google.common.base.Preconditions.checkArgument(!stack.isEmpty(), "Cannot drop air"); // CraftBukkit
 +        this.getEntityData().set(ItemEntity.DATA_ITEM, stack);
 +        this.getEntityData().markDirty(ItemEntity.DATA_ITEM); // CraftBukkit - SPIGOT-4591, must mark dirty
++        net.minecraft.resources.ResourceLocation location = net.minecraft.core.Registry.ITEM.getKey(stack.getItem()); // Paper
++        this.despawnRate = level.paperConfig.altItemDespawnRateMap.getOrDefault(location, level.spigotConfig.itemDespawnRate); // Paper
      }
  
      @Override
@@ -502,20 +505,13 @@
              this.getItem().setEntityRepresentation(this);
          }
  
-@@ -418,11 +568,18 @@
+@@ -418,11 +571,11 @@
  
      public void makeFakeItem() {
          this.setNeverPickUp();
 -        this.age = 5999;
-+        this.age = this.getDespawnRate() - 1; // Spigot
-+    }
-+
-+    // Paper start
-+    public int getDespawnRate(){
-+        org.bukkit.Material material = this.getItem().getBukkitStack().getType();
-+        return level.paperConfig.altItemDespawnRateMap.getOrDefault(material, level.spigotConfig.itemDespawnRate);
++        this.age = this.despawnRate - 1; // Spigot
      }
-+    // Paper end
  
      public float getSpin(float tickDelta) {
 -        return ((float)this.getAge() + tickDelta) / 20.0F + this.bobOffs;

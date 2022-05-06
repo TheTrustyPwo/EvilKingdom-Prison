@@ -45,14 +45,16 @@ public class DataCommand extends CommandHandler {
 
     /**
      * The execution of the command.
-     * Just uses the bukkit arguments since bukkit handles the magic.
+     *
+     * @param sender ~ The command's sender.
+     * @param arguments ~ The command's arguments.
      */
     @Override
-    public boolean onExecution(final CommandSender commandSender, final String[] arguments) {
+    public boolean onExecution(final CommandSender sender, final String[] arguments) {
         if (arguments.length == 0) {
-            this.plugin.getComponentManager().getFileComponent().getConfiguration().getStringList("components.data.commands.data.sub-commands.help.messages.invalid-usage").forEach(string -> commandSender.sendMessage(StringUtilities.colorize(string)));
-            if (commandSender instanceof Player) {
-                final Player player = (Player) commandSender;
+            this.plugin.getComponentManager().getFileComponent().getConfiguration().getStringList("components.data.commands.data.sub-commands.help.messages.invalid-usage").forEach(string -> sender.sendMessage(StringUtilities.colorize(string)));
+            if (sender instanceof Player) {
+                final Player player = (Player) sender;
                 player.playSound(player.getLocation(), Sound.valueOf(this.plugin.getComponentManager().getFileComponent().getConfiguration().getString("components.data.commands.data.sub-commands.help.sounds.error.sound")), (float) this.plugin.getComponentManager().getFileComponent().getConfiguration().getDouble("components.data.commands.data.sub-commands.help.sounds.error.volume"), (float) this.plugin.getComponentManager().getFileComponent().getConfiguration().getDouble("components.data.commands.data.sub-commands.help.sounds.error.pitch"));
             }
             return false;
@@ -60,18 +62,18 @@ public class DataCommand extends CommandHandler {
         final String subCommand = arguments[0].toLowerCase();
         switch (subCommand) {
             default -> {
-                this.plugin.getComponentManager().getFileComponent().getConfiguration().getStringList("components.data.commands.data.sub-commands.help.messages.invalid-usage").forEach(string -> commandSender.sendMessage(StringUtilities.colorize(string)));
-                if (commandSender instanceof Player) {
-                    final Player player = (Player) commandSender;
+                this.plugin.getComponentManager().getFileComponent().getConfiguration().getStringList("components.data.commands.data.sub-commands.help.messages.invalid-usage").forEach(string -> sender.sendMessage(StringUtilities.colorize(string)));
+                if (sender instanceof Player) {
+                    final Player player = (Player) sender;
                     player.playSound(player.getLocation(), Sound.valueOf(this.plugin.getComponentManager().getFileComponent().getConfiguration().getString("components.data.commands.data.sub-commands.help.sounds.error.sound")), (float) this.plugin.getComponentManager().getFileComponent().getConfiguration().getDouble("components.data.commands.data.sub-commands.help.sounds.error.volume"), (float) this.plugin.getComponentManager().getFileComponent().getConfiguration().getDouble("components.data.commands.data.sub-commands.help.sounds.error.pitch"));
                 }
             }
             case "help" -> {
-                if (!(commandSender instanceof Player)) {
-                    this.plugin.getComponentManager().getFileComponent().getConfiguration().getStringList("components.data.commands.data.sub-commands.help.messages.invalid-executor").forEach(string -> commandSender.sendMessage(StringUtilities.colorize(string)));
+                if (!(sender instanceof Player)) {
+                    this.plugin.getComponentManager().getFileComponent().getConfiguration().getStringList("components.data.commands.data.sub-commands.help.messages.invalid-executor").forEach(string -> sender.sendMessage(StringUtilities.colorize(string)));
                     return false;
                 }
-                final Player player = (Player) commandSender;
+                final Player player = (Player) sender;
                 if (!LuckPermsUtilities.getPermissionsViaCache(player.getUniqueId()).contains("prison.data.commands.data")) {
                     this.plugin.getComponentManager().getFileComponent().getConfiguration().getStringList("components.data.commands.data.sub-commands.help.messages.invalid-permissions").forEach(string -> player.sendMessage(StringUtilities.colorize(string)));
                     player.playSound(player.getLocation(), Sound.valueOf(this.plugin.getComponentManager().getFileComponent().getConfiguration().getString("components.data.commands.data.sub-commands.help.sounds.error.sound")), (float) this.plugin.getComponentManager().getFileComponent().getConfiguration().getDouble("components.data.commands.data.sub-commands.help.sounds.error.volume"), (float) this.plugin.getComponentManager().getFileComponent().getConfiguration().getDouble("components.data.commands.data.sub-commands.help.sounds.error.pitch"));
@@ -86,11 +88,11 @@ public class DataCommand extends CommandHandler {
                 player.playSound(player.getLocation(), Sound.valueOf(this.plugin.getComponentManager().getFileComponent().getConfiguration().getString("components.data.commands.data.sub-commands.help.sounds.success.sound")), (float) this.plugin.getComponentManager().getFileComponent().getConfiguration().getDouble("components.data.commands.data.sub-commands.help.sounds.success.volume"), (float) this.plugin.getComponentManager().getFileComponent().getConfiguration().getDouble("components.data.commands.data.sub-commands.help.sounds.success.pitch"));
             }
             case "modify" -> {
-                if (!(commandSender instanceof Player)) {
-                    this.plugin.getComponentManager().getFileComponent().getConfiguration().getStringList("components.data.commands.data.sub-commands.modify.messages.invalid-executor").forEach(string -> commandSender.sendMessage(StringUtilities.colorize(string)));
+                if (!(sender instanceof Player)) {
+                    this.plugin.getComponentManager().getFileComponent().getConfiguration().getStringList("components.data.commands.data.sub-commands.modify.messages.invalid-executor").forEach(string -> sender.sendMessage(StringUtilities.colorize(string)));
                     return false;
                 }
-                final Player player = (Player) commandSender;
+                final Player player = (Player) sender;
                 if (!LuckPermsUtilities.getPermissionsViaCache(player.getUniqueId()).contains("prison.data.commands.data")) {
                     this.plugin.getComponentManager().getFileComponent().getConfiguration().getStringList("components.data.commands.data.sub-commands.modify.messages.invalid-permissions").forEach(string -> player.sendMessage(StringUtilities.colorize(string)));
                     player.playSound(player.getLocation(), Sound.valueOf(this.plugin.getComponentManager().getFileComponent().getConfiguration().getString("components.data.commands.data.sub-commands.modify.sounds.error.sound")), (float) this.plugin.getComponentManager().getFileComponent().getConfiguration().getDouble("components.data.commands.data.sub-commands.modify.sounds.error.volume"), (float) this.plugin.getComponentManager().getFileComponent().getConfiguration().getDouble("components.data.commands.data.sub-commands.modify.sounds.error.pitch"));
@@ -220,14 +222,16 @@ public class DataCommand extends CommandHandler {
 
     /**
      * The tab completion of the command.
-     * Just uses the bukkit arguments since bukkit handles the magic and the converter filters the options returned.
+     *
+     * @param sender ~ The command's sender.
+     * @param arguments ~ The command's arguments.
      */
     @Override
-    public ArrayList<String> onTabCompletion(final CommandSender commandSender, final String[] arguments) {
-        if (!(commandSender instanceof Player)) {
+    public ArrayList<String> onTabCompletion(final CommandSender sender, final String[] arguments) {
+        if (!(sender instanceof Player)) {
             return new ArrayList<String>();
         }
-        final Player player = (Player) commandSender;
+        final Player player = (Player) sender;
         ArrayList<String> tabCompletion = new ArrayList<String>();
         switch (arguments.length) {
             case 1 -> tabCompletion.addAll(Arrays.asList("help", "modify"));

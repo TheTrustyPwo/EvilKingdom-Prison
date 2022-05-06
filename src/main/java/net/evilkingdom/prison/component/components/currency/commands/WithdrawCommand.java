@@ -45,15 +45,17 @@ public class WithdrawCommand extends CommandHandler {
 
     /**
      * The execution of the command.
-     * Just uses the bukkit arguments since bukkit handles the magic.
+     *
+     * @param sender ~ The command's sender.
+     * @param arguments ~ The command's arguments.
      */
     @Override
-    public boolean onExecution(final CommandSender commandSender, final String[] arguments) {
-        if (!(commandSender instanceof Player)) {
-            this.plugin.getComponentManager().getFileComponent().getConfiguration().getStringList("components.currency.commands.withdraw.messages.invalid-executor").forEach(string -> commandSender.sendMessage(StringUtilities.colorize(string)));
+    public boolean onExecution(final CommandSender sender, final String[] arguments) {
+        if (!(sender instanceof Player)) {
+            this.plugin.getComponentManager().getFileComponent().getConfiguration().getStringList("components.currency.commands.withdraw.messages.invalid-executor").forEach(string -> sender.sendMessage(StringUtilities.colorize(string)));
             return false;
         }
-        final Player player = (Player) commandSender;
+        final Player player = (Player) sender;
         if (arguments.length != 2) {
             this.plugin.getComponentManager().getFileComponent().getConfiguration().getStringList("components.currency.commands.withdraw.messages.invalid-usage").forEach(string -> player.sendMessage(StringUtilities.colorize(string)));
             player.playSound(player.getLocation(), Sound.valueOf(this.plugin.getComponentManager().getFileComponent().getConfiguration().getString("components.currency.commands.withdraw.sounds.error.sound")), (float) this.plugin.getComponentManager().getFileComponent().getConfiguration().getDouble("components.currency.commands.withdraw.sounds.error.volume"), (float) this.plugin.getComponentManager().getFileComponent().getConfiguration().getDouble("components.currency.commands.withdraw.sounds.error.pitch"));
@@ -112,14 +114,16 @@ public class WithdrawCommand extends CommandHandler {
 
     /**
      * The tab completion of the command.
-     * Just uses the bukkit arguments since bukkit handles the magic and the converter filters the options returned.
+     *
+     * @param sender ~ The command's sender.
+     * @param arguments ~ The command's arguments.
      */
     @Override
-    public ArrayList<String> onTabCompletion(final CommandSender commandSender, final String[] arguments) {
-        if (!(commandSender instanceof Player)) {
+    public ArrayList<String> onTabCompletion(final CommandSender sender, final String[] arguments) {
+        if (!(sender instanceof Player)) {
             return new ArrayList<String>();
         }
-        final Player player = (Player) commandSender;
+        final Player player = (Player) sender;
         ArrayList<String> tabCompletion = new ArrayList<String>();
         switch (arguments.length) {
             case 1 -> tabCompletion.addAll(Arrays.asList("gems", "tokens"));
