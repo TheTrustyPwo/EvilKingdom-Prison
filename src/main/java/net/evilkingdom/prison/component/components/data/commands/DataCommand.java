@@ -50,14 +50,14 @@ public class DataCommand extends CommandHandler {
      * @param arguments ~ The command's arguments.
      */
     @Override
-    public boolean onExecution(final CommandSender sender, final String[] arguments) {
+    public void onExecution(final CommandSender sender, final String[] arguments) {
         if (arguments.length == 0) {
             this.plugin.getComponentManager().getFileComponent().getConfiguration().getStringList("components.data.commands.data.sub-commands.help.messages.invalid-usage").forEach(string -> sender.sendMessage(StringUtilities.colorize(string)));
             if (sender instanceof Player) {
                 final Player player = (Player) sender;
                 player.playSound(player.getLocation(), Sound.valueOf(this.plugin.getComponentManager().getFileComponent().getConfiguration().getString("components.data.commands.data.sub-commands.help.sounds.error.sound")), (float) this.plugin.getComponentManager().getFileComponent().getConfiguration().getDouble("components.data.commands.data.sub-commands.help.sounds.error.volume"), (float) this.plugin.getComponentManager().getFileComponent().getConfiguration().getDouble("components.data.commands.data.sub-commands.help.sounds.error.pitch"));
             }
-            return false;
+            return;
         }
         final String subCommand = arguments[0].toLowerCase();
         switch (subCommand) {
@@ -71,18 +71,18 @@ public class DataCommand extends CommandHandler {
             case "help" -> {
                 if (!(sender instanceof Player)) {
                     this.plugin.getComponentManager().getFileComponent().getConfiguration().getStringList("components.data.commands.data.sub-commands.help.messages.invalid-executor").forEach(string -> sender.sendMessage(StringUtilities.colorize(string)));
-                    return false;
+                    return;
                 }
                 final Player player = (Player) sender;
                 if (!LuckPermsUtilities.getPermissionsViaCache(player.getUniqueId()).contains("prison.data.commands.data")) {
                     this.plugin.getComponentManager().getFileComponent().getConfiguration().getStringList("components.data.commands.data.sub-commands.help.messages.invalid-permissions").forEach(string -> player.sendMessage(StringUtilities.colorize(string)));
                     player.playSound(player.getLocation(), Sound.valueOf(this.plugin.getComponentManager().getFileComponent().getConfiguration().getString("components.data.commands.data.sub-commands.help.sounds.error.sound")), (float) this.plugin.getComponentManager().getFileComponent().getConfiguration().getDouble("components.data.commands.data.sub-commands.help.sounds.error.volume"), (float) this.plugin.getComponentManager().getFileComponent().getConfiguration().getDouble("components.data.commands.data.sub-commands.help.sounds.error.pitch"));
-                    return false;
+                    return;
                 }
                 if (arguments.length != 1) {
                     this.plugin.getComponentManager().getFileComponent().getConfiguration().getStringList("components.data.commands.data.sub-commands.help.messages.invalid-usage").forEach(string -> player.sendMessage(StringUtilities.colorize(string)));
                     player.playSound(player.getLocation(), Sound.valueOf(this.plugin.getComponentManager().getFileComponent().getConfiguration().getString("components.data.commands.data.sub-commands.help.sounds.error.sound")), (float) this.plugin.getComponentManager().getFileComponent().getConfiguration().getDouble("components.data.commands.data.sub-commands.help.sounds.error.volume"), (float) this.plugin.getComponentManager().getFileComponent().getConfiguration().getDouble("components.data.commands.data.sub-commands.help.sounds.error.pitch"));
-                    return false;
+                    return;
                 }
                 this.plugin.getComponentManager().getFileComponent().getConfiguration().getStringList("components.data.commands.data.sub-commands.help.messages.success").forEach(string -> player.sendMessage(StringUtilities.colorize(string)));
                 player.playSound(player.getLocation(), Sound.valueOf(this.plugin.getComponentManager().getFileComponent().getConfiguration().getString("components.data.commands.data.sub-commands.help.sounds.success.sound")), (float) this.plugin.getComponentManager().getFileComponent().getConfiguration().getDouble("components.data.commands.data.sub-commands.help.sounds.success.volume"), (float) this.plugin.getComponentManager().getFileComponent().getConfiguration().getDouble("components.data.commands.data.sub-commands.help.sounds.success.pitch"));
@@ -90,18 +90,18 @@ public class DataCommand extends CommandHandler {
             case "modify" -> {
                 if (!(sender instanceof Player)) {
                     this.plugin.getComponentManager().getFileComponent().getConfiguration().getStringList("components.data.commands.data.sub-commands.modify.messages.invalid-executor").forEach(string -> sender.sendMessage(StringUtilities.colorize(string)));
-                    return false;
+                    return;
                 }
                 final Player player = (Player) sender;
                 if (!LuckPermsUtilities.getPermissionsViaCache(player.getUniqueId()).contains("prison.data.commands.data")) {
                     this.plugin.getComponentManager().getFileComponent().getConfiguration().getStringList("components.data.commands.data.sub-commands.modify.messages.invalid-permissions").forEach(string -> player.sendMessage(StringUtilities.colorize(string)));
                     player.playSound(player.getLocation(), Sound.valueOf(this.plugin.getComponentManager().getFileComponent().getConfiguration().getString("components.data.commands.data.sub-commands.modify.sounds.error.sound")), (float) this.plugin.getComponentManager().getFileComponent().getConfiguration().getDouble("components.data.commands.data.sub-commands.modify.sounds.error.volume"), (float) this.plugin.getComponentManager().getFileComponent().getConfiguration().getDouble("components.data.commands.data.sub-commands.modify.sounds.error.pitch"));
-                    return false;
+                    return;
                 }
                 if (arguments.length != 5) {
                     this.plugin.getComponentManager().getFileComponent().getConfiguration().getStringList("components.data.commands.data.sub-commands.modify.messages.invalid-usage").forEach(string -> player.sendMessage(StringUtilities.colorize(string)));
                     player.playSound(player.getLocation(), Sound.valueOf(this.plugin.getComponentManager().getFileComponent().getConfiguration().getString("components.data.commands.data.sub-commands.modify.sounds.error.sound")), (float) this.plugin.getComponentManager().getFileComponent().getConfiguration().getDouble("components.data.commands.data.sub-commands.modify.sounds.error.volume"), (float) this.plugin.getComponentManager().getFileComponent().getConfiguration().getDouble("components.data.commands.data.sub-commands.modify.sounds.error.pitch"));
-                    return false;
+                    return;
                 }
                 MojangUtilities.getUUID(arguments[1]).whenComplete((optionalTargetUUID, uuidThrowable) -> {
                     if (optionalTargetUUID.isEmpty()) {
@@ -217,7 +217,6 @@ public class DataCommand extends CommandHandler {
                 });
             }
         }
-        return true;
     }
 
     /**

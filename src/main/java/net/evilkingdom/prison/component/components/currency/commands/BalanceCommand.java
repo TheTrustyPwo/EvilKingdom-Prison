@@ -50,22 +50,22 @@ public class BalanceCommand extends CommandHandler {
      * @param arguments ~ The command's arguments.
      */
     @Override
-    public boolean onExecution(final CommandSender sender, final String[] arguments) {
+    public void onExecution(final CommandSender sender, final String[] arguments) {
         if (!(sender instanceof Player)) {
             this.plugin.getComponentManager().getFileComponent().getConfiguration().getStringList("components.currency.commands.balance.messages.invalid-executor").forEach(string -> sender.sendMessage(StringUtilities.colorize(string)));
-            return false;
+            return;
         }
         final Player player = (Player) sender;
         if (arguments.length < 1 || arguments.length > 2) {
             this.plugin.getComponentManager().getFileComponent().getConfiguration().getStringList("components.currency.commands.balance.messages.invalid-usage").forEach(string -> player.sendMessage(StringUtilities.colorize(string)));
             player.playSound(player.getLocation(), Sound.valueOf(this.plugin.getComponentManager().getFileComponent().getConfiguration().getString("components.currency.commands.balance.sounds.error.sound")), (float) this.plugin.getComponentManager().getFileComponent().getConfiguration().getDouble("components.currency.commands.balance.sounds.error.volume"), (float) this.plugin.getComponentManager().getFileComponent().getConfiguration().getDouble("components.currency.commands.balance.sounds.error.pitch"));
-            return false;
+            return;
         }
         final String currency = arguments[0].toLowerCase();
         if (!Arrays.asList("gems", "tokens").contains(currency)) {
             this.plugin.getComponentManager().getFileComponent().getConfiguration().getStringList("components.currency.commands.balance.messages.invalid-currency").forEach(string -> player.sendMessage(StringUtilities.colorize(string)));
             player.playSound(player.getLocation(), Sound.valueOf(this.plugin.getComponentManager().getFileComponent().getConfiguration().getString("components.currency.commands.balance.sounds.error.sound")), (float) this.plugin.getComponentManager().getFileComponent().getConfiguration().getDouble("components.currency.commands.balance.sounds.error.volume"), (float) this.plugin.getComponentManager().getFileComponent().getConfiguration().getDouble("components.currency.commands.balance.sounds.error.pitch"));
-            return false;
+            return;
         }
         switch (arguments.length) {
             case 1 -> {
@@ -82,7 +82,7 @@ public class BalanceCommand extends CommandHandler {
             case 2 -> {
                 if (arguments[1].equalsIgnoreCase(player.getName())) {
                     player.chat("/balance " + currency);
-                    return false;
+                    return;
                 }
                 MojangUtilities.getUUID(arguments[1]).whenComplete((optionalTargetUUID, uuidThrowable) -> {
                     if (optionalTargetUUID.isEmpty()) {
@@ -111,7 +111,6 @@ public class BalanceCommand extends CommandHandler {
                 });
             }
         }
-        return true;
     }
 
     /**

@@ -48,40 +48,40 @@ public class PayCommand extends CommandHandler {
      * @param arguments ~ The command's arguments.
      */
     @Override
-    public boolean onExecution(final CommandSender sender, final String[] arguments) {
+    public void onExecution(final CommandSender sender, final String[] arguments) {
         if (!(sender instanceof Player)) {
             this.plugin.getComponentManager().getFileComponent().getConfiguration().getStringList("components.currency.commands.pay.messages.invalid-executor").forEach(string -> sender.sendMessage(StringUtilities.colorize(string)));
-            return false;
+            return;
         }
         final Player player = (Player) sender;
         if (arguments.length != 3) {
             this.plugin.getComponentManager().getFileComponent().getConfiguration().getStringList("components.currency.commands.pay.messages.invalid-usage").forEach(string -> player.sendMessage(StringUtilities.colorize(string)));
             player.playSound(player.getLocation(), Sound.valueOf(this.plugin.getComponentManager().getFileComponent().getConfiguration().getString("components.currency.commands.pay.sounds.error.sound")), (float) this.plugin.getComponentManager().getFileComponent().getConfiguration().getDouble("components.currency.commands.pay.sounds.error.volume"), (float) this.plugin.getComponentManager().getFileComponent().getConfiguration().getDouble("components.currency.commands.pay.sounds.error.pitch"));
-            return false;
+            return;
         }
         final Optional<? extends Player> optionalTarget = Bukkit.getOnlinePlayers().stream().filter(onlinePlayer -> onlinePlayer.getName().equalsIgnoreCase(arguments[0])).findFirst();
         if (optionalTarget.isEmpty()) {
             this.plugin.getComponentManager().getFileComponent().getConfiguration().getStringList("components.currency.commands.pay.messages.invalid-player").forEach(string -> player.sendMessage(StringUtilities.colorize(string.replace("%player%", arguments[0]))));
             player.playSound(player.getLocation(), Sound.valueOf(this.plugin.getComponentManager().getFileComponent().getConfiguration().getString("components.currency.commands.pay.sounds.error.sound")), (float) this.plugin.getComponentManager().getFileComponent().getConfiguration().getDouble("components.currency.commands.pay.sounds.error.volume"), (float) this.plugin.getComponentManager().getFileComponent().getConfiguration().getDouble("components.currency.commands.pay.sounds.error.pitch"));
-            return false;
+            return;
         }
         final Player target = optionalTarget.get();
         final String currency = arguments[1].toLowerCase();
         if (!Arrays.asList("gems", "tokens").contains(currency)) {
             this.plugin.getComponentManager().getFileComponent().getConfiguration().getStringList("components.currency.commands.pay.messages.invalid-currency").forEach(string -> player.sendMessage(StringUtilities.colorize(string)));
             player.playSound(player.getLocation(), Sound.valueOf(this.plugin.getComponentManager().getFileComponent().getConfiguration().getString("components.currency.commands.pay.sounds.error.sound")), (float) this.plugin.getComponentManager().getFileComponent().getConfiguration().getDouble("components.currency.commands.pay.sounds.error.volume"), (float) this.plugin.getComponentManager().getFileComponent().getConfiguration().getDouble("components.currency.commands.pay.sounds.error.pitch"));
-            return false;
+            return;
         }
         if (!NumberUtilities.isLong(arguments[2])) {
             this.plugin.getComponentManager().getFileComponent().getConfiguration().getStringList("components.currency.commands.pay.messages.invalid-amount.not-a-long").forEach(string -> player.sendMessage(StringUtilities.colorize(string)));
             player.playSound(player.getLocation(), Sound.valueOf(this.plugin.getComponentManager().getFileComponent().getConfiguration().getString("components.currency.commands.pay.sounds.error.sound")), (float) this.plugin.getComponentManager().getFileComponent().getConfiguration().getDouble("components.currency.commands.pay.sounds.error.volume"), (float) this.plugin.getComponentManager().getFileComponent().getConfiguration().getDouble("components.currency.commands.pay.sounds.error.pitch"));
-            return false;
+            return;
         }
         final long amount = Long.parseLong(arguments[2]);
         if (amount <= 0) {
             this.plugin.getComponentManager().getFileComponent().getConfiguration().getStringList("components.currency.commands.pay.messages.invalid-amount.amount-too-little").forEach(string -> player.sendMessage(StringUtilities.colorize(string)));
             player.playSound(player.getLocation(), Sound.valueOf(this.plugin.getComponentManager().getFileComponent().getConfiguration().getString("components.currency.commands.pay.sounds.error.sound")), (float) this.plugin.getComponentManager().getFileComponent().getConfiguration().getDouble("components.currency.commands.pay.sounds.error.volume"), (float) this.plugin.getComponentManager().getFileComponent().getConfiguration().getDouble("components.currency.commands.pay.sounds.error.pitch"));
-            return false;
+            return;
         }
         final String formattedAmount = this.plugin.getComponentManager().getFileComponent().getConfiguration().getString("components.currency.symbols." + currency) + NumberUtilities.format(amount, NumberFormatType.COMMAS);
         final PlayerData playerData = PlayerData.getViaCache(player.getUniqueId()).get();
@@ -90,14 +90,14 @@ public class PayCommand extends CommandHandler {
                 if (playerData.getTokens() < amount) {
                     this.plugin.getComponentManager().getFileComponent().getConfiguration().getStringList("components.currency.commands.pay.messages.invalid-amount.not-enough").forEach(string -> player.sendMessage(StringUtilities.colorize(string.replace("%currency%", currency))));
                     player.playSound(player.getLocation(), Sound.valueOf(this.plugin.getComponentManager().getFileComponent().getConfiguration().getString("components.currency.commands.pay.sounds.error.sound")), (float) this.plugin.getComponentManager().getFileComponent().getConfiguration().getDouble("components.currency.commands.pay.sounds.error.volume"), (float) this.plugin.getComponentManager().getFileComponent().getConfiguration().getDouble("components.currency.commands.pay.sounds.error.pitch"));
-                    return false;
+                    return;
                 }
             }
             case "gems" -> {
                 if (playerData.getGems() < amount) {
                     this.plugin.getComponentManager().getFileComponent().getConfiguration().getStringList("components.currency.commands.pay.messages.invalid-amount.not-enough").forEach(string -> player.sendMessage(StringUtilities.colorize(string.replace("%currency%", currency))));
                     player.playSound(player.getLocation(), Sound.valueOf(this.plugin.getComponentManager().getFileComponent().getConfiguration().getString("components.currency.commands.pay.sounds.error.sound")), (float) this.plugin.getComponentManager().getFileComponent().getConfiguration().getDouble("components.currency.commands.pay.sounds.error.volume"), (float) this.plugin.getComponentManager().getFileComponent().getConfiguration().getDouble("components.currency.commands.pay.sounds.error.pitch"));
-                    return false;
+                    return;
                 }
             }
         }
@@ -116,7 +116,6 @@ public class PayCommand extends CommandHandler {
         player.playSound(player.getLocation(), Sound.valueOf(this.plugin.getComponentManager().getFileComponent().getConfiguration().getString("components.currency.commands.pay.sounds.success.player.sound")), (float) this.plugin.getComponentManager().getFileComponent().getConfiguration().getDouble("components.currency.commands.pay.sounds.success.player.volume"), (float) this.plugin.getComponentManager().getFileComponent().getConfiguration().getDouble("components.currency.commands.pay.sounds.success.player.pitch"));
         this.plugin.getComponentManager().getFileComponent().getConfiguration().getStringList("components.currency.commands.pay.messages.success.target").forEach(string -> target.sendMessage(StringUtilities.colorize(string.replace("%player%", player.getName()).replace("%amount%", formattedAmount).replace("%currency%", currency))));
         target.playSound(player.getLocation(), Sound.valueOf(this.plugin.getComponentManager().getFileComponent().getConfiguration().getString("components.currency.commands.pay.sounds.success.target.sound")), (float) this.plugin.getComponentManager().getFileComponent().getConfiguration().getDouble("components.currency.commands.pay.sounds.success.target.volume"), (float) this.plugin.getComponentManager().getFileComponent().getConfiguration().getDouble("components.currency.commands.pay.sounds.success.target.pitch"));
-        return true;
     }
 
     /**
