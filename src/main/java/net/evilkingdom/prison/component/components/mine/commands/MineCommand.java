@@ -54,9 +54,7 @@ public class MineCommand extends CommandHandler {
      * Allows you to register the command.
      */
     public void register() {
-        final Command command = new Command(this.plugin, "mine");
-        command.setAliases(new ArrayList<String>(Arrays.asList("mines", "cell", "island", "is")));
-        command.setHandler(this);
+        final Command command = new Command(this.plugin, "mine", new ArrayList<String>(Arrays.asList("mines", "cell", "island", "is")), this);
         command.register();
     }
 

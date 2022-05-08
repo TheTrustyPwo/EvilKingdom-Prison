@@ -58,6 +58,17 @@ public class CraftFallingBlock extends CraftEntity implements FallingBlock {
     public void setHurtEntities(boolean hurtEntities) {
         this.getHandle().hurtEntities = hurtEntities;
     }
+    // Paper Start - Auto expire setting
+    @Override
+    public boolean doesAutoExpire() {
+        return this.getHandle().autoExpire;
+    }
+
+    @Override
+    public void shouldAutoExpire(boolean autoExpires) {
+        this.getHandle().autoExpire = autoExpires;
+    }
+    // Paper End - Auto expire setting
 
     @Override
     public void setTicksLived(int value) {

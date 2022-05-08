@@ -71,7 +71,7 @@
  
      public Zombie(EntityType<? extends Zombie> type, Level world) {
          super(type, world);
-+        this.breakDoorGoal = new BreakDoorGoal(this, com.google.common.base.Predicates.in(world.paperConfig.zombieBreakDoors)); // Paper
++        this.breakDoorGoal = new BreakDoorGoal(this, com.google.common.base.Predicates.in(world.paperConfig.entitiesDifficultyBreakDoors.getOrDefault(type, world.paperConfig.entitiesDifficultyBreakDoors.get(EntityType.ZOMBIE)))); // Paper
      }
  
      public Zombie(Level world) {

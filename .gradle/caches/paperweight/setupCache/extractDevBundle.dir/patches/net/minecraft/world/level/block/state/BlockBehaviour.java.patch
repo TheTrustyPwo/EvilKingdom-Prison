@@ -13,14 +13,16 @@
  import net.minecraft.world.level.BlockGetter;
  import net.minecraft.world.level.EmptyBlockGetter;
  import net.minecraft.world.level.Level;
-@@ -67,6 +69,7 @@
+@@ -67,7 +69,8 @@
  import net.minecraft.world.phys.shapes.VoxelShape;
  
  public abstract class BlockBehaviour {
+-    protected static final Direction[] UPDATE_SHAPE_ORDER = new Direction[]{Direction.WEST, Direction.EAST, Direction.NORTH, Direction.SOUTH, Direction.DOWN, Direction.UP};
 +
-     protected static final Direction[] UPDATE_SHAPE_ORDER = new Direction[]{Direction.WEST, Direction.EAST, Direction.NORTH, Direction.SOUTH, Direction.DOWN, Direction.UP};
++    public static final Direction[] UPDATE_SHAPE_ORDER = new Direction[]{Direction.WEST, Direction.EAST, Direction.NORTH, Direction.SOUTH, Direction.DOWN, Direction.UP}; // Paper - public
      protected final Material material;
      public final boolean hasCollision;
+     protected final float explosionResistance;
 @@ -97,21 +100,20 @@
  
      /** @deprecated */
@@ -76,7 +78,24 @@
          if (state.hasBlockEntity() && !state.is(newState.getBlock())) {
              world.removeBlockEntity(pos);
          }
-@@ -222,7 +232,7 @@
+@@ -177,6 +187,16 @@
+         return false;
+     }
+ 
++    // Paper start - optimize redstone (Alternate Current)
++    public boolean isSignalSourceTo(Level level, BlockPos pos, BlockState state, Direction dir) {
++        return false;
++    }
++
++    public boolean isDirectSignalSourceTo(Level level, BlockPos pos, BlockState state, Direction dir) {
++        return false;
++    }
++    // Paper end
++
+     /** @deprecated */
+     @Deprecated
+     public PushReaction getPistonPushReaction(BlockState state) {
+@@ -222,7 +242,7 @@
      /** @deprecated */
      @Deprecated
      public boolean canBeReplaced(BlockState state, BlockPlaceContext context) {
@@ -85,7 +104,7 @@
      }
  
      /** @deprecated */
-@@ -234,14 +244,16 @@
+@@ -234,14 +254,16 @@
      /** @deprecated */
      @Deprecated
      public List<ItemStack> getDrops(BlockState state, LootContext.Builder builder) {
@@ -108,7 +127,7 @@
          }
      }
  
-@@ -272,11 +284,7 @@
+@@ -272,11 +294,7 @@
      /** @deprecated */
      @Deprecated
      public int getLightBlock(BlockState state, BlockGetter world, BlockPos pos) {
@@ -121,7 +140,7 @@
      }
  
      /** @deprecated */
-@@ -336,30 +344,29 @@
+@@ -336,30 +354,29 @@
  
      /** @deprecated */
      @Deprecated
@@ -158,7 +177,7 @@
  
      /** @deprecated */
      @Deprecated
-@@ -369,8 +376,7 @@
+@@ -369,8 +386,7 @@
  
      /** @deprecated */
      @Deprecated
@@ -168,7 +187,7 @@
  
      /** @deprecated */
      @Deprecated
-@@ -380,8 +386,9 @@
+@@ -380,8 +396,9 @@
  
      public final ResourceLocation getLootTable() {
          if (this.drops == null) {
@@ -180,7 +199,7 @@
          }
  
          return this.drops;
-@@ -389,30 +396,271 @@
+@@ -389,30 +406,271 @@
  
      /** @deprecated */
      @Deprecated
@@ -458,7 +477,7 @@
          private final BlockBehaviour.StatePredicate isRedstoneConductor;
          private final BlockBehaviour.StatePredicate isSuffocating;
          private final BlockBehaviour.StatePredicate isViewBlocking;
-@@ -423,33 +671,109 @@
+@@ -423,33 +681,109 @@
  
          protected BlockStateBase(Block block, ImmutableMap<Property<?>, Comparable<?>> propertyMap, MapCodec<BlockState> codec) {
              super(block, propertyMap, codec);
@@ -516,8 +535,8 @@
 +        // ret -1 if opacity is dynamic, or -1 if the block is conditionally full opaque, else return opacity in [0, 15]
 +        public final int getOpacityIfCached() {
 +            return this.opacityIfCached;
-+        }
-+
+         }
+ 
 +        protected final boolean conditionallyFullOpaque;
 +        public final boolean isConditionallyFullOpaque() {
 +            return this.conditionallyFullOpaque;
@@ -528,9 +547,9 @@
 +
 +        public final long getBlockCollisionBehavior() {
 +            return this.blockCollisionBehavior;
-         }
++        }
 +        // Paper end
- 
++
          public void initCache() {
 +            this.fluid = this.getBlock().getFluidState(this.asState()); // Paper - moved from getFluid()
 +            this.isTicking = this.getBlock().isRandomlyTicking(this.asState()); // Paper - moved from isTicking()
@@ -584,7 +603,7 @@
          public Material getMaterial() {
              return this.material;
          }
-@@ -474,19 +798,19 @@
+@@ -474,19 +808,19 @@
              return this.getBlock().getOcclusionShape(this.asState(), world, pos);
          }
  
@@ -609,7 +628,24 @@
              return this.isAir;
          }
  
-@@ -547,19 +871,20 @@
+@@ -522,6 +856,16 @@
+             return this.getBlock().isSignalSource(this.asState());
+         }
+ 
++        // Paper start - optimize redstone (Alternate Current)
++        public boolean isSignalSourceTo(Level level, BlockPos pos, Direction dir) {
++            return this.getBlock().isSignalSourceTo(level, pos, this.asState(), dir);
++        }
++
++        public boolean isDirectSignalSourceTo(Level level, BlockPos pos, Direction dir) {
++            return this.getBlock().isDirectSignalSourceTo(level, pos, this.asState(), dir);
++        }
++        // Paper end
++
+         public int getSignal(BlockGetter world, BlockPos pos, Direction direction) {
+             return this.getBlock().getSignal(this.asState(), world, pos, direction);
+         }
+@@ -547,19 +891,20 @@
          }
  
          public PushReaction getPistonPushReaction() {
@@ -634,7 +670,7 @@
              return this.canOcclude;
          }
  
-@@ -605,16 +930,18 @@
+@@ -605,16 +950,18 @@
  
          public Vec3 getOffset(BlockGetter world, BlockPos pos) {
              Block block = this.getBlock();
@@ -660,7 +696,7 @@
              }
          }
  
-@@ -632,13 +959,18 @@
+@@ -632,13 +979,18 @@
  
          public final void updateNeighbourShapes(LevelAccessor world, BlockPos pos, int flags, int maxUpdateDepth) {
              this.getBlock();
@@ -685,7 +721,7 @@
              }
  
          }
-@@ -746,19 +1078,19 @@
+@@ -746,19 +1098,19 @@
  
          @Nullable
          public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level world, BlockEntityType<T> blockEntityType) {
@@ -710,7 +746,7 @@
          }
  
          public long getSeed(BlockPos pos) {
-@@ -791,7 +1123,8 @@
+@@ -791,7 +1143,8 @@
              return this.requiresCorrectToolForDrops;
          }
  
@@ -720,7 +756,7 @@
              private static final Direction[] DIRECTIONS = Direction.values();
              private static final int SUPPORT_TYPE_COUNT = SupportType.values().length;
              protected final boolean solidRender;
-@@ -806,17 +1139,25 @@
+@@ -806,17 +1159,25 @@
  
              Cache(BlockState state) {
                  Block block = state.getBlock();
@@ -750,7 +786,7 @@
                      }
                  }
  
-@@ -824,14 +1165,22 @@
+@@ -824,14 +1185,22 @@
                  if (!this.collisionShape.isEmpty() && block.getOffsetType() != BlockBehaviour.OffsetType.NONE) {
                      throw new IllegalStateException(String.format("%s has a collision shape and an offset type, but is not marked as dynamicShape in its properties.", Registry.BLOCK.getKey(block)));
                  } else {
@@ -779,7 +815,7 @@
                          }
                      }
  
-@@ -840,235 +1189,12 @@
+@@ -840,235 +1209,12 @@
              }
  
              public boolean isFaceSturdy(Direction direction, SupportType shapeType) {

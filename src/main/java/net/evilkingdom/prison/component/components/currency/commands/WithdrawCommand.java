@@ -37,9 +37,7 @@ public class WithdrawCommand extends CommandHandler {
      * Allows you to register the command.
      */
     public void register() {
-        final Command command = new Command(this.plugin, "withdraw");
-        command.setAliases(new ArrayList<>(Arrays.asList("note", "banknote")));
-        command.setHandler(this);
+        final Command command = new Command(this.plugin, "withdraw", new ArrayList<String>(Arrays.asList("note", "banknote")), this);
         command.register();
     }
 

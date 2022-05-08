@@ -574,7 +574,7 @@
  
 -                    this.onBlockStateChange(pos, blockState, blockState2);
 +                    this.onBlockStateChange(blockposition, iblockdata1, iblockdata2);
-+                }
+                 }
 +                */
 +
 +                // CraftBukkit start
@@ -587,7 +587,7 @@
 +                        Level.lastPhysicsProblem = new BlockPos(pos);
 +                    }
 +                    // Spigot end
-                 }
++                }
 +                // CraftBukkit end
  
                  return true;
@@ -1461,7 +1461,7 @@
                      }
                  }
              }
-@@ -930,6 +1455,48 @@
+@@ -930,6 +1455,59 @@
  
      @Override
      public long nextSubTickCount() {
@@ -1508,6 +1508,17 @@
 +        List<T> ret = new java.util.ArrayList<>();
 +        this.entitySliceManager.getEntities(entityClass, null, box, ret, predicate);
 +        return ret;
++    }
++    // Paper end
++
++    // Paper start - optimize redstone (Alternate Current)
++    public alternate.current.wire.WireHandler getWireHandler() {
++        // This method is overridden in ServerLevel.
++        // Since Paper is a server platform there is no risk
++        // of this implementation being called. It is here 
++        // only so this method can be called without casting
++        // an instance of Level to ServerLevel.
++        return null;
 +    }
 +    // Paper end
  }

@@ -32,3 +32,17 @@
          if (!world.getBlockTicks().hasScheduledTick(hitResult.getBlockPos(), state.getBlock())) {
              setOutputPower(world, state, i, hitResult.getBlockPos(), j);
          }
+@@ -95,6 +113,13 @@
+         return true;
+     }
+ 
++    // Paper start - optimize redstone (Alternate Current)
++    @Override
++    public boolean isSignalSourceTo(Level level, BlockPos pos, BlockState state, Direction dir) {
++        return true;
++    }
++    // Paper end
++
+     @Override
+     protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
+         builder.add(OUTPUT_POWER);

@@ -307,8 +307,22 @@
      }
  
      @Override
-@@ -235,16 +267,16 @@
+@@ -233,18 +265,30 @@
+         return true;
+     }
  
++    // Paper start - optimize redstone (Alternate Current)
++    @Override
++    public boolean isSignalSourceTo(Level level, BlockPos pos, BlockState state, Direction dir) {
++        return true;
++    }
++
++    @Override
++    public boolean isDirectSignalSourceTo(Level level, BlockPos pos, BlockState state, Direction dir) {
++        return state.getValue(FACING) == dir;
++    }
++    // Paper end
++
      @Override
      public BlockState rotate(BlockState state, Rotation rotation) {
 -        return state.setValue(FACING, rotation.rotate(state.getValue(FACING)));

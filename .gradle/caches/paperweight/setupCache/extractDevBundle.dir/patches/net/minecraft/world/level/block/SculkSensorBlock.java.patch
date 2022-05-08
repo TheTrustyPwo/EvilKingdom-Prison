@@ -217,8 +217,17 @@
      }
  
      @Override
-@@ -201,54 +208,74 @@
+@@ -199,56 +206,83 @@
+         return true;
+     }
  
++    // Paper start - optimize redstone (Alternate Current)
++    @Override
++    public boolean isSignalSourceTo(Level level, BlockPos pos, BlockState state, Direction dir) {
++        return true;
++    }
++    // Paper end
++
      @Override
      public int getSignal(BlockState state, BlockGetter world, BlockPos pos, Direction direction) {
 -        return state.getValue(POWER);
@@ -312,7 +321,7 @@
      }
  
      @Override
-@@ -258,10 +285,12 @@
+@@ -258,10 +292,12 @@
  
      @Override
      public int getAnalogOutputSignal(BlockState state, Level world, BlockPos pos) {

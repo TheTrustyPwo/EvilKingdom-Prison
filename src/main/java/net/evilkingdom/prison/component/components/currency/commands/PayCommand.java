@@ -36,8 +36,7 @@ public class PayCommand extends CommandHandler {
      * Allows you to register the command.
      */
     public void register() {
-        final Command command = new Command(this.plugin, "pay");
-        command.setHandler(this);
+        final Command command = new Command(this.plugin, "pay", new ArrayList<String>(), this);
         command.register();
     }
 

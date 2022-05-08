@@ -156,7 +156,7 @@
              }
          }
  
-@@ -137,7 +159,7 @@
+@@ -137,11 +159,23 @@
  
      @Override
      protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
@@ -165,3 +165,19 @@
      }
  
      @Override
+     public boolean isSignalSource(BlockState state) {
+         return true;
+     }
++
++    // Paper start - optimize redstone (Alternate Current)
++    @Override
++    public boolean isSignalSourceTo(Level level, BlockPos pos, BlockState state, Direction dir) {
++        return true;
++    }
++
++    @Override
++    public boolean isDirectSignalSourceTo(Level level, BlockPos pos, BlockState state, Direction dir) {
++        return state.getValue(FACING) == dir;
++    }
++    // Paper end
+ }

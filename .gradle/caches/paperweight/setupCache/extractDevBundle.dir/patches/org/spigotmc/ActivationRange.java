@@ -211,7 +211,7 @@ public class ActivationRange
             // Paper end
 
             // Paper start
-            java.util.List<Entity> entities = world.getEntities((Entity)null, maxBB, null);
+            java.util.List<Entity> entities = world.getEntities((Entity)null, maxBB, (e) -> !(e instanceof net.minecraft.world.entity.Marker)); // Don't tick markers
             for (int i = 0; i < entities.size(); i++) {
                 Entity entity = entities.get(i);
                 ActivationRange.activateEntity(entity);

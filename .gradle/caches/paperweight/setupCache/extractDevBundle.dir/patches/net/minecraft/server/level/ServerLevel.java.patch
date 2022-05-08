@@ -82,7 +82,7 @@
      public static final BlockPos END_SPAWN_POINT = new BlockPos(100, 50, 0);
      private static final int MIN_RAIN_DELAY_TIME = 12000;
      private static final int MAX_RAIN_DELAY_TIME = 180000;
-@@ -160,77 +177,384 @@
+@@ -160,77 +177,385 @@
      private static final Logger LOGGER = LogUtils.getLogger();
      private static final int EMPTY_TIME_NO_TICK = 300;
      private static final int MAX_SCHEDULED_TICKS_PER_TICK = 65536;
@@ -143,6 +143,7 @@
 +    public final UUID uuid;
 +    public boolean hasPhysicsEvent = true; // Paper
 +    public boolean hasEntityMoveEvent = false; // Paper
++    private final alternate.current.wire.WireHandler wireHandler = new alternate.current.wire.WireHandler(this); // Paper - optimize redstone (Alternate Current)
 +    public static Throwable getAddToWorldStackTrace(Entity entity) {
 +        return new Throwable(entity + " Added to world at " + new java.util.Date());
 +    }
@@ -500,7 +501,7 @@
      }
  
      @Override
-@@ -243,20 +567,39 @@
+@@ -243,20 +568,39 @@
      }
  
      public void tick(BooleanSupplier shouldKeepTicking) {
@@ -546,7 +547,7 @@
              if (this.getGameRules().getBoolean(GameRules.RULE_WEATHER_CYCLE) && this.isRaining()) {
                  this.resetWeatherCycle();
              }
-@@ -264,81 +607,100 @@
+@@ -264,81 +608,100 @@
  
          this.updateSkyBrightness();
          this.tickTime();
@@ -680,7 +681,7 @@
              if (this.levelData.getGameRules().getBoolean(GameRules.RULE_DAYLIGHT)) {
                  this.setDayTime(this.levelData.getDayTime() + 1L);
              }
-@@ -351,135 +713,177 @@
+@@ -351,135 +714,177 @@
      }
  
      public void tickCustomSpawners(boolean spawnMonsters, boolean spawnAnimals) {
@@ -938,7 +939,7 @@
              }
          }
      }
-@@ -496,15 +900,20 @@
+@@ -496,15 +901,20 @@
          if (this.canSleepThroughNights()) {
              if (!this.getServer().isSingleplayer() || this.getServer().isPublished()) {
                  int i = this.getGameRules().getInt(GameRules.RULE_PLAYERS_SLEEPING_PERCENTAGE);
@@ -964,7 +965,7 @@
                  }
  
              }
-@@ -524,27 +933,29 @@
+@@ -524,27 +934,29 @@
      }
  
      private void advanceWeatherCycle() {
@@ -1003,7 +1004,7 @@
                          j = Mth.randomBetweenInclusive(this.random, 3600, 15600);
                      } else {
                          j = Mth.randomBetweenInclusive(this.random, 12000, 180000);
-@@ -553,9 +964,9 @@
+@@ -553,9 +965,9 @@
                      if (k > 0) {
                          --k;
                          if (k == 0) {
@@ -1015,7 +1016,7 @@
                          k = Mth.randomBetweenInclusive(this.random, 12000, 24000);
                      } else {
                          k = Mth.randomBetweenInclusive(this.random, 12000, 180000);
-@@ -565,8 +976,8 @@
+@@ -565,8 +977,8 @@
                  this.serverLevelData.setThunderTime(j);
                  this.serverLevelData.setRainTime(k);
                  this.serverLevelData.setClearWeatherTime(i);
@@ -1026,7 +1027,7 @@
              }
  
              this.oThunderLevel = this.thunderLevel;
-@@ -587,32 +998,66 @@
+@@ -587,32 +999,66 @@
              this.rainLevel = Mth.clamp(this.rainLevel, 0.0F, 1.0F);
          }
  
@@ -1071,12 +1072,12 @@
 +                    ((ServerPlayer) this.players.get(idx)).setPlayerWeather((!flag ? WeatherType.DOWNFALL : WeatherType.CLEAR), false);
 +                }
 +            }
-         }
++        }
 +        for (int idx = 0; idx < this.players.size(); ++idx) {
 +            if (((ServerPlayer) this.players.get(idx)).level == this) {
 +                ((ServerPlayer) this.players.get(idx)).updateWeather(this.oRainLevel, this.rainLevel, this.oThunderLevel, this.thunderLevel);
 +            }
-+        }
+         }
 +        // CraftBukkit end
  
      }
@@ -1105,7 +1106,7 @@
      }
  
      public void resetEmptyTime() {
-@@ -620,55 +1065,131 @@
+@@ -620,55 +1066,131 @@
      }
  
      private void tickFluid(BlockPos pos, Fluid fluid) {
@@ -1254,7 +1255,7 @@
              }
          } else {
              passenger.stopRiding();
-@@ -680,9 +1201,43 @@
+@@ -680,9 +1202,43 @@
          return !this.server.isUnderSpawnProtection(this, pos, player) && this.getWorldBorder().isWithinBounds(pos);
      }
  
@@ -1299,7 +1300,7 @@
              if (progressListener != null) {
                  progressListener.progressStartNoAbort(new TranslatableComponent("menu.savingLevel"));
              }
-@@ -692,7 +1247,10 @@
+@@ -692,7 +1248,10 @@
                  progressListener.progressStage(new TranslatableComponent("menu.savingChunks"));
              }
  
@@ -1311,7 +1312,7 @@
              if (flush) {
                  this.entityManager.saveAll();
              } else {
-@@ -700,11 +1258,25 @@
+@@ -700,11 +1259,25 @@
              }
  
          }
@@ -1338,7 +1339,7 @@
          }
  
          this.getChunkSource().getDataStorage().save();
-@@ -712,6 +1284,7 @@
+@@ -712,6 +1285,7 @@
  
      public <T extends Entity> List<? extends T> getEntities(EntityTypeTest<Entity, T> filter, Predicate<? super T> predicate) {
          List<T> list = Lists.newArrayList();
@@ -1346,7 +1347,7 @@
          this.getEntities().get(filter, (entity) -> {
              if (predicate.test(entity)) {
                  list.add(entity);
-@@ -722,15 +1295,18 @@
+@@ -722,15 +1296,18 @@
      }
  
      public List<? extends EnderDragon> getDragons() {
@@ -1369,7 +1370,7 @@
              }
          }
  
-@@ -740,20 +1316,43 @@
+@@ -740,20 +1317,43 @@
      @Nullable
      public ServerPlayer getRandomPlayer() {
          List<ServerPlayer> list = this.getPlayers(LivingEntity::isAlive);
@@ -1417,7 +1418,7 @@
      }
  
      public void addDuringCommandTeleport(ServerPlayer player) {
-@@ -773,35 +1372,95 @@
+@@ -773,35 +1373,95 @@
      }
  
      private void addPlayer(ServerPlayer player) {
@@ -1520,7 +1521,7 @@
          chunk.clearAllBlockEntities();
          chunk.unregisterTickContainerFromLevel(this);
      }
-@@ -810,15 +1469,48 @@
+@@ -810,15 +1470,48 @@
          player.remove(reason);
      }
  
@@ -1576,7 +1577,7 @@
                  }
              }
          }
-@@ -827,12 +1519,12 @@
+@@ -827,12 +1520,12 @@
  
      @Override
      public void playSound(@Nullable Player except, double x, double y, double z, SoundEvent sound, SoundSource category, float volume, float pitch) {
@@ -1591,7 +1592,7 @@
      }
  
      @Override
-@@ -842,7 +1534,7 @@
+@@ -842,7 +1535,7 @@
  
      @Override
      public void levelEvent(@Nullable Player player, int eventId, BlockPos pos, int data) {
@@ -1600,7 +1601,7 @@
      }
  
      public int getLogicalHeight() {
-@@ -857,34 +1549,71 @@
+@@ -857,34 +1550,71 @@
      @Override
      public void sendBlockUpdated(BlockPos pos, BlockState oldState, BlockState newState, int flags) {
          if (this.isUpdatingNavigations) {
@@ -1683,7 +1684,7 @@
      }
  
      @Override
-@@ -899,16 +1628,31 @@
+@@ -899,16 +1629,31 @@
  
      @Override
      public Explosion explode(@Nullable Entity entity, @Nullable DamageSource damageSource, @Nullable ExplosionDamageCalculator behavior, double x, double y, double z, float power, boolean createFire, Explosion.BlockInteraction destructionType) {
@@ -1719,7 +1720,7 @@
              }
          }
  
-@@ -923,14 +1667,15 @@
+@@ -923,14 +1668,15 @@
      private void runBlockEvents() {
          this.blockEventsToReschedule.clear();
  
@@ -1741,7 +1742,7 @@
              }
          }
  
-@@ -938,8 +1683,9 @@
+@@ -938,8 +1684,9 @@
      }
  
      private boolean doBlockEvent(BlockEventData event) {
@@ -1753,7 +1754,7 @@
      }
  
      @Override
-@@ -967,29 +1713,44 @@
+@@ -967,29 +1714,44 @@
      }
  
      public void sendVibrationParticle(VibrationPath vibration) {
@@ -1810,7 +1811,7 @@
          return this.sendParticles(viewer, force, x, y, z, packet);
      }
  
-@@ -997,8 +1758,9 @@
+@@ -997,8 +1759,9 @@
          if (player.getLevel() != this) {
              return false;
          } else {
@@ -1822,7 +1823,7 @@
                  player.connection.send(packet);
                  return true;
              } else {
-@@ -1010,33 +1772,45 @@
+@@ -1010,33 +1773,45 @@
      @Nullable
      @Override
      public Entity getEntity(int id) {
@@ -1875,7 +1876,7 @@
              }
          }
      }
-@@ -1068,34 +1842,119 @@
+@@ -1068,34 +1843,119 @@
      @Nullable
      @Override
      public MapItemSavedData getMapData(String id) {
@@ -2004,7 +2005,7 @@
      }
  
      public float getSharedSpawnAngle() {
-@@ -1103,30 +1962,32 @@
+@@ -1103,30 +1963,32 @@
      }
  
      public LongSet getForcedChunks() {
@@ -2050,7 +2051,7 @@
      }
  
      @Override
-@@ -1137,19 +1998,26 @@
+@@ -1137,19 +1999,26 @@
      @Override
      public void onBlockStateChange(BlockPos pos, BlockState oldBlock, BlockState newBlock) {
          Optional<PoiType> optional = PoiType.forState(oldBlock);
@@ -2086,7 +2087,7 @@
                  });
              });
          }
-@@ -1168,11 +2036,7 @@
+@@ -1168,11 +2037,7 @@
      }
  
      public boolean isCloseToVillage(BlockPos pos, int maxDistance) {
@@ -2099,7 +2100,7 @@
      }
  
      public int sectionsToVillage(SectionPos pos) {
-@@ -1197,179 +2061,196 @@
+@@ -1197,179 +2062,196 @@
      }
  
      public void saveDebugReport(Path path) throws IOException {
@@ -2384,7 +2385,7 @@
              this.updateNeighborsAt(pos, block);
          }
  
-@@ -1384,18 +2265,17 @@
+@@ -1384,18 +2266,17 @@
          return this.getEntities().getAll();
      }
  
@@ -2405,7 +2406,7 @@
      }
  
      @Nullable
-@@ -1410,43 +2290,66 @@
+@@ -1410,43 +2291,66 @@
  
      @VisibleForTesting
      public String getWatchdogStats() {
@@ -2489,7 +2490,7 @@
          return this.entityManager.getEntityGetter();
      }
  
-@@ -1476,7 +2379,9 @@
+@@ -1476,7 +2380,9 @@
  
      @Override
      public String gatherChunkSourceStats() {
@@ -2500,7 +2501,7 @@
      }
  
      public boolean areEntitiesLoaded(long chunkPos) {
-@@ -1484,102 +2389,183 @@
+@@ -1484,102 +2390,191 @@
      }
  
      private boolean isPositionTickingWithEntitiesLoaded(long chunkPos) {
@@ -2530,6 +2531,13 @@
 -        @Override
 -        public void onCreated(Entity entity) {
 -        }
++    // Paper start - optimize redstone (Alternate Current)
++    @Override
++    public alternate.current.wire.WireHandler getWireHandler() {
++        return wireHandler;
++    }
++    // Paper end
++
 +    private final class EntityCallbacks implements LevelCallback<Entity> {
 +
 +        EntityCallbacks() {}
@@ -2543,6 +2551,7 @@
  
 -        @Override
          public void onTickingStart(Entity entity) {
++            if (entity instanceof net.minecraft.world.entity.Marker) return; // Paper - Don't tick markers
              ServerLevel.this.entityTickList.add(entity);
 +            ServerLevel.this.entityManager.addNavigatorsIfPathingToRegion(entity); // Paper - optimise notify
          }

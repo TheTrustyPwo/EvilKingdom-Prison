@@ -737,13 +737,13 @@
 +        if (str.length() > 64 && ((index = str.indexOf(' ')) == -1 || index >= 64)) {
 +            server.scheduleOnMain(() -> this.disconnect(new TranslatableComponent("disconnect.spam", new Object[0]), org.bukkit.event.player.PlayerKickEvent.Cause.SPAM)); // Paper - kick event cause
 +            return;
-         }
++        }
 +        // Paper end
 +        // CraftBukkit end
 +        // Paper start - Don't suggest if tab-complete is disabled
 +        if (org.spigotmc.SpigotConfig.tabComplete < 0) {
 +            return;
-+        }
+         }
 +        // Paper end
 +        StringReader stringreader = new StringReader(packet.getCommand());
  
@@ -2416,11 +2416,11 @@
 +                    this.disconnect(new TranslatableComponent("disconnect.spam"), org.bukkit.event.player.PlayerKickEvent.Cause.SPAM); // Paper - kick event cause
 +                }
 +                // CraftBukkit end
-             }
- 
-         }
-     }
- 
++            }
++
++        }
++    }
++
 +    // CraftBukkit start - add method
 +    public void chat(String s, boolean async) {
 +        if (s.isEmpty() || this.player.getChatVisibility() == ChatVisiblity.HIDDEN) {
@@ -2449,7 +2449,7 @@
 +                } catch (Exception e) {
 +                    throw new RuntimeException("Exception processing chat command", e.getCause());
 +                }
-+            }
+             }
 +            // Paper End
 +            this.handleCommand(s);
 +        } else if (this.player.getChatVisibility() == ChatVisiblity.SYSTEM) {
@@ -2506,7 +2506,7 @@
 +                if (event.isCancelled()) {
 +                    return;
 +                }
-+
+ 
 +                s = String.format(event.getFormat(), event.getPlayer().getDisplayName(), event.getMessage());
 +                server.console.sendMessage(s);
 +                if (((LazyPlayerSet) event.getRecipients()).isLazy()) {
@@ -2519,10 +2519,10 @@
 +                    }
 +                }
 +            }
-+        }
-+    }
+         }
+     }
 +    // CraftBukkit end
-+
+ 
      private void handleCommand(String input) {
 -        this.server.getCommands().performCommand(this.player.createCommandSourceStack(), input);
 +        MinecraftTimings.playerCommandTimer.startTiming(); // Paper
@@ -3509,7 +3509,7 @@
          }
  
      }
-@@ -1468,7 +3153,17 @@
+@@ -1468,24 +3153,99 @@
      @Override
      public void handlePlayerAbilities(ServerboundPlayerAbilitiesPacket packet) {
          PacketUtils.ensureRunningOnSameThread(packet, this, this.player.getLevel());
@@ -3528,7 +3528,15 @@
      }
  
      @Override
-@@ -1477,15 +3172,73 @@
+     public void handleClientInformation(ServerboundClientInformationPacket packet) {
+         PacketUtils.ensureRunningOnSameThread(packet, this, this.player.getLevel());
++        // Paper start - do not accept invalid information
++        if (packet.viewDistance() < 0) {
++            LOGGER.warn("Disconnecting " + this.player.getScoreboardName() + " for invalid view distance: " + packet.viewDistance());
++            this.disconnect("Invalid client settings", PlayerKickEvent.Cause.ILLEGAL_ACTION);
++            return;
++        }
++        // Paper end - do not accept invalid information
          this.player.updateOptions(packet);
      }
  
@@ -3603,7 +3611,7 @@
          }
      }
  
-@@ -1503,7 +3256,8 @@
+@@ -1503,7 +3263,8 @@
      }
  
      @FunctionalInterface

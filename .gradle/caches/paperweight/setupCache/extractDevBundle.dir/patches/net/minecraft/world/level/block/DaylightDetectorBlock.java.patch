@@ -73,7 +73,21 @@
                  return InteractionResult.CONSUME;
              }
          } else {
-@@ -107,13 +112,13 @@
+@@ -94,6 +99,13 @@
+         return true;
+     }
+ 
++    // Paper start - optimize redstone (Alternate Current)
++    @Override
++    public boolean isSignalSourceTo(Level level, BlockPos pos, BlockState state, Direction dir) {
++        return true;
++    }
++    // Paper end
++
+     @Override
+     public BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
+         return new DaylightDetectorBlockEntity(pos, state);
+@@ -107,13 +119,13 @@
  
      private static void tickEntity(Level world, BlockPos pos, BlockState state, DaylightDetectorBlockEntity blockEntity) {
          if (world.getGameTime() % 20L == 0L) {

@@ -90,7 +90,26 @@
      }
  
      @Override
-@@ -84,16 +97,17 @@
+@@ -77,6 +90,18 @@
+         return true;
+     }
+ 
++    // Paper start - optimize redstone (Alternate Current)
++    @Override
++    public boolean isSignalSourceTo(Level level, BlockPos pos, BlockState state, Direction dir) {
++        return state.getValue(FACING) == dir;
++    }
++
++    @Override
++    public boolean isDirectSignalSourceTo(Level level, BlockPos pos, BlockState state, Direction dir) {
++        return state.getValue(FACING) == dir;
++    }
++    // Paper end
++
+     @Override
+     public int getDirectSignal(BlockState state, BlockGetter world, BlockPos pos, Direction direction) {
+         return state.getSignal(world, pos, direction);
+@@ -84,16 +109,17 @@
  
      @Override
      public int getSignal(BlockState state, BlockGetter world, BlockPos pos, Direction direction) {
@@ -113,7 +132,7 @@
              }
  
          }
-@@ -102,8 +116,8 @@
+@@ -102,8 +128,8 @@
      @Override
      public void onRemove(BlockState state, Level world, BlockPos pos, BlockState newState, boolean moved) {
          if (!state.is(newState.getBlock())) {
@@ -124,7 +143,7 @@
              }
  
          }
-@@ -111,6 +125,6 @@
+@@ -111,6 +137,6 @@
  
      @Override
      public BlockState getStateForPlacement(BlockPlaceContext ctx) {

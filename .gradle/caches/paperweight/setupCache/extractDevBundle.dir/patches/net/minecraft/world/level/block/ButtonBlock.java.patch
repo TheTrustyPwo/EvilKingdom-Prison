@@ -139,8 +139,22 @@
      }
  
      @Override
-@@ -146,13 +161,23 @@
+@@ -144,15 +159,37 @@
+         return true;
+     }
  
++    // Paper start - optimize redstone (Alternate Current)
++    @Override
++    public boolean isSignalSourceTo(Level level, BlockPos pos, BlockState state, Direction dir) {
++        return true;
++    }
++
++    @Override
++    public boolean isDirectSignalSourceTo(Level level, BlockPos pos, BlockState state, Direction dir) {
++        return getConnectedDirection(state) == dir;
++    }
++    // Paper end
++
      @Override
      public void tick(BlockState state, ServerLevel world, BlockPos pos, Random random) {
 -        if (state.getValue(POWERED)) {
@@ -166,7 +180,7 @@
                  world.gameEvent(GameEvent.BLOCK_UNPRESS, pos);
              }
  
-@@ -161,24 +186,63 @@
+@@ -161,24 +198,63 @@
  
      @Override
      public void entityInside(BlockState state, Level world, BlockPos pos, Entity entity) {
@@ -239,7 +253,7 @@
          }
  
      }
-@@ -190,6 +254,6 @@
+@@ -190,6 +266,6 @@
  
      @Override
      protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {

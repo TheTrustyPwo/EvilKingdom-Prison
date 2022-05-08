@@ -104,3 +104,22 @@
          }
  
      }
+@@ -132,6 +153,18 @@
+         return true;
+     }
+ 
++    // Paper start - optimize redstone (Alternate Current)
++    @Override
++    public boolean isSignalSourceTo(Level level, BlockPos pos, BlockState state, Direction dir) {
++        return true;
++    }
++
++    @Override
++    public boolean isDirectSignalSourceTo(Level level, BlockPos pos, BlockState state, Direction dir) {
++        return dir == Direction.UP;
++    }
++    // Paper end
++
+     @Override
+     public PushReaction getPistonPushReaction(BlockState state) {
+         return PushReaction.DESTROY;

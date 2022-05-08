@@ -37,9 +37,7 @@ public class BalanceCommand extends CommandHandler {
      * Allows you to register the command.
      */
     public void register() {
-        final Command command = new Command(this.plugin, "balance");
-        command.setAliases(new ArrayList<>(Arrays.asList("bal", "gems", "tokens", "money", "cash", "currency")));
-        command.setHandler(this);
+        final Command command = new Command(this.plugin, "balance", new ArrayList<String>(Arrays.asList("bal", "gems", "tokens", "money", "cash", "currency")), this);
         command.register();
     }
 

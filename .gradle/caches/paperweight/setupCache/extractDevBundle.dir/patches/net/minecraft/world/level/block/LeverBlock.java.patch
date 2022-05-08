@@ -182,7 +182,26 @@
      }
  
      @Override
-@@ -152,6 +172,6 @@
+@@ -145,6 +165,18 @@
+         return true;
+     }
+ 
++    // Paper start - optimize redstone (Alternate Current)
++    @Override
++    public boolean isSignalSourceTo(Level level, BlockPos pos, BlockState state, Direction dir) {
++        return true;
++    }
++
++    @Override
++    public boolean isDirectSignalSourceTo(Level level, BlockPos pos, BlockState state, Direction dir) {
++        return getConnectedDirection(state) == dir;
++    }
++    // Paper end
++
+     private void updateNeighbours(BlockState state, Level world, BlockPos pos) {
+         world.updateNeighborsAt(pos, this);
+         world.updateNeighborsAt(pos.relative(getConnectedDirection(state).getOpposite()), this);
+@@ -152,6 +184,6 @@
  
      @Override
      protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {

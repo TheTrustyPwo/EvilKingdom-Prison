@@ -20,7 +20,7 @@
  import net.minecraft.world.level.Level;
  import net.minecraft.world.level.block.AnvilBlock;
  import net.minecraft.world.level.block.Block;
-@@ -43,14 +46,17 @@
+@@ -43,21 +46,28 @@
  import net.minecraft.world.phys.Vec3;
  import org.slf4j.Logger;
  
@@ -41,7 +41,8 @@
      private float fallDamagePerDistance;
      @Nullable
      public CompoundTag blockData;
-@@ -58,6 +64,9 @@
+     protected static final EntityDataAccessor<BlockPos> DATA_START_POS = SynchedEntityData.defineId(FallingBlockEntity.class, EntityDataSerializers.BLOCK_POS);
++    public boolean autoExpire = true; // Paper - Auto expire setting
  
      public FallingBlockEntity(EntityType<? extends FallingBlockEntity> type, Level world) {
          super(type, world);
@@ -51,7 +52,7 @@
      }
  
      public FallingBlockEntity(Level world, double x, double y, double z, BlockState block) {
-@@ -73,10 +82,18 @@
+@@ -73,10 +83,18 @@
      }
  
      public static FallingBlockEntity fall(Level world, BlockPos pos, BlockState state) {
@@ -74,7 +75,7 @@
      }
  
      @Override
-@@ -85,11 +102,11 @@
+@@ -85,11 +103,11 @@
      }
  
      public void setStartPos(BlockPos pos) {
@@ -88,7 +89,7 @@
      }
  
      @Override
-@@ -99,7 +116,7 @@
+@@ -99,7 +117,7 @@
  
      @Override
      protected void defineSynchedData() {
@@ -97,7 +98,7 @@
      }
  
      @Override
-@@ -109,90 +126,127 @@
+@@ -109,90 +127,127 @@
  
      @Override
      public void tick() {
@@ -161,7 +162,7 @@
 -                if (!this.onGround && !bl2) {
 -                    if (!this.level.isClientSide && (this.time > 100 && (blockPos.getY() <= this.level.getMinBuildHeight() || blockPos.getY() > this.level.getMaxBuildHeight()) || this.time > 600)) {
 +                if (!this.onGround && !flag1) {
-+                    if (!this.level.isClientSide && (this.time > 100 && (blockposition.getY() <= this.level.getMinBuildHeight() || blockposition.getY() > this.level.getMaxBuildHeight()) || this.time > 600)) {
++                    if (!this.level.isClientSide && ((this.time > 100 && autoExpire) && (blockposition.getY() <= this.level.getMinBuildHeight() || blockposition.getY() > this.level.getMaxBuildHeight()) || (this.time > 600 && autoExpire))) { // Paper - Auto expire setting
                          if (this.dropItem && this.level.getGameRules().getBoolean(GameRules.RULE_DOENTITYDROPS)) {
 -                            this.spawnAtLocation(block);
 +                            this.spawnAtLocation((ItemLike) block);
@@ -262,7 +263,7 @@
                          }
                      }
                  }
-@@ -204,7 +258,7 @@
+@@ -204,7 +259,7 @@
  
      public void callOnBrokenAfterFall(Block block, BlockPos pos) {
          if (block instanceof Fallable) {
@@ -271,7 +272,7 @@
          }
  
      }
-@@ -215,31 +269,39 @@
+@@ -215,31 +270,39 @@
              return false;
          } else {
              int i = Mth.ceil(fallDistance - 1.0F);
@@ -324,7 +325,14 @@
                      }
                  }
  
-@@ -265,6 +327,18 @@
+@@ -259,12 +322,25 @@
+         if (this.blockData != null) {
+             nbt.put("TileEntityData", this.blockData);
+         }
++        if (!autoExpire) {nbt.putBoolean("Paper.AutoExpire", false);} // Paper - AutoExpire setting
+ 
+     }
+ 
      @Override
      protected void readAdditionalSaveData(CompoundTag nbt) {
          this.blockState = NbtUtils.readBlockState(nbt.getCompound("BlockState"));
@@ -343,7 +351,7 @@
          this.time = nbt.getInt("Time");
          if (nbt.contains("HurtEntities", 99)) {
              this.hurtEntities = nbt.getBoolean("HurtEntities");
-@@ -286,6 +360,14 @@
+@@ -286,6 +362,18 @@
              this.blockState = Blocks.SAND.defaultBlockState();
          }
  
@@ -354,11 +362,15 @@
 +            int srcZ = nbt.getInt("SourceLoc_z");
 +            this.setOrigin(new org.bukkit.Location(level.getWorld(), srcX, srcY, srcZ));
 +        }
++
++        if (nbt.contains("Paper.AutoExpire")) {
++            this.autoExpire = nbt.getBoolean("Paper.AutoExpire");
++        }
 +        // Paper end
      }
  
      public void setHurtsEntities(float fallHurtAmount, int fallHurtMax) {
-@@ -302,7 +384,7 @@
+@@ -302,7 +390,7 @@
      @Override
      public void fillCrashReportCategory(CrashReportCategory section) {
          super.fillCrashReportCategory(section);
@@ -367,7 +379,7 @@
      }
  
      public BlockState getBlockState() {
-@@ -324,10 +406,11 @@
+@@ -324,10 +412,11 @@
          super.recreateFromPacket(packet);
          this.blockState = Block.stateById(packet.getData());
          this.blocksBuilding = true;

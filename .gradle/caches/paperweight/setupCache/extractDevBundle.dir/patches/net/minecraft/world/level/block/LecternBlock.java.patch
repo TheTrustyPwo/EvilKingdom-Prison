@@ -232,8 +232,22 @@
          }
  
      }
-@@ -214,12 +222,12 @@
+@@ -212,14 +220,26 @@
+         return true;
+     }
  
++    // Paper start - optimize redstone (Alternate Current)
++    @Override
++    public boolean isSignalSourceTo(Level level, BlockPos pos, BlockState state, Direction dir) {
++        return true;
++    }
++
++    @Override
++    public boolean isDirectSignalSourceTo(Level level, BlockPos pos, BlockState state, Direction dir) {
++        return dir == Direction.UP;
++    }
++    // Paper end;
++
      @Override
      public int getSignal(BlockState state, BlockGetter world, BlockPos pos, Direction direction) {
 -        return state.getValue(POWERED) ? 15 : 0;
@@ -247,7 +261,7 @@
      }
  
      @Override
-@@ -229,10 +237,11 @@
+@@ -229,10 +249,11 @@
  
      @Override
      public int getAnalogOutputSignal(BlockState state, Level world, BlockPos pos) {
@@ -263,7 +277,7 @@
              }
          }
  
-@@ -241,28 +250,30 @@
+@@ -241,28 +262,30 @@
  
      @Override
      public InteractionResult use(BlockState state, Level world, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {

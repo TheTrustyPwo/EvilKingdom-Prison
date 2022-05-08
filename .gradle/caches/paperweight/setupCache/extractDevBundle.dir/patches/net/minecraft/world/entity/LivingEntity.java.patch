@@ -2117,17 +2117,17 @@
 -        this.entityData.set(DATA_ARROW_COUNT_ID, stuckArrowCount);
 +        // CraftBukkit start
 +        this.setArrowCount(stuckArrowCount, false);
-+    }
-+
+     }
+ 
 +    public final void setArrowCount(int i, boolean flag) {
 +        ArrowBodyCountChangeEvent event = CraftEventFactory.callArrowBodyCountChangeEvent(this, this.getArrowCount(), i, flag);
 +        if (event.isCancelled()) {
 +            return;
 +        }
 +        this.entityData.set(LivingEntity.DATA_ARROW_COUNT_ID, event.getNewAmount());
-     }
++    }
 +    // CraftBukkit end
- 
++
      public final int getStingerCount() {
 -        return this.entityData.get(DATA_STINGER_COUNT_ID);
 +        return (Integer) this.entityData.get(LivingEntity.DATA_STINGER_COUNT_ID);
@@ -4012,7 +4012,15 @@
                  }
  
              }
-@@ -2978,22 +3883,83 @@
+@@ -2963,6 +3868,7 @@
+ 
+     public void releaseUsingItem() {
+         if (!this.useItem.isEmpty()) {
++            if (this instanceof ServerPlayer) new io.papermc.paper.event.player.PlayerStopUsingItemEvent((Player) getBukkitEntity(), useItem.asBukkitMirror(), getTicksUsingItem()).callEvent(); // Paper
+             this.useItem.releaseUsing(this.level, this, this.getUseItemRemainingTicks());
+             if (this.useItem.useOnRelease()) {
+                 this.updatingUsingItem();
+@@ -2978,22 +3884,83 @@
          }
  
          this.useItem = ItemStack.EMPTY;
@@ -4102,7 +4110,7 @@
      public boolean isSuppressingSlidingDownLadder() {
          return this.isShiftKeyDown();
      }
-@@ -3012,48 +3978,81 @@
+@@ -3012,48 +3979,81 @@
      }
  
      public boolean randomTeleport(double x, double y, double z, boolean particleEffects) {
@@ -4211,7 +4219,7 @@
          }
      }
  
-@@ -3065,8 +4064,7 @@
+@@ -3065,8 +4065,7 @@
          return true;
      }
  
@@ -4221,7 +4229,7 @@
  
      public boolean canTakeItem(ItemStack stack) {
          return false;
-@@ -3079,7 +4077,7 @@
+@@ -3079,7 +4078,7 @@
  
      @Override
      public EntityDimensions getDimensions(Pose pose) {
@@ -4230,7 +4238,7 @@
      }
  
      public ImmutableList<Pose> getDismountPoses() {
-@@ -3087,20 +4085,21 @@
+@@ -3087,20 +4086,21 @@
      }
  
      public AABB getLocalBoundsForPose(Pose pose) {
@@ -4257,7 +4265,7 @@
      }
  
      public boolean isSleeping() {
-@@ -3112,9 +4111,10 @@
+@@ -3112,9 +4112,10 @@
              this.stopRiding();
          }
  
@@ -4271,7 +4279,7 @@
          }
  
          this.setPose(Pose.SLEEPING);
-@@ -3125,42 +4125,51 @@
+@@ -3125,42 +4126,51 @@
      }
  
      private void setPosToBed(BlockPos pos) {
@@ -4340,7 +4348,7 @@
      }
  
      @Override
-@@ -3184,9 +4193,9 @@
+@@ -3184,9 +4194,9 @@
      public ItemStack eat(Level world, ItemStack stack) {
          if (stack.isEdible()) {
              world.gameEvent(this, GameEvent.EAT, this.eyeBlockPosition());
@@ -4352,7 +4360,7 @@
                  stack.shrink(1);
              }
  
-@@ -3198,10 +4207,16 @@
+@@ -3198,10 +4208,16 @@
  
      private void addEatEffect(ItemStack stack, Level world, LivingEntity targetEntity) {
          Item item = stack.getItem();
@@ -4372,7 +4380,7 @@
                  }
              }
          }
-@@ -3209,26 +4224,26 @@
+@@ -3209,26 +4225,26 @@
      }
  
      private static byte entityEventForEquipmentBreak(EquipmentSlot slot) {
@@ -4415,7 +4423,7 @@
      }
  
      public void broadcastBreakEvent(InteractionHand hand) {
-@@ -3239,6 +4254,7 @@
+@@ -3239,6 +4255,7 @@
      public AABB getBoundingBoxForCulling() {
          if (this.getItemBySlot(EquipmentSlot.HEAD).is(Items.DRAGON_HEAD)) {
              float f = 0.5F;
@@ -4423,7 +4431,7 @@
              return this.getBoundingBox().inflate(0.5D, 0.5D, 0.5D);
          } else {
              return super.getBoundingBoxForCulling();
-@@ -3247,46 +4263,26 @@
+@@ -3247,46 +4264,26 @@
  
      public static EquipmentSlot getEquipmentSlotForItem(ItemStack stack) {
          Item item = stack.getItem();
@@ -4478,7 +4486,7 @@
      }
  
      @Override
-@@ -3294,8 +4290,9 @@
+@@ -3294,8 +4291,9 @@
          if (this.isSpectator()) {
              return false;
          } else {
@@ -4490,7 +4498,7 @@
          }
      }
  
-@@ -3305,22 +4302,43 @@
+@@ -3305,22 +4303,43 @@
      }
  
      public void recreateFromPacket(ClientboundAddMobPacket packet) {

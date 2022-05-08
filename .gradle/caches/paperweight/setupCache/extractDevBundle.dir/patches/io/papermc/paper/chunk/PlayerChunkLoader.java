@@ -935,7 +935,7 @@ public final class PlayerChunkLoader {
         }
 
         protected int getClientViewDistance() {
-            return this.player.clientViewDistance == null ? -1 : this.player.clientViewDistance.intValue();
+            return this.player.clientViewDistance == null ? -1 : Math.max(0, this.player.clientViewDistance.intValue());
         }
 
         public void update() {

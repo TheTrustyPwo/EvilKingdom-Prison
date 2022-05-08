@@ -135,8 +135,22 @@
          }
  
      }
-@@ -100,32 +141,38 @@
+@@ -98,34 +139,52 @@
+         return true;
+     }
  
++    // Paper start - optimize redstone (Alternate Current)
++    @Override
++    public boolean isSignalSourceTo(Level level, BlockPos pos, BlockState state, Direction dir) {
++        return dir != Direction.UP;
++    }
++
++    @Override
++    public boolean isDirectSignalSourceTo(Level level, BlockPos pos, BlockState state, Direction dir) {
++        return dir == Direction.DOWN;
++    }
++    // Paper end
++
      @Override
      public void animateTick(BlockState state, Level world, BlockPos pos, Random random) {
 -        if (state.getValue(LIT)) {
@@ -186,7 +200,7 @@
                  ++i;
                  if (i >= 8) {
                      return true;
-@@ -137,6 +184,7 @@
+@@ -137,6 +196,7 @@
      }
  
      public static class Toggle {

@@ -168,8 +168,22 @@
      }
  
      @Override
-@@ -149,13 +161,13 @@
+@@ -147,15 +159,27 @@
+         return true;
+     }
  
++    // Paper start - optimize redstone (Alternate Current)
++    @Override
++    public boolean isSignalSourceTo(Level level, BlockPos pos, BlockState state, Direction dir) {
++        return state.getValue(FACING) == dir;
++    }
++
++    @Override
++    public boolean isDirectSignalSourceTo(Level level, BlockPos pos, BlockState state, Direction dir) {
++        return state.getValue(FACING) == dir;
++    }
++    // Paper end
++
      @Override
      public BlockState getStateForPlacement(BlockPlaceContext ctx) {
 -        return this.defaultBlockState().setValue(FACING, ctx.getHorizontalDirection().getOpposite());
@@ -184,7 +198,7 @@
          }
  
      }
-@@ -174,10 +186,11 @@
+@@ -174,10 +198,11 @@
      }
  
      protected void updateNeighborsInFront(Level world, BlockPos pos, BlockState state) {
@@ -200,7 +214,7 @@
      }
  
      protected boolean isAlternateInput(BlockState state) {
-@@ -193,9 +206,10 @@
+@@ -193,9 +218,10 @@
      }
  
      public boolean shouldPrioritize(BlockGetter world, BlockPos pos, BlockState state) {
