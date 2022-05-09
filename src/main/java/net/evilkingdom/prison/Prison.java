@@ -4,6 +4,7 @@ package net.evilkingdom.prison;
  * Made with love by https://kodirati.com/.
  */
 
+import net.evilkingdom.commons.Commons;
 import net.evilkingdom.commons.utilities.string.StringUtilities;
 import net.evilkingdom.prison.component.ComponentManager;
 import org.bukkit.Bukkit;
@@ -18,6 +19,20 @@ public class Prison extends JavaPlugin {
      * Bukkit's detection for the plugin enabling.
      */
     public void onEnable() {
+        this.initialize();
+    }
+
+    /**
+     * Bukkit's detection for the plugin disabling.
+     */
+    public void onDisable() {
+        this.terminate();
+    }
+
+    /**
+     * Allows you to initialize the plugin.
+     */
+    public void initialize() {
         Bukkit.getConsoleSender().sendMessage(StringUtilities.colorize("&2[Prison] &aInitializing..."));
         plugin = this;
         this.componentManager = new ComponentManager();
@@ -26,9 +41,9 @@ public class Prison extends JavaPlugin {
     }
 
     /**
-     * Bukkit's detection for the plugin disabling.
+     * Allows you to terminate the plugin.
      */
-    public void onDisable() {
+    public void terminate() {
         Bukkit.getConsoleSender().sendMessage(StringUtilities.colorize("&4[Prison] &cTerminating..."));
         this.componentManager.terminate();
         Bukkit.getConsoleSender().sendMessage(StringUtilities.colorize("&4[Prison] &cTerminated."));
