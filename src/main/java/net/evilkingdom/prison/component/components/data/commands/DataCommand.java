@@ -230,7 +230,7 @@ public class DataCommand extends CommandHandler {
             return new ArrayList<String>();
         }
         final Player player = (Player) sender;
-        if (LuckPermsUtilities.getPermissionsViaCache(player.getUniqueId()).contains("prison.data.commands.data")) {
+        if (!LuckPermsUtilities.getPermissionsViaCache(player.getUniqueId()).contains("prison.data.commands.data")) {
             return new ArrayList<String>();
         }
         ArrayList<String> tabCompletion = new ArrayList<String>();
