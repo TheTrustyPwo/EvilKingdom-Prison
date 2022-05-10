@@ -136,7 +136,7 @@
                  }
  
                  if (!this.level.isClientSide) {
-@@ -173,16 +195,19 @@
+@@ -173,16 +195,18 @@
      }
  
      public boolean isConverting() {
@@ -153,7 +153,6 @@
 -        this.level.broadcastEntityEvent(this, (byte)16);
 +        this.getEntityData().set(ZombieVillager.DATA_CONVERTING_ID, true);
 +        // CraftBukkit start
-+        this.setPersistenceRequired(true); // CraftBukkit - SPIGOT-4684 update persistence
 +        this.removeEffect(MobEffects.WEAKNESS, org.bukkit.event.entity.EntityPotionEffectEvent.Cause.CONVERSION);
 +        this.addEffect(new MobEffectInstance(MobEffects.DAMAGE_BOOST, delay, Math.min(this.level.getDifficulty().getId() - 1, 0)), org.bukkit.event.entity.EntityPotionEffectEvent.Cause.CONVERSION);
 +        // CraftBukkit end
@@ -161,7 +160,7 @@
      }
  
      @Override
-@@ -198,59 +223,75 @@
+@@ -198,59 +222,75 @@
      }
  
      private void finishConversion(ServerLevel world) {
@@ -263,7 +262,7 @@
                              if (this.random.nextFloat() < 0.3F) {
                                  ++i;
                              }
-@@ -312,17 +353,18 @@
+@@ -312,17 +352,18 @@
  
      @Override
      public void setVillagerData(VillagerData villagerData) {

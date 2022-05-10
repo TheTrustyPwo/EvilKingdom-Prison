@@ -92,15 +92,12 @@
          this.goalSelector = new GoalSelector(world.getProfilerSupplier());
          this.targetSelector = new GoalSelector(world.getProfilerSupplier());
          this.lookControl = new LookControl(this);
-@@ -128,10 +153,16 @@
-             this.registerGoals();
-         }
+@@ -130,8 +155,13 @@
  
-+        // CraftBukkit start - default persistance to type's persistance value
-+        this.persistenceRequired = !this.removeWhenFarAway(0);
      }
  
 -    protected void registerGoals() {
++    // CraftBukkit start
 +    public void setPersistenceRequired(boolean persistenceRequired) {
 +        this.persistenceRequired = persistenceRequired;
      }
@@ -110,7 +107,7 @@
  
      public static AttributeSupplier.Builder createMobAttributes() {
          return LivingEntity.createLivingAttributes().add(Attributes.FOLLOW_RANGE, 16.0D).add(Attributes.ATTACK_KNOCKBACK);
-@@ -146,15 +177,17 @@
+@@ -146,15 +176,17 @@
      }
  
      public float getPathfindingMalus(BlockPathTypes nodeType) {
@@ -134,7 +131,7 @@
      }
  
      public void setPathfindingMalus(BlockPathTypes nodeType, float penalty) {
-@@ -173,10 +206,24 @@
+@@ -173,10 +205,24 @@
          return this.lookControl;
      }
  
@@ -161,7 +158,7 @@
          } else {
              return this.moveControl;
          }
-@@ -188,8 +235,9 @@
+@@ -188,8 +234,9 @@
  
      public PathNavigation getNavigation() {
          if (this.isPassenger() && this.getVehicle() instanceof Mob) {
@@ -173,7 +170,7 @@
          } else {
              return this.navigation;
          }
-@@ -204,8 +252,40 @@
+@@ -204,8 +251,40 @@
          return this.target;
      }
  
@@ -215,7 +212,7 @@
      }
  
      @Override
-@@ -217,13 +297,12 @@
+@@ -217,13 +296,12 @@
          return false;
      }
  
@@ -231,7 +228,7 @@
      }
  
      public int getAmbientSoundInterval() {
-@@ -231,9 +310,10 @@
+@@ -231,9 +309,10 @@
      }
  
      public void playAmbientSound() {
@@ -245,7 +242,7 @@
          }
  
      }
-@@ -265,14 +345,16 @@
+@@ -265,14 +344,16 @@
          if (this.xpReward > 0) {
              int i = this.xpReward;
  
@@ -266,7 +263,7 @@
                      i += 1 + this.random.nextInt(3);
                  }
              }
-@@ -285,15 +367,16 @@
+@@ -285,15 +366,16 @@
  
      public void spawnAnim() {
          if (this.level.isClientSide) {
@@ -290,7 +287,7 @@
          }
  
      }
-@@ -321,11 +404,12 @@
+@@ -321,11 +403,12 @@
      }
  
      protected void updateControlFlags() {
@@ -308,7 +305,7 @@
      }
  
      @Override
-@@ -344,57 +428,74 @@
+@@ -344,57 +427,74 @@
          super.addAdditionalSaveData(nbt);
          nbt.putBoolean("CanPickUpLoot", this.canPickUpLoot());
          nbt.putBoolean("PersistenceRequired", this.persistenceRequired);
@@ -415,7 +412,7 @@
          } else if (this.leashInfoTag != null) {
              nbt.put("Leash", this.leashInfoTag.copy());
          }
-@@ -411,45 +512,58 @@
+@@ -411,45 +511,58 @@
              nbt.putBoolean("NoAI", this.isNoAi());
          }
  
@@ -488,7 +485,7 @@
              }
          }
  
-@@ -464,6 +578,11 @@
+@@ -464,6 +577,11 @@
          }
  
          this.setNoAi(nbt.getBoolean("NoAI"));
@@ -500,7 +497,7 @@
      }
  
      @Override
-@@ -482,7 +601,7 @@
+@@ -482,7 +600,7 @@
          return this.lootTable == null ? this.getDefaultLootTable() : this.lootTable;
      }
  
@@ -509,7 +506,7 @@
          return super.getLootTable();
      }
  
-@@ -509,9 +628,19 @@
+@@ -509,9 +627,19 @@
          super.aiStep();
          this.level.getProfiler().push("looting");
          if (!this.level.isClientSide && this.canPickUpLoot() && this.isAlive() && !this.dead && this.level.getGameRules().getBoolean(GameRules.RULE_MOBGRIEFING)) {
@@ -532,7 +529,7 @@
                  }
              }
          }
-@@ -520,27 +649,44 @@
+@@ -520,27 +648,44 @@
      }
  
      protected void pickUpItem(ItemEntity item) {
@@ -589,7 +586,7 @@
              return true;
          } else {
              return false;
-@@ -554,12 +700,12 @@
+@@ -554,12 +699,12 @@
      }
  
      public void setGuaranteedDrop(EquipmentSlot slot) {
@@ -608,7 +605,7 @@
          }
  
      }
-@@ -571,13 +717,10 @@
+@@ -571,13 +716,10 @@
              if (!(oldStack.getItem() instanceof SwordItem)) {
                  return true;
              } else {
@@ -626,7 +623,7 @@
              }
          } else if (newStack.getItem() instanceof BowItem && oldStack.getItem() instanceof BowItem) {
              return this.canReplaceEqualItem(newStack, oldStack);
-@@ -589,15 +732,10 @@
+@@ -589,15 +731,10 @@
              } else if (!(oldStack.getItem() instanceof ArmorItem)) {
                  return true;
              } else {
@@ -646,7 +643,7 @@
              }
          } else {
              if (newStack.getItem() instanceof DiggerItem) {
-@@ -606,10 +744,11 @@
+@@ -606,10 +743,11 @@
                  }
  
                  if (oldStack.getItem() instanceof DiggerItem) {
@@ -662,7 +659,7 @@
                      }
  
                      return this.canReplaceEqualItem(newStack, oldStack);
-@@ -621,19 +760,11 @@
+@@ -621,19 +759,11 @@
      }
  
      public boolean canReplaceEqualItem(ItemStack newStack, ItemStack oldStack) {
@@ -687,7 +684,7 @@
      }
  
      public boolean canHoldItem(ItemStack stack) {
-@@ -661,20 +792,28 @@
+@@ -661,20 +791,28 @@
          if (this.level.getDifficulty() == Difficulty.PEACEFUL && this.shouldDespawnInPeaceful()) {
              this.discard();
          } else if (!this.isPersistenceRequired() && !this.requiresCustomPersistence()) {
@@ -708,7 +705,7 @@
                  int j = i * i;
 -                if (d > (double)j && this.removeWhenFarAway(d)) {
 +
-+                if (d0 > (double) j) { // CraftBukkit - remove isTypeNotPersistent() check
++                if (d0 > (double) j && this.removeWhenFarAway(d0)) {
                      this.discard();
                  }
  
@@ -717,14 +714,14 @@
                  int l = k * k;
 -                if (this.noActionTime > 600 && this.random.nextInt(800) == 0 && d > (double)l && this.removeWhenFarAway(d)) {
 +
-+                if (this.noActionTime > 600 && this.random.nextInt(800) == 0 && d0 > (double) l) { // CraftBukkit - remove isTypeNotPersistent() check
++                if (this.noActionTime > 600 && this.random.nextInt(800) == 0 && d0 > (double) l && this.removeWhenFarAway(d0)) {
                      this.discard();
 -                } else if (d < (double)l) {
 +                } else if (d0 < (double) l) {
                      this.noActionTime = 0;
                  }
              }
-@@ -687,10 +826,22 @@
+@@ -687,10 +825,22 @@
      @Override
      protected final void serverAiStep() {
          ++this.noActionTime;
@@ -747,7 +744,7 @@
          if (i % 2 != 0 && this.tickCount > 1) {
              this.level.getProfiler().push("targetSelector");
              this.targetSelector.tickRunningGoals(false);
-@@ -729,8 +880,7 @@
+@@ -729,8 +879,7 @@
          DebugPackets.sendGoalSelector(this.level, this, this.goalSelector);
      }
  
@@ -757,7 +754,7 @@
  
      public int getMaxHeadXRot() {
          return 40;
-@@ -745,39 +895,44 @@
+@@ -745,39 +894,44 @@
      }
  
      public void lookAt(Entity targetEntity, float maxYawChange, float maxPitchChange) {
@@ -821,7 +818,7 @@
      }
  
      public boolean checkSpawnRules(LevelAccessor world, MobSpawnType spawnReason) {
-@@ -801,7 +956,8 @@
+@@ -801,7 +955,8 @@
          if (this.getTarget() == null) {
              return 3;
          } else {
@@ -831,7 +828,7 @@
              i -= (3 - this.level.getDifficulty().getId()) * 4;
              if (i < 0) {
                  i = 0;
-@@ -823,25 +979,25 @@
+@@ -823,25 +978,25 @@
  
      @Override
      public ItemStack getItemBySlot(EquipmentSlot slot) {
@@ -870,7 +867,7 @@
          }
  
      }
-@@ -849,18 +1005,28 @@
+@@ -849,18 +1004,28 @@
      @Override
      protected void dropCustomDeathLoot(DamageSource source, int lootingMultiplier, boolean allowDrops) {
          super.dropCustomDeathLoot(source, lootingMultiplier, allowDrops);
@@ -908,7 +905,7 @@
              }
          }
  
-@@ -868,15 +1034,16 @@
+@@ -868,15 +1033,16 @@
  
      protected float getEquipmentDropChance(EquipmentSlot slot) {
          float f;
@@ -934,7 +931,7 @@
          }
  
          return f;
-@@ -886,6 +1053,7 @@
+@@ -886,6 +1052,7 @@
          if (this.random.nextFloat() < 0.15F * difficulty.getSpecialMultiplier()) {
              int i = this.random.nextInt(2);
              float f = this.level.getDifficulty() == Difficulty.HARD ? 0.1F : 0.25F;
@@ -942,7 +939,7 @@
              if (this.random.nextFloat() < 0.095F) {
                  ++i;
              }
-@@ -898,20 +1066,26 @@
+@@ -898,20 +1065,26 @@
                  ++i;
              }
  
@@ -978,7 +975,7 @@
                          }
                      }
                  }
-@@ -922,67 +1096,72 @@
+@@ -922,67 +1095,72 @@
  
      @Nullable
      public static Item getEquipmentForSlot(EquipmentSlot equipmentSlot, int equipmentLevel) {
@@ -1105,7 +1102,7 @@
              }
          }
  
-@@ -990,15 +1169,16 @@
+@@ -990,15 +1168,16 @@
  
      protected void enchantSpawnedWeapon(float power) {
          if (!this.getMainHandItem().isEmpty() && this.random.nextFloat() < 0.25F * power) {
@@ -1126,7 +1123,7 @@
          }
  
      }
-@@ -1024,12 +1204,12 @@
+@@ -1024,12 +1203,12 @@
      }
  
      public void setDropChance(EquipmentSlot slot, float chance) {
@@ -1145,7 +1142,7 @@
          }
  
      }
-@@ -1044,8 +1224,9 @@
+@@ -1044,8 +1223,9 @@
  
      @Override
      public boolean canTakeItem(ItemStack stack) {
@@ -1157,7 +1154,7 @@
      }
  
      public boolean isPersistenceRequired() {
-@@ -1057,39 +1238,58 @@
+@@ -1057,39 +1237,58 @@
          if (!this.isAlive()) {
              return InteractionResult.PASS;
          } else if (this.getLeashHolder() == player) {
@@ -1234,7 +1231,7 @@
                      });
                      return optional.isPresent() ? InteractionResult.SUCCESS : InteractionResult.PASS;
                  } else {
-@@ -1101,8 +1301,7 @@
+@@ -1101,8 +1300,7 @@
          }
      }
  
@@ -1244,7 +1241,7 @@
  
      protected InteractionResult mobInteract(Player player, InteractionHand hand) {
          return InteractionResult.PASS;
-@@ -1113,16 +1312,12 @@
+@@ -1113,16 +1311,12 @@
      }
  
      public boolean isWithinRestriction(BlockPos pos) {
@@ -1263,7 +1260,7 @@
      }
  
      public BlockPos getRestrictCenter() {
-@@ -1141,47 +1336,65 @@
+@@ -1141,47 +1335,65 @@
          return this.restrictRadius != -1.0F;
      }
  
@@ -1349,7 +1346,7 @@
          }
      }
  
-@@ -1192,7 +1405,11 @@
+@@ -1192,7 +1404,11 @@
  
          if (this.leashHolder != null) {
              if (!this.isAlive() || !this.leashHolder.isAlive()) {
@@ -1362,7 +1359,7 @@
              }
  
          }
-@@ -1203,11 +1420,13 @@
+@@ -1203,11 +1419,13 @@
              this.leashHolder = null;
              this.leashInfoTag = null;
              if (!this.level.isClientSide && dropItem) {
@@ -1378,7 +1375,7 @@
              }
          }
  
-@@ -1234,7 +1453,7 @@
+@@ -1234,7 +1452,7 @@
          this.leashHolder = entity;
          this.leashInfoTag = null;
          if (!this.level.isClientSide && sendPacket && this.level instanceof ServerLevel) {
@@ -1387,7 +1384,7 @@
          }
  
          if (this.isPassenger()) {
-@@ -1250,31 +1469,40 @@
+@@ -1250,31 +1468,40 @@
  
      @Override
      public boolean startRiding(Entity entity, boolean force) {
@@ -1437,7 +1434,7 @@
                  this.leashInfoTag = null;
              }
          }
-@@ -1292,34 +1520,36 @@
+@@ -1292,34 +1519,36 @@
      }
  
      public void setNoAi(boolean aiDisabled) {
@@ -1485,7 +1482,7 @@
  
      @Override
      public HumanoidArm getMainArm() {
-@@ -1327,48 +1557,60 @@
+@@ -1327,48 +1556,60 @@
      }
  
      public double getMeleeAttackRangeSqr(LivingEntity target) {
@@ -1561,7 +1558,7 @@
              }
          }
  
-@@ -1377,9 +1619,10 @@
+@@ -1377,9 +1618,10 @@
      public boolean isSunBurnTick() {
          if (this.level.isDay() && !this.level.isClientSide) {
              float f = this.getBrightness();
@@ -1575,7 +1572,7 @@
                  return true;
              }
          }
-@@ -1405,16 +1648,21 @@
+@@ -1405,16 +1647,21 @@
      @Override
      protected void removeAfterChangingDimensions() {
          super.removeAfterChangingDimensions();

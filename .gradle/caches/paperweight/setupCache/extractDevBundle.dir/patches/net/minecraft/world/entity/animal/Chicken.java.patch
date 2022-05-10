@@ -38,19 +38,7 @@
          this.goalSelector.addGoal(4, new FollowParentGoal(this, 1.1D));
          this.goalSelector.addGoal(5, new WaterAvoidingRandomStrollGoal(this, 1.0D));
          this.goalSelector.addGoal(6, new LookAtPlayerGoal(this, Player.class, 6.0F));
-@@ -72,6 +75,11 @@
- 
-     @Override
-     public void aiStep() {
-+        // CraftBukkit start
-+        if (this.isChickenJockey()) {
-+            this.setPersistenceRequired(!this.removeWhenFarAway(0));
-+        }
-+        // CraftBukkit end
-         super.aiStep();
-         this.oFlap = this.flap;
-         this.oFlapSpeed = this.flapSpeed;
-@@ -82,15 +90,18 @@
+@@ -82,15 +85,18 @@
          }
  
          this.flapping *= 0.9F;
@@ -73,7 +61,7 @@
              this.eggTime = this.random.nextInt(6000) + 6000;
          }
  
-@@ -132,13 +143,13 @@
+@@ -132,13 +138,13 @@
      }
  
      @Override
@@ -90,7 +78,7 @@
      }
  
      @Override
-@@ -171,13 +182,14 @@
+@@ -171,13 +177,14 @@
      @Override
      public void positionRider(Entity passenger) {
          super.positionRider(passenger);

@@ -71,6 +71,7 @@ import org.bukkit.Effect;
 import org.bukkit.FluidCollisionMode;
 import org.bukkit.GameRule;
 import org.bukkit.Location;
+import org.bukkit.NamespacedKey;
 import org.bukkit.Particle;
 import org.bukkit.Raid;
 import org.bukkit.Sound;
@@ -826,6 +827,11 @@ public class CraftWorld extends CraftRegionAccessor implements World {
     @Override
     public UUID getUID() {
         return world.uuid;
+    }
+
+    @Override
+    public NamespacedKey getKey() {
+        return CraftNamespacedKey.fromMinecraft(this.world.dimension().location());
     }
 
     @Override
@@ -2206,11 +2212,6 @@ public class CraftWorld extends CraftRegionAccessor implements World {
             if (chunk != null) addTicket(x, z); // Paper
             return java.util.concurrent.CompletableFuture.completedFuture(chunk == null ? null : chunk.getBukkitChunk());
         }, net.minecraft.server.MinecraftServer.getServer());
-    }
-
-    @Override
-    public org.bukkit.NamespacedKey getKey() {
-        return org.bukkit.craftbukkit.v1_18_R2.util.CraftNamespacedKey.fromMinecraft(world.dimension().location());
     }
     // Paper end
 

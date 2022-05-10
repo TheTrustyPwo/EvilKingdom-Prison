@@ -9,12 +9,3 @@
      }
  
      @Override
-@@ -181,7 +181,7 @@
- 
-     @Override
-     public boolean removeWhenFarAway(double distanceSquared) {
--        return !this.isPersistenceRequired();
-+        return /*!this.isPersistenceRequired();*/ true; // Paper - what a jank fix, CBs like totally tried to change what removeWhenFarAway does, that method isnt even called in NaturalSpawner in vanilla, idk wtf is going on, there are so many places where this is done, for whatever reason
-     }
- 
-     @Override

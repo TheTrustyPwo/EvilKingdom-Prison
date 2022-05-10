@@ -1,14 +1,6 @@
 --- a/net/minecraft/world/entity/animal/Animal.java
 +++ b/net/minecraft/world/entity/animal/Animal.java
-@@ -18,6 +18,7 @@
- import net.minecraft.world.entity.EntityType;
- import net.minecraft.world.entity.ExperienceOrb;
- import net.minecraft.world.entity.MobSpawnType;
-+import net.minecraft.world.entity.TamableAnimal;
- import net.minecraft.world.entity.player.Player;
- import net.minecraft.world.item.ItemStack;
- import net.minecraft.world.item.Items;
-@@ -29,12 +30,17 @@
+@@ -29,12 +29,17 @@
  import net.minecraft.world.level.block.Blocks;
  import net.minecraft.world.level.gameevent.GameEvent;
  import net.minecraft.world.level.pathfinder.BlockPathTypes;
@@ -26,7 +18,7 @@
  
      protected Animal(EntityType<? extends Animal> type, Level world) {
          super(type, world);
-@@ -61,24 +67,29 @@
+@@ -61,24 +66,29 @@
          if (this.inLove > 0) {
              --this.inLove;
              if (this.inLove % 10 == 0) {
@@ -63,7 +55,7 @@
  
      @Override
      public float getWalkTargetValue(BlockPos pos, LevelReader world) {
-@@ -108,7 +119,7 @@
+@@ -108,7 +118,7 @@
      }
  
      public static boolean checkAnimalSpawnRules(EntityType<? extends Animal> type, LevelAccessor world, MobSpawnType spawnReason, BlockPos pos, Random random) {
@@ -72,7 +64,7 @@
      }
  
      protected static boolean isBrightEnoughToSpawn(BlockAndTintGetter world, BlockPos pos) {
-@@ -136,19 +147,21 @@
+@@ -136,19 +146,21 @@
  
      @Override
      public InteractionResult mobInteract(Player player, InteractionHand hand) {
@@ -99,7 +91,7 @@
                  this.gameEvent(GameEvent.MOB_INTERACT, this.eyeBlockPosition());
                  return InteractionResult.sidedSuccess(this.level.isClientSide);
              }
-@@ -173,12 +186,19 @@
+@@ -173,12 +185,19 @@
      }
  
      public void setInLove(@Nullable Player player) {
@@ -121,7 +113,7 @@
      }
  
      public void setInLoveTime(int loveTicks) {
-@@ -194,8 +214,9 @@
+@@ -194,8 +213,9 @@
          if (this.loveCause == null) {
              return null;
          } else {
@@ -133,7 +125,7 @@
          }
      }
  
-@@ -208,38 +229,51 @@
+@@ -208,38 +228,46 @@
      }
  
      public boolean canMate(Animal other) {
@@ -156,16 +148,8 @@
 +        AgeableMob entityageable = this.getBreedOffspring(world, other);
 +
 +        if (entityageable != null) {
-+            // CraftBukkit start - set persistence for tame animals
-+            if (entityageable instanceof TamableAnimal && ((TamableAnimal) entityageable).isTame()) {
-+                entityageable.setPersistenceRequired(true);
-             }
-+            // CraftBukkit end
 +            ServerPlayer entityplayer = this.getLoveCause();
- 
--            if (serverPlayer != null) {
--                serverPlayer.awardStat(Stats.ANIMALS_BRED);
--                CriteriaTriggers.BRED_ANIMALS.trigger(serverPlayer, this, other, ageableMob);
++
 +            if (entityplayer == null && other.getLoveCause() != null) {
 +                entityplayer = other.getLoveCause();
 +            }
@@ -176,10 +160,13 @@
 +            org.bukkit.event.entity.EntityBreedEvent entityBreedEvent = org.bukkit.craftbukkit.v1_18_R2.event.CraftEventFactory.callEntityBreedEvent(entityageable, this, other, entityplayer, this.breedItem, experience);
 +            if (entityBreedEvent.isCancelled()) {
 +                return;
-+            }
+             }
 +            experience = entityBreedEvent.getExperience();
 +            // CraftBukkit end
-+
+ 
+-            if (serverPlayer != null) {
+-                serverPlayer.awardStat(Stats.ANIMALS_BRED);
+-                CriteriaTriggers.BRED_ANIMALS.trigger(serverPlayer, this, other, ageableMob);
 +            if (entityplayer != null) {
 +                entityplayer.awardStat(Stats.ANIMALS_BRED);
 +                CriteriaTriggers.BRED_ANIMALS.trigger(entityplayer, this, other, entityageable);
@@ -205,7 +192,7 @@
              }
  
          }
-@@ -248,11 +282,12 @@
+@@ -248,11 +276,12 @@
      @Override
      public void handleEntityEvent(byte status) {
          if (status == 18) {

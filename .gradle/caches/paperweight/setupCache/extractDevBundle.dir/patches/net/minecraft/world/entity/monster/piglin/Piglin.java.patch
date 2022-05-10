@@ -105,15 +105,6 @@
      }
  
      public static boolean checkPiglinSpawnRules(EntityType<Piglin> type, LevelAccessor world, MobSpawnType spawnReason, BlockPos pos, Random random) {
-@@ -171,7 +199,7 @@
- 
-     @Override
-     public boolean removeWhenFarAway(double distanceSquared) {
--        return !this.isPersistenceRequired();
-+        return true; // CraftBukkit - SPIGOT-6278
-     }
- 
-     @Override
 @@ -194,7 +222,7 @@
  
      @Override

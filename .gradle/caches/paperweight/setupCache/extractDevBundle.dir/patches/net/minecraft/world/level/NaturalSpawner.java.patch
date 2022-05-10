@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/level/NaturalSpawner.java
 +++ b/net/minecraft/world/level/NaturalSpawner.java
-@@ -44,188 +44,324 @@
+@@ -44,188 +44,323 @@
  import net.minecraft.world.level.levelgen.structure.BuiltinStructures;
  import net.minecraft.world.level.material.FluidState;
  import net.minecraft.world.level.pathfinder.PathComputationType;
@@ -58,8 +58,7 @@
 +            if (entity instanceof Mob) {
 +                Mob entityinsentient = (Mob) entity;
 +
-+                // CraftBukkit - Split out persistent check, don't apply it to special persistent mobs
-+                if (entityinsentient.removeWhenFarAway(0) && entityinsentient.isPersistenceRequired()) {
++                if (entityinsentient.isPersistenceRequired() || entityinsentient.requiresCustomPersistence()) {
 +                    continue;
                  }
 +            }
@@ -430,7 +429,7 @@
          } else {
              return false;
          }
-@@ -235,91 +371,82 @@
+@@ -235,91 +370,82 @@
      private static Mob getMobForSpawn(ServerLevel world, EntityType<?> type) {
          try {
              Entity entity = type.create(world);
@@ -557,7 +556,7 @@
              }
          } else {
              return false;
-@@ -327,59 +454,66 @@
+@@ -327,59 +453,66 @@
      }
  
      public static void spawnMobsForChunkGeneration(ServerLevelAccessor world, Holder<Biome> holder, ChunkPos chunkPos, Random random) {
@@ -655,7 +654,7 @@
                              }
                          }
                      }
-@@ -390,44 +524,38 @@
+@@ -390,44 +523,38 @@
      }
  
      private static BlockPos getTopNonCollidingPos(LevelReader world, EntityType<?> entityType, int x, int z) {
@@ -714,7 +713,7 @@
          private final int spawnableChunkCount;
          private final Object2IntOpenHashMap<MobCategory> mobCategoryCounts;
          private final PotentialCalculator spawnPotential;
-@@ -450,37 +578,43 @@
+@@ -450,37 +577,43 @@
          private boolean canSpawn(EntityType<?> type, BlockPos pos, ChunkAccess chunk) {
              this.lastCheckedPos = pos;
              this.lastCheckedType = type;
@@ -777,7 +776,7 @@
          }
  
          public int getSpawnableChunkCount() {
-@@ -491,13 +625,25 @@
+@@ -491,13 +624,25 @@
              return this.unmodifiableMobCategoryCounts;
          }
  

@@ -72,7 +72,7 @@
      @Override
      public boolean removeWhenFarAway(double distanceSquared) {
 -        return !this.isTrusting() && this.tickCount > 2400;
-+        return !this.isTrusting() && !this.hasCustomName() && !this.isLeashed() /*&& this.tickCount > 2400*/; // CraftBukkit // Paper - honor name and leash
++        return !this.isTrusting() && this.tickCount > 2400 && !this.hasCustomName() && !this.isLeashed(); // Paper - honor name and leash
      }
  
      public static AttributeSupplier.Builder createAttributes() {
