@@ -37,7 +37,7 @@ components:
   data:
 
     #The configuration for the database.
-    #All of the data for this plugin is stored via MongoDB and if this fails, the plugin will disable itself.
+    #All of the data for this plugin is stored using this information and if this fails, the plugin will disable itself.
     database:
 
       #The name of the database.
