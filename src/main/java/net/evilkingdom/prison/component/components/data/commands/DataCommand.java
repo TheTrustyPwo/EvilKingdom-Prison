@@ -230,14 +230,15 @@ public class DataCommand extends CommandHandler {
             return new ArrayList<String>();
         }
         final Player player = (Player) sender;
-        ArrayList<String> tabCompletion = new ArrayList<String>();
         if (LuckPermsUtilities.getPermissionsViaCache(player.getUniqueId()).contains("prison.data.commands.data")) {
-            switch (arguments.length) {
-                case 1 -> tabCompletion.addAll(Arrays.asList("help", "modify"));
-                case 2 -> tabCompletion.addAll(Bukkit.getOnlinePlayers().stream().map(onlinePlayer -> onlinePlayer.getName()).collect(Collectors.toList()));
-                case 3 -> tabCompletion.addAll(Arrays.asList("rank", "tokens", "gems", "blocks_mined", "multiplier"));
-                case 4 -> tabCompletion.addAll(Arrays.asList("set", "add", "subtract"));
-            }
+            return new ArrayList<String>();
+        }
+        ArrayList<String> tabCompletion = new ArrayList<String>();
+        switch (arguments.length) {
+            case 1 -> tabCompletion.addAll(Arrays.asList("help", "modify"));
+            case 2 -> tabCompletion.addAll(Bukkit.getOnlinePlayers().stream().map(onlinePlayer -> onlinePlayer.getName()).collect(Collectors.toList()));
+            case 3 -> tabCompletion.addAll(Arrays.asList("rank", "tokens", "gems", "blocks_mined", "multiplier"));
+            case 4 -> tabCompletion.addAll(Arrays.asList("set", "add", "subtract"));
         }
         return tabCompletion;
     }
