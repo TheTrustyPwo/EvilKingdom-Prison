@@ -42,7 +42,7 @@ bukkit {
     website = "kodirati.com"
     description = "Used as the core for the prison server of Evil Kingdom."
     main = "net.evilkingdom.prison.Prison"
-    version = "commit-" + gitCommit()
+    version = "master-" + gitCommit()
     apiVersion = "1.18"
     depend = listOf("Commons", "Basics")
 }
