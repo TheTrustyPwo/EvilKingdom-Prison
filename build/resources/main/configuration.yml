@@ -10,15 +10,15 @@ components:
     #The scoreboard's lines.
     #I suggest using some type of random color code for spacer lines (not entirely sure if it works without).
     #Variables:
-    # - %gems% ~ The player.
-    # - %tokens% ~ The player's tokens.
-    # - %multiplier% ~ The player's multiplier.
-    # - %blocks_mined% ~ The player's blocks mined.
-    # - %rank% ~ The player's rank.
-    # - %next_rank% ~ The player's next rank.
-    # - %next_rank_price% ~ The player's next rank price.
-    # - %next_rank_progress% ~ The player's next rank progress.
-    # - %next_rank_progress_percentage% ~ The player's next rank progress percentage.
+    # » %gems% ~ The player.
+    # » %tokens% ~ The player's tokens.
+    # » %multiplier% ~ The player's multiplier.
+    # » %blocks_mined% ~ The player's blocks mined.
+    # » %rank% ~ The player's rank.
+    # » %next_rank% ~ The player's next rank.
+    # » %next_rank_price% ~ The player's next rank price.
+    # » %next_rank_progress% ~ The player's next rank progress.
+    # » %next_rank_progress_percentage% ~ The player's next rank progress percentage.
     lines:
       - "&0"
       - "&6%player%"
@@ -178,7 +178,7 @@ components:
 
               #The message sent when the targeted player is invalid (not in the database).
               #Variables:
-              # - %player% ~ The targeted player.
+              # » %player% ~ The targeted player.
               invalid-player:
                 - "&6&lPrison &7» &eInvalid player, &6%player%&e does not exist in the database."
 
@@ -210,9 +210,9 @@ components:
 
                 #The message sent when setting a player's data.
                 #Variables:
-                # - %player% ~ The targeted player.
-                # - %amount% ~ The amount that was modified.
-                # - %data_type% ~ The data type that was modified.
+                # » %player% ~ The targeted player.
+                # » %amount% ~ The amount that was modified.
+                # » %data_type% ~ The data type that was modified.
                 set:
 
                   #The message sent to the player.
@@ -225,9 +225,9 @@ components:
 
                 #The message sent when adding a player's data.
                 #Variables:
-                # - %player% ~ The targeted player.
-                # - %amount% ~ The amount that was modified.
-                # - %data_type% ~ The data type that was modified.
+                # » %player% ~ The targeted player.
+                # » %amount% ~ The amount that was modified.
+                # » %data_type% ~ The data type that was modified.
                 add:
 
                   #The message sent to the player.
@@ -240,9 +240,9 @@ components:
 
                 #The message sent when subtracting a player's data.
                 #Variables:
-                # - %player% ~ The targeted player.
-                # - %amount% ~ The amount that was modified.
-                # - %data_type% ~ The data type that was modified.
+                # » %player% ~ The targeted player.
+                # » %amount% ~ The amount that was modified.
+                # » %data_type% ~ The data type that was modified.
                 subtract:
 
                   #The message sent to the player.
@@ -317,15 +317,15 @@ components:
 
           #The message sent when the targeted player is invalid (not in the database).
           #Variables:
-          # - %player% ~ The targeted player.
+          # » %player% ~ The targeted player.
           invalid-player:
             - "&6&lPrison &7» &eInvalid player, &6%player%&e does not exist in the database."
 
           #The message sent when the balance is a success.
           #Variables:
-          # - %player% ~ The targeted player.
-          # - %amount% ~ The amount that was paid.
-          # - %currency% ~ The currency that was paid.
+          # » %player% ~ The targeted player.
+          # » %amount% ~ The amount that was paid.
+          # » %currency% ~ The currency that was paid.
           success:
 
             #The message sent to the player.
@@ -347,9 +347,9 @@ components:
 
             #The message sent when the deposit is a success.
             #Variables:
-            # - %withdrawer% ~ The withdrawer.
-            # - %amount% ~ The amount that was deposited.
-            # - %currency% ~ The currency that was deposited.
+            # » %withdrawer% ~ The withdrawer.
+            # » %amount% ~ The amount that was deposited.
+            # » %currency% ~ The currency that was deposited.
             success:
               - "&6&lPrison &7» &eYou have withdrawn &6%amount%&e of &6%currency%&e."
 
@@ -378,16 +378,16 @@ components:
 
             #The name of the item.
             #Variables:
-            # - %withdrawer% ~ The withdrawer.
-            # - %amount% ~ The amount that was withdrawn.
-            # - %currency% ~ The currency that was withdrawn.
+            # » %withdrawer% ~ The withdrawer.
+            # » %amount% ~ The amount that was withdrawn.
+            # » %currency% ~ The currency that was withdrawn.
             name: "&6&l%currency% Note &7(%amount%)"
 
             #The lore of the item.
             #Variables:
-            # - %withdrawer% ~ The withdrawer.
-            # - %amount% ~ The amount that was withdrawn.
-            # - %currency% ~ The currency that was withdrawn.
+            # » %withdrawer% ~ The withdrawer.
+            # » %amount% ~ The amount that was withdrawn.
+            # » %currency% ~ The currency that was withdrawn.
             lore:
               - ""
               - "&6&lAmount"
@@ -461,7 +461,7 @@ components:
 
             #The message sent when the player doesn't have enough of the desired currency to pay.
             #Variables:
-            # - %currency% ~ The currency.
+            # » %currency% ~ The currency.
             not-enough:
               - "&6&lPrison &7» &eInvalid amount, &eyou do not have enough &6%currency% &ecurrency."
 
@@ -471,9 +471,9 @@ components:
 
           #The message sent when the withdrawal is a success.
           #Variables:
-          # - %player% ~ The targeted player.
-          # - %amount% ~ The amount that was withdrawn.
-          # - %currency% ~ The currency that was withdrawn.
+          # » %player% ~ The targeted player.
+          # » %amount% ~ The amount that was withdrawn.
+          # » %currency% ~ The currency that was withdrawn.
           success:
             - "&6&lPrison &7» &eYou have withdrawn &6%amount%&e of &6%currency%&e."
 
@@ -538,7 +538,7 @@ components:
 
           #The message sent when the targeted player is invalid (not online).
           #Variables:
-          # - %player% ~ The targeted player.
+          # » %player% ~ The targeted player.
           invalid-player:
             - "&6&lPrison &7» &eInvalid player, &6%player%&e is not online."
 
@@ -559,15 +559,15 @@ components:
 
             #The message sent when the player doesn't have enough of the desired currency to pay.
             #Variables:
-            # - %currency% ~ The currency.
+            # » %currency% ~ The currency.
             not-enough:
               - "&6&lPrison &7» &eInvalid amount, &eyou do not have enough &6%currency% &ecurrency."
 
           #The message sent when the pay is a success.
           #Variables:
-          # - %player% ~ The targeted player.
-          # - %amount% ~ The amount that was paid.
-          # - %currency% ~ The currency that was paid.
+          # » %player% ~ The targeted player.
+          # » %amount% ~ The amount that was paid.
+          # » %currency% ~ The currency that was paid.
           success:
 
             #The message sent to the player.
@@ -710,7 +710,7 @@ components:
 
               #The message sent when the targeted player is invalid (not in the database).
               #Variables:
-              # - %player% ~ The targeted player.
+              # » %player% ~ The targeted player.
               invalid-player:
                 - "&6&lPrison &7» &eInvalid player, &6%player%&e does not exist in the database."
 
@@ -728,26 +728,26 @@ components:
 
                 #The message sent when the targeted player has no mine.
                 #Variables:
-                # - %player% ~ The targeted player.
+                # » %player% ~ The targeted player.
                 target-has-no-mine:
                   - "&6&lPrison &7» &eInvalid go, &6%player% &edoes not have a &6mine&e."
 
                 #The message sent when the targeted player's mine is preforming a large task (maybe retheme?).
                 #Variables:
-                # - %player% ~ The targeted player.
+                # » %player% ~ The targeted player.
                 target-mine-preforming-large-task:
                   - "&6&lPrison &7» &eInvalid go, &6%player%&e's &6mine&e is currently preforming a &6large task&e."
                   - "&7&o(Please be patient, this could take a bit!)"
 
                 #The message sent when the player is banned from the targeted player's mine.
                 #Variables:
-                # - %player% ~ The targeted player.
+                # » %player% ~ The targeted player.
                 banned-from-target-mine:
                   - "&6&lPrison &7» &eInvalid go, you are banned from &6%player%&e's &6mine&e."
 
                 #The message sent when the targeted player's mine is private (and the player isn't whitelisted obviously).
                 #Variables:
-                # - %player% ~ The targeted player.
+                # » %player% ~ The targeted player.
                 target-mine-private:
                   - "&6&lPrison &7» &eInvalid go, &6%player%&e's &6mine&e is currently private."
 
@@ -760,7 +760,7 @@ components:
 
                 #The message sent when there is a targeted player.
                 #Variables:
-                # - %player% ~ The targeted player.
+                # » %player% ~ The targeted player.
                 with-target:
                   - "&6&lPrison &7» &eYou have been teleported to &6%player%&e's &6mine&e."
 
@@ -820,7 +820,7 @@ components:
 
                 #The message sent when the mine is on cooldown.
                 #Variables:
-                # - %time_left% ~ The cooldown's time left.
+                # » %time_left% ~ The cooldown's time left.
                 on-cooldown:
                   - "&6&lPrison &7» &eInvalid reset, &eyou are on &6cooldown &efor another &6%time_left%&e."
 
@@ -972,18 +972,18 @@ components:
                     #It is suggested you use set this to the "%related_material%" variable which retrieves the theme's related material.
                     #Use the SpigotMC 1.18.2's API's material list, which can be found at https://hub.spigotmc.org/javadocs/spigot/org/bukkit/Material.html.
                     #Variables:
-                    # - %related_material% ~ The theme's related material.
+                    # » %related_material% ~ The theme's related material.
                     material: "%related_material%"
 
                     #The name of the item.
                     #Variables:
-                    # - %name% ~ The name of the theme.
+                    # » %name% ~ The name of the theme.
                     name: "&6&l%name%"
 
                     #The lore of the item.
                     #Variables:
-                    # - %name% ~ The name of the theme.
-                    # - %description% ~ The description of the theme.
+                    # » %name% ~ The name of the theme.
+                    # » %description% ~ The description of the theme.
                     lore:
                       - ""
                       - "&6Description"
@@ -1414,7 +1414,7 @@ components:
 
               #The message sent when the targeted player is invalid.
               #Variables:
-              # - %player% ~ The targeted player.
+              # » %player% ~ The targeted player.
               invalid-player:
 
                 #The message sent if the targeted player does not exist in the database.
@@ -1434,13 +1434,13 @@ components:
 
                 #The message sent when the targeted player is already banned.
                 #Variables:
-                # - %player% ~ The targeted player.
+                # » %player% ~ The targeted player.
                 already-banned:
                   - "&6&lPrison &7» &eInvalid ban, &6%player% &eis already banned."
 
               #The message sent when the ban is a success.
               #Variables:
-              # - %player% ~ The targeted player.
+              # » %player% ~ The targeted player.
               success:
 
                 #The message sent to the player.
@@ -1513,7 +1513,7 @@ components:
 
               #The message sent when the targeted player is invalid.
               #Variables:
-              # - %player% ~ The targeted player.
+              # » %player% ~ The targeted player.
               invalid-player:
 
                 #The message sent if the targeted player does not exist in the database.
@@ -1533,13 +1533,13 @@ components:
 
                 #The message sent when the targeted player is not banned.
                 #Variables:
-                # - %player% ~ The targeted player.
+                # » %player% ~ The targeted player.
                 not-banned:
                   - "&6&lPrison &7» &eInvalid unban, &6%player% &eis not banned."
 
               #The message sent when the unban is a success.
               #Variables:
-              # - %player% ~ The targeted player.
+              # » %player% ~ The targeted player.
               success:
                 - "&6&lPrison &7» &eYou have unbanned &6%player%&e from your &6mine&e."
 
@@ -1670,7 +1670,7 @@ components:
 
               #The message sent when the targeted player is invalid.
               #Variables:
-              # - %player% ~ The targeted player.
+              # » %player% ~ The targeted player.
               invalid-player:
 
                 #The message sent if the targeted player does not exist in the database.
@@ -1690,13 +1690,13 @@ components:
 
                 #The message sent when the targeted player is already banned.
                 #Variables:
-                # - %player% ~ The targeted player.
+                # » %player% ~ The targeted player.
                 already-banned:
                   - "&6&lPrison &7» &eInvalid whitelist, &6%player% &eis already whitelisted."
 
               #The message sent when the whitelist is a success.
               #Variables:
-              # - %player% ~ The targeted player.
+              # » %player% ~ The targeted player.
               success:
                 - "&6&lPrison &7» &eYou have whitelisted &6%player%&e to your &6mine&e."
 
@@ -1745,7 +1745,7 @@ components:
 
               #The message sent when the targeted player is invalid.
               #Variables:
-              # - %player% ~ The targeted player.
+              # » %player% ~ The targeted player.
               invalid-player:
 
                 #The message sent if the targeted player does not exist in the database.
@@ -1765,13 +1765,13 @@ components:
 
                 #The message sent when the targeted player is not whitelisted.
                 #Variables:
-                # - %player% ~ The targeted player.
+                # » %player% ~ The targeted player.
                 not-whitelisted:
                   - "&6&lPrison &7» &eInvalid unwhitelist, &6%player% &eis not whitelisted."
 
               #The message sent when the unwhitelist is a success.
               #Variables:
-              # - %player% ~ The targeted player.
+              # » %player% ~ The targeted player.
               success:
 
                 #The message sent to the player.
@@ -1899,7 +1899,7 @@ components:
 
                     #The name of the item.
                     #Variables:
-                    # - %privacy% ~ The mine's privacy state (Enabled/Disabled).
+                    # » %privacy% ~ The mine's privacy state (Enabled/Disabled).
                     name: "&6&lPrivacy &7| &6%privacy%"
 
                     #The lore of the item.
@@ -2919,12 +2919,12 @@ components:
                     #It is suggested you use set this to the "%player_head%" variable which retrieves the player's head.
                     #Use the SpigotMC 1.18.2's API's material list, which can be found at https://hub.spigotmc.org/javadocs/spigot/org/bukkit/Material.html.
                     #Variables:
-                    # - %player_head% ~ The player's head.
+                    # » %player_head% ~ The player's head.
                     material: "%player_head%"
 
                     #The name of the item.
                     #Variables:
-                    # - %player% ~ The player.
+                    # » %player% ~ The player.
                     name: "&6&l%player%"
 
                     #The lore of the item.
@@ -2950,12 +2950,12 @@ components:
                     #It is suggested you use set this to the "%player_head%" variable which retrieves the player's head.
                     #Use the SpigotMC 1.18.2's API's material list, which can be found at https://hub.spigotmc.org/javadocs/spigot/org/bukkit/Material.html.
                     #Variables:
-                    # - %player_head% ~ The player's head.
+                    # » %player_head% ~ The player's head.
                     material: "%player_head%"
 
                     #The name of the item.
                     #Variables:
-                    # - %player% ~ The player.
+                    # » %player% ~ The player.
                     name: "&6&l%player%"
 
                     #The lore of the item.
@@ -3025,7 +3025,7 @@ components:
 
                   #The menu's title
                   #Variables:
-                  # - %type% ~ The type of user management (Whitelists/Bans).
+                  # » %type% ~ The type of user management (Whitelists/Bans).
                   title: "Mine | %type%"
 
                   #The inventory's items.
@@ -3474,7 +3474,7 @@ components:
 
                 #The message sent when the player's mine is already using selected theme.
                 #Variables:
-                # - %theme% ~ The selected theme.
+                # » %theme% ~ The selected theme.
                 already-using-theme:
                   - "&6&lPrison &7» &eInvalid retheme, &eyour &6mine&e is &6already&e using the &6%theme% &etheme."
 
@@ -3484,7 +3484,7 @@ components:
 
                 #The message sent when the mine is on cooldown.
                 #Variables:
-                # - %time_left% ~ The cooldown's time left.
+                # » %time_left% ~ The cooldown's time left.
                 on-cooldown:
                   - "&6&lPrison &7» &eInvalid retheme, &eyou are on &6cooldown &efor another &6%time_left%&e."
 
@@ -3586,18 +3586,18 @@ components:
                     #It is suggested you use set this to the "%related_material%" variable which retrieves the theme's related material.
                     #Use the SpigotMC 1.18.2's API's material list, which can be found at https://hub.spigotmc.org/javadocs/spigot/org/bukkit/Material.html.
                     #Variables:
-                    # - %related_material% ~ The theme's related material.
+                    # » %related_material% ~ The theme's related material.
                     material: "%related_material%"
 
                     #The name of the item.
                     #Variables:
-                    # - %name% ~ The name of the theme.
+                    # » %name% ~ The name of the theme.
                     name: "&6&l%name%"
 
                     #The lore of the item.
                     #Variables:
-                    # - %name% ~ The name of the theme.
-                    # - %description% ~ The description of the theme.
+                    # » %name% ~ The name of the theme.
+                    # » %description% ~ The description of the theme.
                     lore:
                       - ""
                       - "&6Description"
