@@ -42,16 +42,12 @@ bukkit {
     website = "kodirati.com"
     description = "Used as the core for the prison server of Evil Kingdom."
     main = "net.evilkingdom.prison.Prison"
-    version = "commit-" + gitBranch()
+    version = "commit-" + gitCommit()
     apiVersion = "1.18"
     depend = listOf("Commons", "Basics")
 }
 
-/**
- * Utility function to retrieve the name of the current git branch.
- * Will not work if build tool detaches head after checkout, which some do!
- */
-fun gitBranch(): String {
+fun gitCommit(): String {
     return try {
         val byteOut = org.apache.commons.io.output.ByteArrayOutputStream()
         project.exec {
@@ -60,10 +56,10 @@ fun gitBranch(): String {
         }
         String(byteOut.toByteArray()).trim().also {
             if (it == "HEAD")
-                logger.warn("Unable to determine current branch: Project is checked out with detached head!")
+                logger.warn("Unable to determine current commit: Project is checked out with detached head!")
         }
     } catch (e: Exception) {
-        logger.warn("Unable to determine current branch: ${e.message}")
-        "Unknown Branch"
+        logger.warn("Unable to determine current commit: ${e.message}")
+        "Unknown Commit"
     }
 }
