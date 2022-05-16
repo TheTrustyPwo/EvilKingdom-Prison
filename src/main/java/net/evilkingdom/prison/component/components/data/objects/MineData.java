@@ -4,6 +4,8 @@ package net.evilkingdom.prison.component.components.data.objects;
  * Made with love by https://kodirati.com/.
  */
 
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
 import com.mongodb.BasicDBObject;
 import com.mongodb.client.model.Filters;
 import com.mongodb.client.model.FindOneAndReplaceOptions;
@@ -11,8 +13,6 @@ import net.evilkingdom.commons.cooldown.CooldownImplementor;
 import net.evilkingdom.commons.cooldown.objects.Cooldown;
 import net.evilkingdom.commons.datapoint.DataImplementor;
 import net.evilkingdom.commons.datapoint.objects.Datapoint;
-import net.evilkingdom.commons.datapoint.objects.DatapointModel;
-import net.evilkingdom.commons.datapoint.objects.DatapointObject;
 import net.evilkingdom.commons.datapoint.objects.Datasite;
 import net.evilkingdom.prison.Prison;
 import org.bson.Document;
@@ -33,8 +33,8 @@ public class MineData {
     private final UUID uuid;
     private boolean privacy;
     private Location center;
-    private ArrayList<Cooldown> cooldowns;
-    private ArrayList<UUID> banned, whitelisted;
+    private final ArrayList<Cooldown> cooldowns;
+    private final ArrayList<UUID> banned, whitelisted;
 
     private static final HashSet<MineData> cache = new HashSet<MineData>();
 
@@ -82,48 +82,37 @@ public class MineData {
         final DataImplementor dataImplementor = DataImplementor.get(this.plugin);
         final Datasite datasite = dataImplementor.getSites().stream().filter(innerDatasite -> innerDatasite.getPlugin() == this.plugin).findFirst().get();
         final Datapoint datapoint = datasite.getPoints().stream().filter(innerDatapoint -> innerDatapoint.getName().equals("prison_mines")).findFirst().get();
-        return datapoint.get(this.uuid.toString()).thenApply(optionalDatapointModel -> {
-            if (optionalDatapointModel.isEmpty()) {
+        return datapoint.get(this.uuid.toString()).thenApply(optionalJsonObject -> {
+            if (optionalJsonObject.isEmpty()) {
                 return false;
             }
-            final DatapointModel datapointModel = optionalDatapointModel.get();
-            if (datapointModel.getObjects().containsKey("tax")) {
-                final DatapointObject datapointObject = datapointModel.getObjects().get("tax");
-                this.tax = (Double) datapointObject.getObject();
+            final JsonObject jsonObject = optionalJsonObject.get();
+            if (jsonObject.has("tax")) {
+                this.tax = jsonObject.get("tax").getAsDouble();
             }
-            if (datapointModel.getObjects().containsKey("theme")) {
-                final DatapointObject datapointObject = datapointModel.getObjects().get("theme");
-                this.theme = (String) datapointObject.getObject();
+            if (jsonObject.has("theme")) {
+                this.theme = jsonObject.get("theme").getAsString();
             }
-            if (datapointModel.getObjects().containsKey("owner")) {
-                final DatapointObject datapointObject = datapointModel.getObjects().get("owner");
-                this.owner = UUID.fromString(((String) datapointObject.getObject()));
+            if (jsonObject.has("owner")) {
+                this.owner = UUID.fromString(jsonObject.get("owner").getAsString());
             }
-            if (datapointModel.getObjects().containsKey("privacy")) {
-                final DatapointObject datapointObject = datapointModel.getObjects().get("privacy");
-                this.privacy = (boolean) datapointObject.getObject();
+            if (jsonObject.has("privacy")) {
+                this.privacy = jsonObject.get("privacy").getAsBoolean();
             }
-            if (datapointModel.getObjects().containsKey("center")) {
-                final DatapointObject datapointObject = datapointModel.getObjects().get("center");
-                final int x = (int) datapointObject.getInnerObjects().get("x").getObject();
-                final int z = (int) datapointObject.getInnerObjects().get("z").getObject();
-                this.center = new Location(this.plugin.getComponentManager().getMineComponent().getWorld(), x, 175, z);
+            if (jsonObject.has("center")) {
+                final JsonObject centerJsonObject = jsonObject.get("center").getAsJsonObject();
+                this.center = new Location(this.plugin.getComponentManager().getMineComponent().getWorld(), centerJsonObject.get("x").getAsInt(), 175, centerJsonObject.get("z").getAsInt());
             }
-            if (datapointModel.getObjects().containsKey("banned")) {
-                final DatapointObject datapointObject = datapointModel.getObjects().get("banned");
-                this.banned = new ArrayList<UUID>(datapointObject.getInnerObjects().values().stream().map(innerDatapointObject -> UUID.fromString(((String) innerDatapointObject.getObject()))).collect(Collectors.toList()));
+            if (jsonObject.has("banned")) {
+                jsonObject.get("banned").getAsJsonArray().forEach(jsonElement -> this.banned.add(UUID.fromString(jsonElement.getAsString())));
             }
-            if (datapointModel.getObjects().containsKey("whitelisted")) {
-                final DatapointObject datapointObject = datapointModel.getObjects().get("whitelisted");
-                this.whitelisted = new ArrayList<UUID>(datapointObject.getInnerObjects().values().stream().map(innerDatapointObject -> UUID.fromString(((String) innerDatapointObject.getObject()))).collect(Collectors.toList()));
+            if (jsonObject.has("whitelisted")) {
+                jsonObject.get("whitelisted").getAsJsonArray().forEach(jsonElement -> this.banned.add(UUID.fromString(jsonElement.getAsString())));
             }
-            if (datapointModel.getObjects().containsKey("cooldowns")) {
-                final DatapointObject datapointObject = datapointModel.getObjects().get("cooldowns");
-                datapointObject.getInnerObjects().values().forEach(innerDatapointObject -> {
-                    final String type = (String) innerDatapointObject.getInnerObjects().get("type").getObject();
-                    final long timeLeft = (long) innerDatapointObject.getInnerObjects().get("timeLeft").getObject();
-                    final Cooldown cooldown = new Cooldown(this.plugin, "mine-" + this.uuid + "-" + type, timeLeft);
-                    this.cooldowns.add(cooldown);
+            if (jsonObject.has("cooldowns")) {
+                jsonObject.get("cooldowns").getAsJsonArray().forEach(jsonElement -> {
+                    final JsonObject cooldownJsonObject = jsonElement.getAsJsonObject();
+                    this.cooldowns.add(new Cooldown(this.plugin, "mine-" + this.uuid + "-" + cooldownJsonObject.get("type").getAsString(), cooldownJsonObject.get("timeLeft").getAsLong()));
                 });
             }
             return true;
@@ -136,38 +125,34 @@ public class MineData {
      * @param asynchronous ~ If the save is asynchronous (should always be unless it's an emergency saves).
      */
     public void save(final boolean asynchronous) {
-        final DatapointModel datapointModel = new DatapointModel(this.uuid.toString());
-        datapointModel.getObjects().put("tax", new DatapointObject(this.tax));
-        datapointModel.getObjects().put("owner", new DatapointObject(this.owner.toString()));
-        datapointModel.getObjects().put("theme", new DatapointObject(this.theme));
-        datapointModel.getObjects().put("privacy", new DatapointObject(this.privacy));
-        final DatapointObject centerDatapointObject = new DatapointObject();
-        centerDatapointObject.getInnerObjects().put("x", new DatapointObject(this.center.getBlockX()));
-        centerDatapointObject.getInnerObjects().put("z", new DatapointObject(this.center.getBlockZ()));
-        datapointModel.getObjects().put("center", centerDatapointObject);
-        final DatapointObject bannedDatapointObject = new DatapointObject();
-        for (int i = 0; i < this.banned.size(); i++) {
-            bannedDatapointObject.getInnerObjects().put(String.valueOf(i), new DatapointObject(this.banned.get(i).toString()));
-        }
-        datapointModel.getObjects().put("banned", bannedDatapointObject);
-        final DatapointObject whitelistedDatapointObject = new DatapointObject();
-        for (int i = 0; i < this.whitelisted.size(); i++) {
-            whitelistedDatapointObject.getInnerObjects().put(String.valueOf(i), new DatapointObject(this.whitelisted.get(i).toString()));
-        }
-        datapointModel.getObjects().put("whitelisted", whitelistedDatapointObject);
-        final DatapointObject cooldownsDatapointObject = new DatapointObject();
-        for (int i = 0; i < this.getCooldowns().size(); i++) {
-            final Cooldown cooldown = this.getCooldowns().get(i);
-            final DatapointObject cooldownDatapointObject = new DatapointObject();
-            cooldownDatapointObject.getInnerObjects().put("type", new DatapointObject(cooldown.getIdentifier().replaceFirst("mine-" + this.uuid + "-", "")));
-            cooldownDatapointObject.getInnerObjects().put("timeLeft", new DatapointObject(cooldown.getTimeLeft()));
-            cooldownsDatapointObject.getInnerObjects().put(String.valueOf(i), cooldownDatapointObject);
-        }
-        datapointModel.getObjects().put("cooldowns", cooldownsDatapointObject);
+        final JsonObject jsonObject = new JsonObject();
+        jsonObject.addProperty("_id", this.uuid.toString());
+        jsonObject.addProperty("tax", this.tax);
+        jsonObject.addProperty("owner", this.owner.toString());
+        jsonObject.addProperty("theme", this.theme);
+        jsonObject.addProperty("privacy", this.privacy);
+        final JsonObject centerJsonObject = new JsonObject();
+        centerJsonObject.addProperty("x", this.center.getBlockX());
+        centerJsonObject.addProperty("z", this.center.getBlockZ());
+        jsonObject.add("center", centerJsonObject);
+        final JsonArray bannedJsonArray = new JsonArray();
+        this.banned.forEach(uuid -> bannedJsonArray.add(uuid.toString()));
+        jsonObject.add("banned", bannedJsonArray);
+        final JsonArray whitelistedJsonArray = new JsonArray();
+        this.whitelisted.forEach(uuid -> whitelistedJsonArray.add(uuid.toString()));
+        jsonObject.add("whitelisted", whitelistedJsonArray);
+        final JsonArray cooldownsJsonArray = new JsonArray();
+        this.getCooldowns().forEach(cooldown -> {
+            final JsonObject cooldownJsonObject = new JsonObject();
+            cooldownJsonObject.addProperty("type", cooldown.getIdentifier().replaceFirst("mine-" + this.uuid + "-", ""));
+            cooldownJsonObject.addProperty("timeLeft", cooldown.getTimeLeft());
+            cooldownsJsonArray.add(cooldownJsonObject);
+        });
+        jsonObject.add("cooldowns", cooldownsJsonArray);
         final DataImplementor dataImplementor = DataImplementor.get(this.plugin);
         final Datasite datasite = dataImplementor.getSites().stream().filter(innerDatasite -> innerDatasite.getPlugin() == this.plugin).findFirst().get();
         final Datapoint datapoint = datasite.getPoints().stream().filter(innerDatapoint -> innerDatapoint.getName().equals("prison_mines")).findFirst().get();
-        datapoint.save(datapointModel, asynchronous);
+        datapoint.save(jsonObject, asynchronous);
     }
 
     /**

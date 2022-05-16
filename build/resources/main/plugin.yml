@@ -1,5 +1,5 @@
 name: Prison
-version: commit-6cb9575
+version: master-44f1482
 main: net.evilkingdom.prison.Prison
 description: Used as the core for the prison server of Evil Kingdom.
 author: kodirati

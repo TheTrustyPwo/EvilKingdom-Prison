@@ -4,12 +4,11 @@ package net.evilkingdom.prison.component.components.data.objects;
  * Made with love by https://kodirati.com/.
  */
 
+import com.google.gson.JsonObject;
 import com.mongodb.client.model.Filters;
 import com.mongodb.client.model.FindOneAndReplaceOptions;
 import net.evilkingdom.commons.datapoint.DataImplementor;
 import net.evilkingdom.commons.datapoint.objects.Datapoint;
-import net.evilkingdom.commons.datapoint.objects.DatapointModel;
-import net.evilkingdom.commons.datapoint.objects.DatapointObject;
 import net.evilkingdom.commons.datapoint.objects.Datasite;
 import net.evilkingdom.prison.Prison;
 import org.bson.Document;
@@ -75,34 +74,28 @@ public class PlayerData {
         final DataImplementor dataImplementor = DataImplementor.get(this.plugin);
         final Datasite datasite = dataImplementor.getSites().stream().filter(innerDatasite -> innerDatasite.getPlugin() == this.plugin).findFirst().get();
         final Datapoint datapoint = datasite.getPoints().stream().filter(innerDatapoint -> innerDatapoint.getName().equals("prison_players")).findFirst().get();
-        return datapoint.get(this.uuid.toString()).thenApply(optionalDatapointModel -> {
-            if (optionalDatapointModel.isEmpty()) {
+        return datapoint.get(this.uuid.toString()).thenApply(optionalJsonObject -> {
+            if (optionalJsonObject.isEmpty()) {
                 return false;
             }
-            final DatapointModel datapointModel = optionalDatapointModel.get();
-            if (datapointModel.getObjects().containsKey("mine")) {
-                final DatapointObject datapointObject = datapointModel.getObjects().get("mine");
-                this.mine = Optional.of(UUID.fromString(((String) datapointObject.getObject())));
+            final JsonObject jsonObject = optionalJsonObject.get();
+            if (jsonObject.has("mine")) {
+                this.mine = Optional.of(UUID.fromString(jsonObject.get("mine").getAsString()));
             }
-            if (datapointModel.getObjects().containsKey("tokens")) {
-                final DatapointObject datapointObject = datapointModel.getObjects().get("tokens");
-                this.tokens = (long) datapointObject.getObject();
+            if (jsonObject.has("tokens")) {
+                this.tokens = jsonObject.get("tokens").getAsLong();
             }
-            if (datapointModel.getObjects().containsKey("gems")) {
-                final DatapointObject datapointObject = datapointModel.getObjects().get("gems");
-                this.gems = (long) datapointObject.getObject();
+            if (jsonObject.has("gems")) {
+                this.gems = jsonObject.get("gems").getAsLong();
             }
-            if (datapointModel.getObjects().containsKey("rank")) {
-                final DatapointObject datapointObject = datapointModel.getObjects().get("rank");
-                this.rank = (long) datapointObject.getObject();
+            if (jsonObject.has("rank")) {
+                this.rank = jsonObject.get("rank").getAsLong();
             }
-            if (datapointModel.getObjects().containsKey("blocksMined")) {
-                final DatapointObject datapointObject = datapointModel.getObjects().get("blocksMined");
-                this.blocksMined = (long) datapointObject.getObject();
+            if (jsonObject.has("blocksMined")) {
+                this.blocksMined = jsonObject.get("blocksMined").getAsLong();
             }
-            if (datapointModel.getObjects().containsKey("multiplier")) {
-                final DatapointObject datapointObject = datapointModel.getObjects().get("multiplier");
-                this.multiplier = (double) datapointObject.getObject();
+            if (jsonObject.has("multiplier")) {
+                this.multiplier = jsonObject.get("multiplier").getAsDouble();
             }
             return true;
         });
@@ -114,21 +107,18 @@ public class PlayerData {
      * @param asynchronous ~ If the save is asynchronous (should always be unless it's an emergency saves).
      */
     public void save(final boolean asynchronous) {
-        final DatapointModel datapointModel = new DatapointModel(this.uuid.toString());
-        if (this.mine.isPresent()) {
-            datapointModel.getObjects().put("mine", new DatapointObject(this.mine.get().toString()));
-        } else {
-            datapointModel.getObjects().put("mine", new DatapointObject());
-        }
-        datapointModel.getObjects().put("tokens", new DatapointObject(this.tokens));
-        datapointModel.getObjects().put("gems", new DatapointObject(this.gems));
-        datapointModel.getObjects().put("rank", new DatapointObject(this.rank));
-        datapointModel.getObjects().put("blocksMined", new DatapointObject(this.blocksMined));
-        datapointModel.getObjects().put("multiplier", new DatapointObject(this.multiplier));
+        final JsonObject jsonObject = new JsonObject();
+        jsonObject.addProperty("_id", this.uuid.toString());
+        this.mine.ifPresent(mine -> jsonObject.addProperty("mine", mine.toString()));
+        jsonObject.addProperty("tokens", this.tokens);
+        jsonObject.addProperty("gems", this.gems);
+        jsonObject.addProperty("rank", this.rank);
+        jsonObject.addProperty("blocksMined", this.blocksMined);
+        jsonObject.addProperty("multiplier", this.multiplier);
         final DataImplementor dataImplementor = DataImplementor.get(this.plugin);
         final Datasite datasite = dataImplementor.getSites().stream().filter(innerDatasite -> innerDatasite.getPlugin() == this.plugin).findFirst().get();
         final Datapoint datapoint = datasite.getPoints().stream().filter(innerDatapoint -> innerDatapoint.getName().equals("prison_players")).findFirst().get();
-        datapoint.save(datapointModel, asynchronous);
+        datapoint.save(jsonObject, asynchronous);
     }
 
     /**

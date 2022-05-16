@@ -4,6 +4,8 @@ package net.evilkingdom.prison.component.components.data.objects;
  * Made with love by https://kodirati.com/.
  */
 
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
 import com.mongodb.BasicDBList;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DBObject;
@@ -11,8 +13,6 @@ import com.mongodb.client.model.Filters;
 import com.mongodb.client.model.FindOneAndReplaceOptions;
 import net.evilkingdom.commons.datapoint.DataImplementor;
 import net.evilkingdom.commons.datapoint.objects.Datapoint;
-import net.evilkingdom.commons.datapoint.objects.DatapointModel;
-import net.evilkingdom.commons.datapoint.objects.DatapointObject;
 import net.evilkingdom.commons.datapoint.objects.Datasite;
 import net.evilkingdom.prison.component.components.mine.objects.MineLocation;
 import net.evilkingdom.prison.Prison;
@@ -27,8 +27,8 @@ public class SelfData {
 
     private final Prison plugin;
 
-    private ArrayList<Rank> ranks;
-    private ArrayList<MineLocation> mineLocations;
+    private final ArrayList<Rank> ranks;
+    private final ArrayList<MineLocation> mineLocations;
 
     private static final HashSet<SelfData> cache = new HashSet<SelfData>();
 
@@ -67,33 +67,24 @@ public class SelfData {
         final DataImplementor dataImplementor = DataImplementor.get(this.plugin);
         final Datasite datasite = dataImplementor.getSites().stream().filter(innerDatasite -> innerDatasite.getPlugin() == this.plugin).findFirst().get();
         final Datapoint datapoint = datasite.getPoints().stream().filter(innerDatapoint -> innerDatapoint.getName().equals("prison_self")).findFirst().get();
-        return datapoint.get("self").thenApply(optionalDatapointModel -> {
-            if (optionalDatapointModel.isEmpty()) {
+        return datapoint.get("self").thenApply(optionalJsonObject -> {
+            if (optionalJsonObject.isEmpty()) {
                 return false;
             }
-            final DatapointModel datapointModel = optionalDatapointModel.get();
-            if (datapointModel.getObjects().containsKey("mineLocations")) {
-                final DatapointObject datapointObject = datapointModel.getObjects().get("mineLocations");
-                datapointObject.getInnerObjects().values().forEach(innerDatapointObject -> {
-                    final int x = (int) innerDatapointObject.getInnerObjects().get("x").getObject();
-                    final int z = (int) innerDatapointObject.getInnerObjects().get("z").getObject();
-                    final boolean used = (boolean) innerDatapointObject.getInnerObjects().get("used").getObject();
-                    final MineLocation mineLocation = new MineLocation(x, z, used);
-                    this.mineLocations.add(mineLocation);
+            final JsonObject jsonObject = optionalJsonObject.get();
+            if (jsonObject.has("mineLocations")) {
+                jsonObject.get("mineLocations").getAsJsonArray().forEach(jsonElement -> {
+                    final JsonObject mineLocationJsonObject = jsonElement.getAsJsonObject();
+                    this.mineLocations.add(new MineLocation(mineLocationJsonObject.get("x").getAsInt(), mineLocationJsonObject.get("z").getAsInt(), mineLocationJsonObject.get("used").getAsBoolean()));
                 });
            }
-           if (datapointModel.getObjects().containsKey("ranks")) {
-               final DatapointObject datapointObject = datapointModel.getObjects().get("ranks");
-               datapointObject.getInnerObjects().forEach((key, value) -> {
-                   final long rankNumber = Long.parseLong(key);
-                   final long price = (long) value.getInnerObjects().get("price").getObject();
+           if (jsonObject.has("ranks")) {
+               jsonObject.get("mineLocations").getAsJsonObject().entrySet().forEach(entry -> {
+                   final JsonObject mineLocationJsonObject = entry.getValue().getAsJsonObject();
                    final HashMap<Material, Double> blockPercentages = new HashMap<Material, Double>();
-                   final DatapointObject blockPalletDatapointObject = value.getInnerObjects().get("blockPallet");
-                   blockPalletDatapointObject.getInnerObjects().forEach((innerKey, innerObject) -> {
-                       blockPercentages.put(Material.getMaterial(innerKey), (double) innerObject.getObject());
-                   });
-                   final Rank rank = new Rank(rankNumber, price, blockPercentages);
-                   this.ranks.add(rank);
+                   final JsonObject blockPalletJsonObject = mineLocationJsonObject.get("blockPallet").getAsJsonObject();
+                   blockPalletJsonObject.entrySet().forEach(blockPalletEntry -> blockPercentages.put(Material.getMaterial(entry.getKey()), entry.getValue().getAsDouble()));
+                   this.ranks.add(new Rank(Long.parseLong(entry.getKey()), mineLocationJsonObject.get("price").getAsLong(), blockPercentages));
                });
            }
            return true;
@@ -106,31 +97,31 @@ public class SelfData {
      * @param asynchronous ~ If the save is asynchronous (should always be unless it's an emergency saves).
      */
     public void save(final boolean asynchronous) {
-        final DatapointModel datapointModel = new DatapointModel("self");
-        final DatapointObject mineLocationsDatapointObject = new DatapointObject();
-        for (int i = 0; i < this.mineLocations.size(); i++) {
-            final MineLocation mineLocation = this.mineLocations.get(i);
-            final DatapointObject mineLocationDatapointObject = new DatapointObject();
-            mineLocationDatapointObject.getInnerObjects().put("x", new DatapointObject(mineLocation.getX()));
-            mineLocationDatapointObject.getInnerObjects().put("z", new DatapointObject(mineLocation.getZ()));
-            mineLocationDatapointObject.getInnerObjects().put("used", new DatapointObject(mineLocation.isUsed()));
-            mineLocationsDatapointObject.getInnerObjects().put(String.valueOf(i), mineLocationDatapointObject);
-        }
-        datapointModel.getObjects().put("mineLocations", mineLocationsDatapointObject);
-        final DatapointObject ranksDatapointObject = new DatapointObject();
-        this.ranks.forEach(rank -> {
-            final DatapointObject rankDatapointObject = new DatapointObject();
-            rankDatapointObject.getInnerObjects().put("price", new DatapointObject(rank.getPrice()));
-            final DatapointObject blockPalletDatapointObject = new DatapointObject();
-            rank.getBlockPallet().forEach((material, chance) -> blockPalletDatapointObject.getInnerObjects().put(material.name(), new DatapointObject(chance)));
-            rankDatapointObject.getInnerObjects().put("blockPallet", blockPalletDatapointObject);
-            ranksDatapointObject.getInnerObjects().put(String.valueOf(rank.getRank()), rankDatapointObject);
+        final JsonObject jsonObject = new JsonObject();
+        jsonObject.addProperty("_id", "self");
+        final JsonArray mineLocationsJsonArray = new JsonArray();
+        this.mineLocations.forEach(mineLocation -> {
+            final JsonObject mineLocationJsonObject = new JsonObject();
+            mineLocationJsonObject.addProperty("x", mineLocation.getX());
+            mineLocationJsonObject.addProperty("z", mineLocation.getZ());
+            mineLocationJsonObject.addProperty("used", mineLocation.isUsed());
+            mineLocationsJsonArray.add(mineLocationJsonObject);
         });
-        datapointModel.getObjects().put("ranks", ranksDatapointObject);
+        jsonObject.add("mineLocations", mineLocationsJsonArray);
+        final JsonObject ranksJsonObject = new JsonObject();
+        this.ranks.forEach(rank -> {
+            final JsonObject rankJsonObject = new JsonObject();
+            rankJsonObject.addProperty("price", rank.getPrice());
+            final JsonObject blockPalletJsonObject = new JsonObject();
+            rank.getBlockPallet().forEach((material, chance) -> blockPalletJsonObject.addProperty(material.name(), chance));
+            rankJsonObject.add("blockPallet", blockPalletJsonObject);
+            ranksJsonObject.add(rank.getRank().toString(), rankJsonObject);
+        });
+        jsonObject.add("ranks", ranksJsonObject);
         final DataImplementor dataImplementor = DataImplementor.get(this.plugin);
         final Datasite datasite = dataImplementor.getSites().stream().filter(innerDatasite -> innerDatasite.getPlugin() == this.plugin).findFirst().get();
         final Datapoint datapoint = datasite.getPoints().stream().filter(innerDatapoint -> innerDatapoint.getName().equals("prison_self")).findFirst().get();
-        datapoint.save(datapointModel, asynchronous);
+        datapoint.save(jsonObject, asynchronous);
     }
 
     /**
