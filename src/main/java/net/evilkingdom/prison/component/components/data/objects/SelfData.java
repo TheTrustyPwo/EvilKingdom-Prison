@@ -79,12 +79,12 @@ public class SelfData {
                 });
            }
            if (jsonObject.has("ranks")) {
-               jsonObject.get("mineLocations").getAsJsonObject().entrySet().forEach(entry -> {
-                   final JsonObject mineLocationJsonObject = entry.getValue().getAsJsonObject();
+               jsonObject.get("ranks").getAsJsonObject().entrySet().forEach(entry -> {
+                   final JsonObject rankJsonObject = entry.getValue().getAsJsonObject();
                    final HashMap<Material, Double> blockPercentages = new HashMap<Material, Double>();
-                   final JsonObject blockPalletJsonObject = mineLocationJsonObject.get("blockPallet").getAsJsonObject();
-                   blockPalletJsonObject.entrySet().forEach(blockPalletEntry -> blockPercentages.put(Material.getMaterial(entry.getKey()), entry.getValue().getAsDouble()));
-                   this.ranks.add(new Rank(Long.parseLong(entry.getKey()), mineLocationJsonObject.get("price").getAsLong(), blockPercentages));
+                   final JsonObject blockPalletJsonObject = rankJsonObject.get("blockPallet").getAsJsonObject();
+                   blockPalletJsonObject.entrySet().forEach(blockPalletEntry -> blockPercentages.put(Material.getMaterial(blockPalletEntry.getKey()), blockPalletEntry.getValue().getAsDouble()));
+                   this.ranks.add(new Rank(Long.parseLong(entry.getKey()), rankJsonObject.get("price").getAsLong(), blockPercentages));
                });
            }
            return true;
@@ -147,7 +147,6 @@ public class SelfData {
      */
     public void cache() {
         cache.add(this);
-        System.out.println("ye he fr did look - " + cache);
     }
 
     /**

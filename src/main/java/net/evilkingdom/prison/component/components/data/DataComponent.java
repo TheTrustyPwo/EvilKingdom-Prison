@@ -119,7 +119,6 @@ public class DataComponent {
     public void initializeData() {
         Bukkit.getConsoleSender().sendMessage(StringUtilities.colorize("&2[Prison » Component » Components » Data] &aInitializing data..."));
         CompletableFuture.supplyAsync(() -> {
-            CooldownImplementor.get(this.plugin);
             final DataImplementor dataImplementor = DataImplementor.get(this.plugin);
             final Datasite datasite = dataImplementor.getSites().stream().filter(innerDatasite -> innerDatasite.getPlugin() == this.plugin).findFirst().get();
             if (datasite.getMongoClient().getDatabase(datasite.getName()).getCollection("prison_players").countDocuments() == 0L)  {
@@ -128,8 +127,10 @@ public class DataComponent {
                 return (datasite.getMongoClient().getDatabase(datasite.getName()).getCollection("prison_players").find().sort(Sorts.descending("rank")).first().getLong("rank") + 1000L);
             }
         }).whenComplete((generationAmount, generationAmountThrowable) -> SelfData.get().whenComplete((selfData, selfDataThrowable) -> {
+            if (selfDataThrowable != null) {
+                selfDataThrowable.printStackTrace();
+            }
             selfData.cache();
-            System.out.println("i cached that hoe");
             selfData.getRanks().clear();
             this.plugin.getComponentManager().getRankComponent().generate(0, generationAmount).whenComplete((generated, generatedThrowable) -> selfData.getRanks().addAll(generated));
             if (selfData.getMineLocations().isEmpty()) {
