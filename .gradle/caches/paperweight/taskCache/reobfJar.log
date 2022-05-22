@@ -1,2 +1,2 @@
 Command: C:\Users\Camer\.jdks\openjdk-17.0.1\bin\java.exe -Xmx1G -classpath C:\Users\Camer\.gradle\caches\modules-2\files-2.1\net.fabricmc\tiny-remapper\0.8.2\551cd73d063740ad4f1b54a5e33ece5e00b08fef\tiny-remapper-0.8.2-fat.jar net.fabricmc.tinyremapper.Main R:\Evil Kingdom\sources\Prison (Server)\build\libs\Prison (Server)-dev-all.jar R:\Evil Kingdom\sources\Prison (Server)\build\libs\Prison (Server)-unspecified.jar R:\Evil Kingdom\sources\Prison (Server)\.gradle\caches\paperweight\setupCache\extractDevBundle.dir\data\mojang+yarn-spigot-reobf.tiny mojang+yarn spigot R:\Evil Kingdom\sources\Prison (Server)\.gradle\caches\paperweight\setupCache\applyMojangMappedPaperclipPatch.jar --threads=1
-Finished after 1088.64 ms.
+Finished after 1479.64 ms.

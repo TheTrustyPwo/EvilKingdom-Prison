@@ -718,7 +718,7 @@
      }
  
      public void addAndRegisterBlockEntity(BlockEntity blockEntity) {
-@@ -338,56 +690,81 @@
+@@ -338,56 +690,82 @@
          if (!this.level.getWorldBorder().isWithinBounds(pos)) {
              return false;
          } else {
@@ -763,7 +763,8 @@
 +                "Attempted to place a tile entity (" + blockEntity + ") at " + blockEntity.getBlockPos().getX() + ","
 +                    + blockEntity.getBlockPos().getY() + "," + blockEntity.getBlockPos().getZ()
 +                    + " (" + getBlockState(blockposition) + ") where there was no entity tile!\n" +
-+                    "Chunk coordinates: " + (this.chunkPos.x * 16) + "," + (this.chunkPos.z * 16));
++                    "Chunk coordinates: " + (this.chunkPos.x * 16) + "," + (this.chunkPos.z * 16) +
++                    "\nWorld: " + level.getLevel().dimension().location());
 +            e.printStackTrace();
 +            ServerInternalException.reportInternalException(e);
 +            // Paper end
@@ -823,7 +824,7 @@
              }
          }
  
-@@ -397,13 +774,16 @@
+@@ -397,13 +775,16 @@
      private <T extends BlockEntity> void removeGameEventListener(T blockEntity) {
          if (!this.level.isClientSide) {
              Block block = blockEntity.getBlockState().getBlock();
@@ -845,7 +846,7 @@
                          this.gameEventDispatcherSections.remove(i);
                      }
                  }
-@@ -413,9 +793,10 @@
+@@ -413,9 +794,10 @@
      }
  
      private void removeBlockEntityTicker(BlockPos pos) {
@@ -859,7 +860,7 @@
          }
  
      }
-@@ -428,28 +809,129 @@
+@@ -428,28 +810,129 @@
  
      }
  
@@ -999,7 +1000,7 @@
              }
  
          });
-@@ -469,27 +951,35 @@
+@@ -469,27 +952,35 @@
  
      @Override
      public Stream<BlockPos> getLights() {
@@ -1048,7 +1049,7 @@
                      }
                  }
  
-@@ -497,37 +987,47 @@
+@@ -497,37 +988,47 @@
              }
          }
  
@@ -1110,7 +1111,7 @@
      }
  
      public void unpackTicks(long time) {
-@@ -551,7 +1051,7 @@
+@@ -551,7 +1052,7 @@
      }
  
      public ChunkHolder.FullChunkStatus getFullStatus() {
@@ -1119,7 +1120,7 @@
      }
  
      public void setFullStatus(Supplier<ChunkHolder.FullChunkStatus> levelTypeProvider) {
-@@ -561,27 +1061,30 @@
+@@ -561,27 +1062,30 @@
      public void clearAllBlockEntities() {
          this.blockEntities.values().forEach(BlockEntity::setRemoved);
          this.blockEntities.clear();
@@ -1159,7 +1160,7 @@
                  }
              }
  
-@@ -589,20 +1092,23 @@
+@@ -589,20 +1093,23 @@
      }
  
      private <T extends BlockEntity> void updateBlockEntityTicker(T blockEntity) {
@@ -1194,7 +1195,7 @@
                  } else {
                      return null;
                  }
-@@ -623,111 +1129,126 @@
+@@ -623,111 +1130,126 @@
          this.clientLightReady = shouldRenderOnUpdate;
      }
  

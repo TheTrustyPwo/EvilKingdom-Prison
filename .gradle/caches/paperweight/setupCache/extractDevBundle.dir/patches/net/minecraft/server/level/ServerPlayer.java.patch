@@ -533,8 +533,8 @@
              });
          }
 +        this.getBukkitEntity().setExtraData(nbt); // CraftBukkit
-+
-+    }
+ 
+     }
  
 +    // CraftBukkit start - World fallback code, either respawn location or global spawn
 +    public void spawnIn(Level world) {
@@ -556,9 +556,9 @@
 +            this.setPosRaw(position.x(), position.y(), position.z()); // Paper - don't register to chunks yet
 +        }
 +        this.gameMode.setLevel((ServerLevel) world);
-     }
++    }
 +    // CraftBukkit end
- 
++
      public void setExperiencePoints(int points) {
 -        float f = (float)this.getXpNeededForNextLevel();
 -        float g = (f - 1.0F) / f;
@@ -659,14 +659,14 @@
                  this.lastRecordedExperience = this.totalExperience;
 -                this.updateScoreForCriteria(ObjectiveCriteria.EXPERIENCE, Mth.ceil((float)this.lastRecordedExperience));
 +                this.updateScoreForCriteria(ObjectiveCriteria.EXPERIENCE, Mth.ceil((float) this.lastRecordedExperience));
-             }
- 
++            }
++
 +            // CraftBukkit start - Force max health updates
 +            if (this.maxHealthCache != this.getMaxHealth()) {
 +                this.getBukkitEntity().updateScaledHealth();
-+            }
+             }
 +            // CraftBukkit end
-+
+ 
              if (this.experienceLevel != this.lastRecordedLevel) {
                  this.lastRecordedLevel = this.experienceLevel;
 -                this.updateScoreForCriteria(ObjectiveCriteria.LEVEL, Mth.ceil((float)this.lastRecordedLevel));
@@ -1661,24 +1661,23 @@
          if (this.isSleeping()) {
              this.stopSleepInBed(true, false);
          }
-@@ -1114,8 +1686,17 @@
+@@ -1114,7 +1686,16 @@
  
      public void resetSentInfo() {
          this.lastSentHealth = -1.0E8F;
 +        this.lastSentExp = -1; // CraftBukkit - Added to reset
-     }
- 
++    }
++
 +    // CraftBukkit start - Support multi-line messages
 +    public void sendMessage(UUID uuid, Component[] ichatbasecomponent) {
 +        for (Component component : ichatbasecomponent) {
 +            this.sendMessage(component, (uuid == null) ? Util.NIL_UUID : uuid);
 +        }
-+    }
+     }
 +    // CraftBukkit end
-+
+ 
      @Override
      public void displayClientMessage(Component message, boolean actionBar) {
-         this.sendMessage(message, actionBar ? ChatType.GAME_INFO : ChatType.CHAT, Util.NIL_UUID);
 @@ -1124,7 +1705,7 @@
      @Override
      protected void completeUsingItem() {
@@ -2123,7 +2122,7 @@
      }
  
      @Override
-@@ -1582,15 +2289,160 @@
+@@ -1582,15 +2289,161 @@
      }
  
      public boolean drop(boolean entireStack) {
@@ -2279,6 +2278,7 @@
 +            this.giveExperiencePoints(this.newExp);
 +        }
 +        this.keepLevel = false;
++        this.setDeltaMovement(0, 0, 0); // CraftBukkit - SPIGOT-6948: Reset velocity on death
 +    }
 +
 +    @Override

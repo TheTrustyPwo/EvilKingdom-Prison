@@ -147,6 +147,7 @@ public class SelfData {
      */
     public void cache() {
         cache.add(this);
+        System.out.println("ye he fr did look - " + cache);
     }
 
     /**

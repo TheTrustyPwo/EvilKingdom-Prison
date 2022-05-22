@@ -33,7 +33,6 @@ tasks {
     processResources {
         filteringCharset = "UTF-8"
     }
-
 }
 
 bukkit {

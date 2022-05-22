@@ -5,7 +5,7 @@
   "mojangApiCoordinates": "io.papermc.paper:paper-mojangapi:1.18.2-R0.1-SNAPSHOT",
   "buildData": {
     "paramMappings": {
-      "url": "https://papermc.io/repo/repository/maven-public/",
+      "url": "https://repo.papermc.io/repository/maven-public/",
       "coordinates": [
         "net.fabricmc:yarn:1.18.2+build.2:mergedv2"
       ]
@@ -126,7 +126,7 @@
     ],
     "libraryRepositories": [
       "https://repo.maven.apache.org/maven2/",
-      "https://papermc.io/repo/repository/maven-public/"
+      "https://repo.papermc.io/repository/maven-public/"
     ],
     "relocations": [
       {
@@ -162,7 +162,7 @@
   },
   "decompile": {
     "dep": {
-      "url": "https://papermc.io/repo/repository/maven-public/",
+      "url": "https://repo.papermc.io/repository/maven-public/",
       "coordinates": [
         "net.minecraftforge:forgeflower:1.5.498.29"
       ]
@@ -190,7 +190,7 @@
     ]
   },
   "remapper": {
-    "url": "https://papermc.io/repo/repository/maven-public/",
+    "url": "https://repo.papermc.io/repository/maven-public/",
     "coordinates": [
       "net.fabricmc:tiny-remapper:0.8.2:fat"
     ]

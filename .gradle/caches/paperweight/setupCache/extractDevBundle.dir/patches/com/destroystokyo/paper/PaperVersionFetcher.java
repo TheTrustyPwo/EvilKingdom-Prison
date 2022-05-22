@@ -85,7 +85,7 @@ public class PaperVersionFetcher implements VersionFetcher {
         if (siteApiVersion == null) { return -1; }
         try {
             try (BufferedReader reader = Resources.asCharSource(
-                new URL("https://papermc.io/api/v2/projects/paper/versions/" + siteApiVersion),
+                new URL("https://api.papermc.io/v2/projects/paper/versions/" + siteApiVersion),
                 Charsets.UTF_8
             ).openBufferedStream()) {
                 JsonObject json = new Gson().fromJson(reader, JsonObject.class);
