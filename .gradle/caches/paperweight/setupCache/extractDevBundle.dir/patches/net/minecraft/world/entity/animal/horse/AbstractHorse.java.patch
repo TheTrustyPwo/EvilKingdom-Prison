@@ -662,12 +662,13 @@
          }
  
      }
-@@ -908,33 +967,35 @@
+@@ -907,33 +966,36 @@
+     @Override
      public void positionRider(Entity passenger) {
          super.positionRider(passenger);
-         if (passenger instanceof Mob) {
--            Mob mob = (Mob)passenger;
+-        if (passenger instanceof Mob mob) {
 -            this.yBodyRot = mob.yBodyRot;
++        if (passenger instanceof Mob) {
 +            Mob entityinsentient = (Mob) passenger;
 +
 +            this.yBodyRot = entityinsentient.yBodyRot;
@@ -709,16 +710,7 @@
      }
  
      @Override
-@@ -959,7 +1020,7 @@
-         return false;
-     }
- 
--    private SlotAccess createEquipmentSlotAccess(int slot, Predicate<ItemStack> predicate) {
-+    private SlotAccess createEquipmentSlotAccess(final int slot, final Predicate<ItemStack> predicate) {
-         return new SlotAccess() {
-             @Override
-             public ItemStack get() {
-@@ -981,27 +1042,29 @@
+@@ -980,27 +1042,29 @@
  
      @Override
      public SlotAccess getSlot(int mappedIndex) {
@@ -758,7 +750,7 @@
      }
  
      @Nullable
-@@ -1012,32 +1075,37 @@
+@@ -1011,32 +1075,37 @@
  
      @Nullable
      private Vec3 getDismountLocationInDirection(Vec3 offset, LivingEntity passenger) {
@@ -814,7 +806,7 @@
                      break;
                  }
              }
-@@ -1048,19 +1116,20 @@
+@@ -1047,19 +1116,20 @@
  
      @Override
      public Vec3 getDismountLocationForPassenger(LivingEntity passenger) {
@@ -844,7 +836,7 @@
  
      @Nullable
      @Override
-@@ -1070,7 +1139,7 @@
+@@ -1069,7 +1139,7 @@
          }
  
          this.randomizeAttributes();

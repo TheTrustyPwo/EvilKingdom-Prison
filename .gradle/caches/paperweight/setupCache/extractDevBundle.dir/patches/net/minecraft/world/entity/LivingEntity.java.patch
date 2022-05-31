@@ -1422,7 +1422,7 @@
          }
      }
  
-@@ -1198,30 +1547,35 @@
+@@ -1198,29 +1547,35 @@
      }
  
      protected void playHurtSound(DamageSource source) {
@@ -1440,12 +1440,12 @@
      public boolean isDamageSourceBlocked(DamageSource source) {
          Entity entity = source.getDirectEntity();
 -        boolean bl = false;
-+        boolean flag = false;
-+
-         if (entity instanceof AbstractArrow) {
--            AbstractArrow abstractArrow = (AbstractArrow)entity;
+-        if (entity instanceof AbstractArrow abstractArrow) {
 -            if (abstractArrow.getPierceLevel() > 0) {
 -                bl = true;
++        boolean flag = false;
++
++        if (entity instanceof AbstractArrow) {
 +            AbstractArrow entityarrow = (AbstractArrow) entity;
 +
 +            if (entityarrow.getPierceLevel() > 0) {
@@ -1472,7 +1472,7 @@
                      return true;
                  }
              }
-@@ -1244,9 +1598,10 @@
+@@ -1243,9 +1598,10 @@
      public void die(DamageSource source) {
          if (!this.isRemoved() && !this.dead) {
              Entity entity = source.getEntity();
@@ -1486,7 +1486,7 @@
              }
  
              if (this.isSleeping()) {
-@@ -1254,106 +1609,206 @@
+@@ -1253,106 +1609,206 @@
              }
  
              if (!this.level.isClientSide && this.hasCustomName()) {
@@ -1732,7 +1732,7 @@
          }
      }
  
-@@ -1400,13 +1855,14 @@
+@@ -1399,13 +1855,14 @@
          if (this.isSpectator()) {
              return false;
          } else {
@@ -1753,7 +1753,7 @@
                  return true;
              } else {
                  return false;
-@@ -1415,9 +1871,10 @@
+@@ -1414,9 +1871,10 @@
      }
  
      private boolean trapdoorUsableAsLadder(BlockPos pos, BlockState state) {
@@ -1767,7 +1767,7 @@
                  return true;
              }
          }
-@@ -1432,33 +1889,42 @@
+@@ -1431,33 +1889,42 @@
  
      @Override
      public boolean causeFallDamage(float fallDistance, float damageMultiplier, DamageSource damageSource) {
@@ -1821,7 +1821,7 @@
              }
  
          }
-@@ -1475,19 +1941,16 @@
+@@ -1474,19 +1941,16 @@
          return Mth.floor(this.getAttributeValue(Attributes.ARMOR));
      }
  
@@ -1846,7 +1846,7 @@
          }
  
          return amount;
-@@ -1497,18 +1960,23 @@
+@@ -1496,18 +1960,23 @@
          if (source.isBypassMagic()) {
              return amount;
          } else {
@@ -1879,7 +1879,7 @@
                      }
                  }
              }
-@@ -1516,9 +1984,9 @@
+@@ -1515,9 +1984,9 @@
              if (amount <= 0.0F) {
                  return 0.0F;
              } else {
@@ -1892,7 +1892,7 @@
                  }
  
                  return amount;
-@@ -1526,25 +1994,181 @@
+@@ -1525,25 +1994,181 @@
          }
      }
  
@@ -2089,7 +2089,7 @@
      }
  
      public CombatTracker getCombatTracker() {
-@@ -1553,41 +2177,41 @@
+@@ -1552,41 +2177,41 @@
  
      @Nullable
      public LivingEntity getKillCredit() {
@@ -2148,7 +2148,7 @@
      }
  
      public void swing(InteractionHand hand) {
-@@ -1600,12 +2224,13 @@
+@@ -1599,12 +2224,13 @@
              this.swinging = true;
              this.swingingArm = hand;
              if (this.level instanceof ServerLevel) {
@@ -2166,250 +2166,77 @@
                  }
              }
          }
-@@ -1614,162 +2239,169 @@
+@@ -1629,35 +2255,38 @@
+                     this.playSound(SoundEvents.THORNS_HIT, this.getSoundVolume(), (this.random.nextFloat() - this.random.nextFloat()) * 0.2F + 1.0F);
+                 }
  
-     @Override
-     public void handleEntityEvent(byte status) {
--        switch(status) {
--        case 2:
--        case 33:
--        case 36:
--        case 37:
--        case 44:
--        case 57:
--            this.animationSpeed = 1.5F;
--            this.invulnerableTime = 20;
--            this.hurtDuration = 10;
--            this.hurtTime = this.hurtDuration;
--            this.hurtDir = 0.0F;
--            if (status == 33) {
--                this.playSound(SoundEvents.THORNS_HIT, this.getSoundVolume(), (this.random.nextFloat() - this.random.nextFloat()) * 0.2F + 1.0F);
--            }
-+        switch (status) {
-+            case 2:
-+            case 33:
-+            case 36:
-+            case 37:
-+            case 44:
-+            case 57:
-+                this.animationSpeed = 1.5F;
-+                this.invulnerableTime = 20;
-+                this.hurtDuration = 10;
-+                this.hurtTime = this.hurtDuration;
-+                this.hurtDir = 0.0F;
-+                if (status == 33) {
-+                    this.playSound(SoundEvents.THORNS_HIT, this.getSoundVolume(), (this.random.nextFloat() - this.random.nextFloat()) * 0.2F + 1.0F);
-+                }
- 
--            DamageSource damageSource;
--            if (status == 37) {
--                damageSource = DamageSource.ON_FIRE;
--            } else if (status == 36) {
--                damageSource = DamageSource.DROWN;
--            } else if (status == 44) {
--                damageSource = DamageSource.SWEET_BERRY_BUSH;
--            } else if (status == 57) {
--                damageSource = DamageSource.FREEZE;
--            } else {
--                damageSource = DamageSource.GENERIC;
--            }
+-                DamageSource damageSource;
 +                DamageSource damagesource;
- 
--            SoundEvent soundEvent = this.getHurtSound(damageSource);
--            if (soundEvent != null) {
--                this.playSound(soundEvent, this.getSoundVolume(), (this.random.nextFloat() - this.random.nextFloat()) * 0.2F + 1.0F);
--            }
-+                if (status == 37) {
++
+                 if (status == 37) {
+-                    damageSource = DamageSource.ON_FIRE;
 +                    damagesource = DamageSource.ON_FIRE;
-+                } else if (status == 36) {
+                 } else if (status == 36) {
+-                    damageSource = DamageSource.DROWN;
 +                    damagesource = DamageSource.DROWN;
-+                } else if (status == 44) {
+                 } else if (status == 44) {
+-                    damageSource = DamageSource.SWEET_BERRY_BUSH;
 +                    damagesource = DamageSource.SWEET_BERRY_BUSH;
-+                } else if (status == 57) {
+                 } else if (status == 57) {
+-                    damageSource = DamageSource.FREEZE;
 +                    damagesource = DamageSource.FREEZE;
-+                } else {
+                 } else {
+-                    damageSource = DamageSource.GENERIC;
 +                    damagesource = DamageSource.GENERIC;
-+                }
+                 }
  
--            this.hurt(DamageSource.GENERIC, 0.0F);
--            this.lastDamageSource = damageSource;
--            this.lastDamageStamp = this.level.getGameTime();
--            break;
--        case 3:
--            SoundEvent soundEvent2 = this.getDeathSound();
--            if (soundEvent2 != null) {
--                this.playSound(soundEvent2, this.getSoundVolume(), (this.random.nextFloat() - this.random.nextFloat()) * 0.2F + 1.0F);
--            }
+-                SoundEvent soundEvent = this.getHurtSound(damageSource);
+-                if (soundEvent != null) {
+-                    this.playSound(soundEvent, this.getSoundVolume(), (this.random.nextFloat() - this.random.nextFloat()) * 0.2F + 1.0F);
 +                SoundEvent soundeffect = this.getHurtSound(damagesource);
- 
--            if (!(this instanceof Player)) {
--                this.setHealth(0.0F);
--                this.die(DamageSource.GENERIC);
--            }
--            break;
--        case 4:
--        case 5:
--        case 6:
--        case 7:
--        case 8:
--        case 9:
--        case 10:
--        case 11:
--        case 12:
--        case 13:
--        case 14:
--        case 15:
--        case 16:
--        case 17:
--        case 18:
--        case 19:
--        case 20:
--        case 21:
--        case 22:
--        case 23:
--        case 24:
--        case 25:
--        case 26:
--        case 27:
--        case 28:
--        case 31:
--        case 32:
--        case 34:
--        case 35:
--        case 38:
--        case 39:
--        case 40:
--        case 41:
--        case 42:
--        case 43:
--        case 45:
--        case 53:
--        case 56:
--        case 58:
--        case 59:
--        default:
--            super.handleEntityEvent(status);
--            break;
--        case 29:
--            this.playSound(SoundEvents.SHIELD_BLOCK, 1.0F, 0.8F + this.level.random.nextFloat() * 0.4F);
--            break;
--        case 30:
--            this.playSound(SoundEvents.SHIELD_BREAK, 0.8F, 0.8F + this.level.random.nextFloat() * 0.4F);
--            break;
--        case 46:
--            int i = 128;
++
 +                if (soundeffect != null) {
 +                    this.playSound(soundeffect, this.getSoundVolume(), (this.random.nextFloat() - this.random.nextFloat()) * 0.2F + 1.0F);
-+                }
+                 }
  
--            for(int j = 0; j < 128; ++j) {
--                double d = (double)j / 127.0D;
--                float f = (this.random.nextFloat() - 0.5F) * 0.2F;
--                float g = (this.random.nextFloat() - 0.5F) * 0.2F;
--                float h = (this.random.nextFloat() - 0.5F) * 0.2F;
--                double e = Mth.lerp(d, this.xo, this.getX()) + (this.random.nextDouble() - 0.5D) * (double)this.getBbWidth() * 2.0D;
--                double k = Mth.lerp(d, this.yo, this.getY()) + this.random.nextDouble() * (double)this.getBbHeight();
--                double l = Mth.lerp(d, this.zo, this.getZ()) + (this.random.nextDouble() - 0.5D) * (double)this.getBbWidth() * 2.0D;
--                this.level.addParticle(ParticleTypes.PORTAL, e, k, l, (double)f, (double)g, (double)h);
--            }
--            break;
--        case 47:
--            this.breakItem(this.getItemBySlot(EquipmentSlot.MAINHAND));
--            break;
--        case 48:
--            this.breakItem(this.getItemBySlot(EquipmentSlot.OFFHAND));
--            break;
--        case 49:
--            this.breakItem(this.getItemBySlot(EquipmentSlot.HEAD));
--            break;
--        case 50:
--            this.breakItem(this.getItemBySlot(EquipmentSlot.CHEST));
--            break;
--        case 51:
--            this.breakItem(this.getItemBySlot(EquipmentSlot.LEGS));
--            break;
--        case 52:
--            this.breakItem(this.getItemBySlot(EquipmentSlot.FEET));
--            break;
--        case 54:
--            HoneyBlock.showJumpParticles(this);
--            break;
--        case 55:
--            this.swapHandItems();
--            break;
--        case 60:
--            this.makePoofParticles();
-+                this.hurt(DamageSource.GENERIC, 0.0F);
+                 this.hurt(DamageSource.GENERIC, 0.0F);
+-                this.lastDamageSource = damageSource;
 +                this.lastDamageSource = damagesource;
-+                this.lastDamageStamp = this.level.getGameTime();
-+                break;
-+            case 3:
+                 this.lastDamageStamp = this.level.getGameTime();
+                 break;
+             case 3:
+-                SoundEvent soundEvent2 = this.getDeathSound();
+-                if (soundEvent2 != null) {
+-                    this.playSound(soundEvent2, this.getSoundVolume(), (this.random.nextFloat() - this.random.nextFloat()) * 0.2F + 1.0F);
 +                SoundEvent soundeffect1 = this.getDeathSound();
 +
 +                if (soundeffect1 != null) {
 +                    this.playSound(soundeffect1, this.getSoundVolume(), (this.random.nextFloat() - this.random.nextFloat()) * 0.2F + 1.0F);
-+                }
-+
+                 }
+ 
+-                if (!(this instanceof Player)) {
 +                if (!(this instanceof net.minecraft.world.entity.player.Player)) {
-+                    this.setHealth(0.0F);
-+                    this.die(DamageSource.GENERIC);
-+                }
-+                break;
-+            case 4:
-+            case 5:
-+            case 6:
-+            case 7:
-+            case 8:
-+            case 9:
-+            case 10:
-+            case 11:
-+            case 12:
-+            case 13:
-+            case 14:
-+            case 15:
-+            case 16:
-+            case 17:
-+            case 18:
-+            case 19:
-+            case 20:
-+            case 21:
-+            case 22:
-+            case 23:
-+            case 24:
-+            case 25:
-+            case 26:
-+            case 27:
-+            case 28:
-+            case 31:
-+            case 32:
-+            case 34:
-+            case 35:
-+            case 38:
-+            case 39:
-+            case 40:
-+            case 41:
-+            case 42:
-+            case 43:
-+            case 45:
-+            case 53:
-+            case 56:
-+            case 58:
-+            case 59:
-+            default:
-+                super.handleEntityEvent(status);
-+                break;
-+            case 29:
-+                this.playSound(SoundEvents.SHIELD_BLOCK, 1.0F, 0.8F + this.level.random.nextFloat() * 0.4F);
-+                break;
-+            case 30:
-+                this.playSound(SoundEvents.SHIELD_BREAK, 0.8F, 0.8F + this.level.random.nextFloat() * 0.4F);
-+                break;
-+            case 46:
+                     this.setHealth(0.0F);
+                     this.die(DamageSource.GENERIC);
+                 }
+@@ -1712,19 +2341,21 @@
+                 this.playSound(SoundEvents.SHIELD_BREAK, 0.8F, 0.8F + this.level.random.nextFloat() * 0.4F);
+                 break;
+             case 46:
+-                int i = 128;
 +                boolean flag = true;
-+
+ 
+-                for(int j = 0; j < 128; ++j) {
+-                    double d = (double)j / 127.0D;
 +                for (int i = 0; i < 128; ++i) {
 +                    double d0 = (double) i / 127.0D;
-+                    float f = (this.random.nextFloat() - 0.5F) * 0.2F;
+                     float f = (this.random.nextFloat() - 0.5F) * 0.2F;
+-                    float g = (this.random.nextFloat() - 0.5F) * 0.2F;
+-                    float h = (this.random.nextFloat() - 0.5F) * 0.2F;
+-                    double e = Mth.lerp(d, this.xo, this.getX()) + (this.random.nextDouble() - 0.5D) * (double)this.getBbWidth() * 2.0D;
+-                    double k = Mth.lerp(d, this.yo, this.getY()) + this.random.nextDouble() * (double)this.getBbHeight();
+-                    double l = Mth.lerp(d, this.zo, this.getZ()) + (this.random.nextDouble() - 0.5D) * (double)this.getBbWidth() * 2.0D;
+-                    this.level.addParticle(ParticleTypes.PORTAL, e, k, l, (double)f, (double)g, (double)h);
 +                    float f1 = (this.random.nextFloat() - 0.5F) * 0.2F;
 +                    float f2 = (this.random.nextFloat() - 0.5F) * 0.2F;
 +                    double d1 = Mth.lerp(d0, this.xo, this.getX()) + (this.random.nextDouble() - 0.5D) * (double) this.getBbWidth() * 2.0D;
@@ -2417,37 +2244,14 @@
 +                    double d3 = Mth.lerp(d0, this.zo, this.getZ()) + (this.random.nextDouble() - 0.5D) * (double) this.getBbWidth() * 2.0D;
 +
 +                    this.level.addParticle(ParticleTypes.PORTAL, d1, d2, d3, (double) f, (double) f1, (double) f2);
-+                }
+                 }
+-                break;
 +
 +                return;
-+            case 47:
-+                this.breakItem(this.getItemBySlot(EquipmentSlot.MAINHAND));
-+                break;
-+            case 48:
-+                this.breakItem(this.getItemBySlot(EquipmentSlot.OFFHAND));
-+                break;
-+            case 49:
-+                this.breakItem(this.getItemBySlot(EquipmentSlot.HEAD));
-+                break;
-+            case 50:
-+                this.breakItem(this.getItemBySlot(EquipmentSlot.CHEST));
-+                break;
-+            case 51:
-+                this.breakItem(this.getItemBySlot(EquipmentSlot.LEGS));
-+                break;
-+            case 52:
-+                this.breakItem(this.getItemBySlot(EquipmentSlot.FEET));
-+                break;
-+            case 54:
-+                HoneyBlock.showJumpParticles(this);
-+                break;
-+            case 55:
-+                this.swapHandItems();
-+                break;
-+            case 60:
-+                this.makePoofParticles();
-         }
- 
+             case 47:
+                 this.breakItem(this.getItemBySlot(EquipmentSlot.MAINHAND));
+                 break;
+@@ -1756,19 +2387,21 @@
      }
  
      private void makePoofParticles() {
@@ -2476,7 +2280,7 @@
      }
  
      @Override
-@@ -1779,6 +2411,7 @@
+@@ -1778,6 +2411,7 @@
  
      protected void updateSwingTime() {
          int i = this.getCurrentSwingDuration();
@@ -2484,7 +2288,7 @@
          if (this.swinging) {
              ++this.swingTime;
              if (this.swingTime >= i) {
-@@ -1789,7 +2422,7 @@
+@@ -1788,7 +2422,7 @@
              this.swingTime = 0;
          }
  
@@ -2493,7 +2297,7 @@
      }
  
      @Nullable
-@@ -1822,8 +2455,8 @@
+@@ -1821,8 +2455,8 @@
      }
  
      public boolean isHolding(Item item) {
@@ -2504,7 +2308,7 @@
          });
      }
  
-@@ -1863,13 +2496,20 @@
+@@ -1862,13 +2496,20 @@
  
      public abstract ItemStack getItemBySlot(EquipmentSlot slot);
  
@@ -2528,7 +2332,7 @@
          }
  
      }
-@@ -1879,27 +2519,28 @@
+@@ -1878,27 +2519,28 @@
          int i = 0;
          int j = 0;
  
@@ -2566,7 +2370,7 @@
          }
  
      }
-@@ -1925,17 +2566,19 @@
+@@ -1924,17 +2566,19 @@
      }
  
      private void dismountVehicle(Entity vehicle) {
@@ -2592,7 +2396,7 @@
      }
  
      @Override
-@@ -1948,168 +2591,201 @@
+@@ -1947,168 +2591,201 @@
      }
  
      public double getJumpBoostPower() {
@@ -2874,7 +2678,7 @@
                  }
              }
          }
-@@ -2119,15 +2795,16 @@
+@@ -2118,15 +2795,16 @@
  
      public void calculateEntityAnimation(LivingEntity entity, boolean flutter) {
          entity.animationSpeedOld = entity.animationSpeed;
@@ -2898,7 +2702,7 @@
          entity.animationPosition += entity.animationSpeed;
      }
  
-@@ -2135,26 +2812,28 @@
+@@ -2134,26 +2812,28 @@
          this.moveRelative(this.getFrictionInfluencedSpeed(slipperiness), movementInput);
          this.setDeltaMovement(this.handleOnClimbable(this.getDeltaMovement()));
          this.move(MoverType.SELF, this.getDeltaMovement());
@@ -2937,7 +2741,7 @@
          }
      }
  
-@@ -2162,14 +2841,15 @@
+@@ -2161,14 +2841,15 @@
          if (this.onClimbable()) {
              this.resetFallDistance();
              float f = 0.15F;
@@ -2959,7 +2763,7 @@
          }
  
          return motion;
-@@ -2199,6 +2879,7 @@
+@@ -2198,6 +2879,7 @@
          this.updateSwimAmount();
          if (!this.level.isClientSide) {
              int i = this.getArrowCount();
@@ -2967,7 +2771,7 @@
              if (i > 0) {
                  if (this.removeArrowTime <= 0) {
                      this.removeArrowTime = 20 * (30 - i);
-@@ -2211,6 +2892,7 @@
+@@ -2210,6 +2892,7 @@
              }
  
              int j = this.getStingerCount();
@@ -2975,7 +2779,7 @@
              if (j > 0) {
                  if (this.removeStingerTime <= 0) {
                      this.removeStingerTime = 20 * (30 - j);
-@@ -2233,73 +2915,76 @@
+@@ -2232,73 +2915,76 @@
          }
  
          this.aiStep();
@@ -3078,7 +2882,7 @@
          if (this.isFallFlying()) {
              ++this.fallFlyTicks;
          } else {
-@@ -2309,11 +2994,11 @@
+@@ -2308,11 +2994,11 @@
          if (this.isSleeping()) {
              this.setXRot(0.0F);
          }
@@ -3091,7 +2895,7 @@
          if (map != null) {
              this.handleHandSwap(map);
              if (!map.isEmpty()) {
-@@ -2326,33 +3011,45 @@
+@@ -2325,33 +3011,45 @@
      @Nullable
      private Map<EquipmentSlot, ItemStack> collectEquipmentChanges() {
          Map<EquipmentSlot, ItemStack> map = null;
@@ -3100,28 +2904,22 @@
  
 -        for(EquipmentSlot equipmentSlot : EquipmentSlot.values()) {
 -            ItemStack itemStack;
--            switch(equipmentSlot.getType()) {
--            case HAND:
--                itemStack = this.getLastHandItem(equipmentSlot);
--                break;
--            case ARMOR:
--                itemStack = this.getLastArmorItem(equipmentSlot);
--                break;
--            default:
--                continue;
+-            switch (equipmentSlot.getType()) {
 +        for (int j = 0; j < i; ++j) {
 +            EquipmentSlot enumitemslot = aenumitemslot[j];
 +            ItemStack itemstack;
 +
 +            switch (enumitemslot.getType()) {
-+                case HAND:
+                 case HAND:
+-                    itemStack = this.getLastHandItem(equipmentSlot);
 +                    itemstack = this.getLastHandItem(enumitemslot);
-+                    break;
-+                case ARMOR:
+                     break;
+                 case ARMOR:
+-                    itemStack = this.getLastArmorItem(equipmentSlot);
 +                    itemstack = this.getLastArmorItem(enumitemslot);
-+                    break;
-+                default:
-+                    continue;
+                     break;
+                 default:
+                     continue;
              }
  
 -            ItemStack itemStack4 = this.getItemBySlot(equipmentSlot);
@@ -3155,7 +2953,7 @@
                  }
              }
          }
-@@ -2361,37 +3058,124 @@
+@@ -2360,37 +3058,124 @@
      }
  
      private void handleHandSwap(Map<EquipmentSlot, ItemStack> equipmentChanges) {
@@ -3183,12 +2981,7 @@
 -        equipmentChanges.forEach((slot, stack) -> {
 -            ItemStack itemStack = stack.copy();
 -            list.add(Pair.of(slot, itemStack));
--            switch(slot.getType()) {
--            case HAND:
--                this.setLastHandItem(slot, itemStack);
--                break;
--            case ARMOR:
--                this.setLastArmorItem(slot, itemStack);
+-            switch (slot.getType()) {
 +
 +        equipmentChanges.forEach((enumitemslot, itemstack) -> {
 +            ItemStack itemstack1 = itemstack.copy();
@@ -3198,18 +2991,20 @@
 +            list.add(Pair.of(enumitemslot, stripMeta(toSend, toSend == itemstack1))); // Paper - hide unnecessary item meta
 +            // Paper end
 +            switch (enumitemslot.getType()) {
-+                case HAND:
+                 case HAND:
+-                    this.setLastHandItem(slot, itemStack);
 +                    this.setLastHandItem(enumitemslot, itemstack1);
-+                    break;
-+                case ARMOR:
+                     break;
+                 case ARMOR:
+-                    this.setLastArmorItem(slot, itemStack);
 +                    this.setLastArmorItem(enumitemslot, itemstack1);
              }
  
          });
 -        ((ServerLevel)this.level).getChunkSource().broadcast(this, new ClientboundSetEquipmentPacket(this.getId(), list));
 +        ((ServerLevel) this.level).getChunkSource().broadcast(this, new ClientboundSetEquipmentPacket(this.getId(), list));
-     }
- 
++    }
++
 +    // Paper start - hide unnecessary item meta
 +    public ItemStack stripMeta(final ItemStack itemStack, final boolean copyItemStack) {
 +        if (itemStack.isEmpty() || (!itemStack.hasTag() && itemStack.getCount() < 2)) {
@@ -3288,16 +3083,16 @@
 +            blockEntityTag.remove("Items");
 +        }
 +        return copy;
-+    }
+     }
 +    // Paper end
-+
+ 
      private ItemStack getLastArmorItem(EquipmentSlot slot) {
 -        return this.lastArmorItemStacks.get(slot.getIndex());
 +        return (ItemStack) this.lastArmorItemStacks.get(slot.getIndex());
      }
  
      private void setLastArmorItem(EquipmentSlot slot, ItemStack armor) {
-@@ -2399,7 +3183,7 @@
+@@ -2398,7 +3183,7 @@
      }
  
      private ItemStack getLastHandItem(EquipmentSlot slot) {
@@ -3306,7 +3101,7 @@
      }
  
      private void setLastHandItem(EquipmentSlot slot, ItemStack stack) {
-@@ -2407,24 +3191,26 @@
+@@ -2406,24 +3191,26 @@
      }
  
      protected float tickHeadTurn(float bodyRotation, float headRotation) {
@@ -3345,7 +3140,7 @@
              headRotation *= -1.0F;
          }
  
-@@ -2442,41 +3228,43 @@
+@@ -2441,41 +3228,43 @@
          }
  
          if (this.lerpSteps > 0) {
@@ -3408,7 +3203,7 @@
          this.level.getProfiler().push("ai");
          if (this.isImmobile()) {
              this.jumping = false;
-@@ -2491,26 +3279,26 @@
+@@ -2490,26 +3279,26 @@
          this.level.getProfiler().pop();
          this.level.getProfiler().push("jump");
          if (this.jumping && this.isAffectedByFluids()) {
@@ -3450,7 +3245,7 @@
              }
          } else {
              this.noJumpDelay = 0;
-@@ -2521,36 +3309,55 @@
+@@ -2520,36 +3309,55 @@
          this.xxa *= 0.98F;
          this.zza *= 0.98F;
          this.updateFallFlying();
@@ -3516,7 +3311,7 @@
          if (!this.level.isClientSide && this.isSensitiveToWater() && this.isInWaterRainOrBubble()) {
              this.hurt(DamageSource.DROWN, 1.0F);
          }
-@@ -2562,47 +3369,60 @@
+@@ -2561,47 +3369,60 @@
      }
  
      private void updateFallFlying() {
@@ -3594,7 +3389,7 @@
                          ++j;
                      }
                  }
-@@ -2612,8 +3432,12 @@
+@@ -2611,8 +3432,12 @@
                  }
              }
  
@@ -3609,7 +3404,7 @@
                  this.doPush(entity);
              }
          }
-@@ -2621,13 +3445,15 @@
+@@ -2620,13 +3445,15 @@
      }
  
      protected void checkAutoSpinAttack(AABB a, AABB b) {
@@ -3630,7 +3425,7 @@
                      this.autoSpinAttackTicks = 0;
                      this.setDeltaMovement(this.getDeltaMovement().scale(-0.2D));
                      break;
-@@ -2647,18 +3473,24 @@
+@@ -2646,18 +3473,24 @@
          entity.push(this);
      }
  
@@ -3660,7 +3455,7 @@
              this.dismountVehicle(entity);
          }
  
-@@ -2677,14 +3509,14 @@
+@@ -2676,14 +3509,14 @@
          this.lerpX = x;
          this.lerpY = y;
          this.lerpZ = z;
@@ -3678,7 +3473,7 @@
          this.lerpHeadSteps = interpolationSteps;
      }
  
-@@ -2693,16 +3525,17 @@
+@@ -2692,16 +3525,17 @@
      }
  
      public void onItemPickup(ItemEntity item) {
@@ -3700,7 +3495,7 @@
          }
  
      }
-@@ -2711,13 +3544,11 @@
+@@ -2710,13 +3544,11 @@
          if (entity.level != this.level) {
              return false;
          } else {
@@ -3719,7 +3514,7 @@
          }
      }
  
-@@ -2727,12 +3558,13 @@
+@@ -2726,12 +3558,13 @@
      }
  
      public float getAttackAnim(float tickDelta) {
@@ -3737,7 +3532,7 @@
      }
  
      public boolean isEffectiveAi() {
-@@ -2741,13 +3573,27 @@
+@@ -2740,15 +3573,29 @@
  
      @Override
      public boolean isPickable() {
@@ -3750,9 +3545,9 @@
      public boolean isPushable() {
 -        return this.isAlive() && !this.isSpectator() && !this.onClimbable();
 +        return this.isCollidable(level.paperConfig.fixClimbingBypassingCrammingRule);
-+    }
-+
-+    @Override
+     }
+ 
+     @Override
 +    public boolean isCollidable(boolean ignoreClimbing) {
 +        return this.isAlive() && !this.isSpectator() && (ignoreClimbing || !this.onClimbable()) && this.collides; // CraftBukkit
 +        // Paper end
@@ -3762,12 +3557,14 @@
 +    @Override
 +    public boolean canCollideWithBukkit(Entity entity) {
 +        return this.isPushable() && this.collides != this.collidableExemptions.contains(entity.getUUID());
-     }
++    }
 +    // CraftBukkit end
- 
-     @Override
++
++    @Override
      public float getYHeadRot() {
-@@ -2766,7 +3612,7 @@
+         return this.yHeadRot;
+     }
+@@ -2765,7 +3612,7 @@
  
      @Override
      protected Vec3 getRelativePortalPosition(Direction.Axis portalAxis, BlockUtil.FoundRectangle portalRect) {
@@ -3776,7 +3573,7 @@
      }
  
      public static Vec3 resetForwardDirectionOfRelativePortalPosition(Vec3 pos) {
-@@ -2778,18 +3624,16 @@
+@@ -2777,18 +3624,16 @@
      }
  
      public void setAbsorptionAmount(float amount) {
@@ -3798,7 +3595,7 @@
  
      protected void updateEffectVisibility() {
          this.effectsDirty = true;
-@@ -2798,13 +3642,18 @@
+@@ -2797,13 +3642,18 @@
      public abstract HumanoidArm getMainArm();
  
      public boolean isUsingItem() {
@@ -3819,7 +3616,7 @@
      private void updatingUsingItem() {
          if (this.isUsingItem()) {
              if (ItemStack.isSameIgnoreDurability(this.getItemInHand(this.getUsedItemHand()), this.useItem)) {
-@@ -2822,8 +3671,12 @@
+@@ -2821,8 +3671,12 @@
          if (this.shouldTriggerItemUseEffects()) {
              this.triggerItemUseEffects(stack, 5);
          }
@@ -3834,7 +3631,7 @@
              this.completeUsingItem();
          }
  
-@@ -2831,10 +3684,11 @@
+@@ -2830,10 +3684,11 @@
  
      private boolean shouldTriggerItemUseEffects() {
          int i = this.getUseItemRemainingTicks();
@@ -3850,7 +3647,7 @@
      }
  
      private void updateSwimAmount() {
-@@ -2848,21 +3702,32 @@
+@@ -2847,21 +3702,32 @@
      }
  
      protected void setLivingEntityFlag(int mask, boolean value) {
@@ -3891,7 +3688,7 @@
              if (!this.level.isClientSide) {
                  this.setLivingEntityFlag(1, true);
                  this.setLivingEntityFlag(2, hand == InteractionHand.OFF_HAND);
-@@ -2874,11 +3739,11 @@
+@@ -2873,11 +3739,11 @@
      @Override
      public void onSyncedDataUpdated(EntityDataAccessor<?> data) {
          super.onSyncedDataUpdated(data);
@@ -3905,7 +3702,7 @@
              if (this.isUsingItem() && this.useItem.isEmpty()) {
                  this.useItem = this.getItemInHand(this.getUsedItemHand());
                  if (!this.useItem.isEmpty()) {
-@@ -2886,7 +3751,10 @@
+@@ -2885,7 +3751,10 @@
                  }
              } else if (!this.isUsingItem() && !this.useItem.isEmpty()) {
                  this.useItem = ItemStack.EMPTY;
@@ -3917,7 +3714,7 @@
              }
          }
  
-@@ -2908,41 +3776,78 @@
+@@ -2907,41 +3776,78 @@
  
              if (stack.getUseAnimation() == UseAnim.EAT) {
                  this.spawnItemParticles(stack, particleCount);
@@ -4012,7 +3809,7 @@
                  }
  
              }
-@@ -2963,6 +3868,7 @@
+@@ -2962,6 +3868,7 @@
  
      public void releaseUsingItem() {
          if (!this.useItem.isEmpty()) {
@@ -4020,7 +3817,7 @@
              this.useItem.releaseUsing(this.level, this, this.getUseItemRemainingTicks());
              if (this.useItem.useOnRelease()) {
                  this.updatingUsingItem();
-@@ -2978,22 +3884,83 @@
+@@ -2977,22 +3884,83 @@
          }
  
          this.useItem = ItemStack.EMPTY;
@@ -4110,7 +3907,7 @@
      public boolean isSuppressingSlidingDownLadder() {
          return this.isShiftKeyDown();
      }
-@@ -3012,48 +3979,81 @@
+@@ -3011,48 +3979,81 @@
      }
  
      public boolean randomTeleport(double x, double y, double z, boolean particleEffects) {
@@ -4171,7 +3968,7 @@
 +                this.setPos(d0, d6, d2);
 +                if (world.noCollision((Entity) this) && !world.containsAnyLiquid(this.getBoundingBox())) {
 +                    flag1 = true;
-                 }
++                }
 +                // now revert and call event if the teleport place is valid
 +                this.setPos(d3, d4, d5);
 +
@@ -4191,7 +3988,7 @@
 +                            return Optional.empty();
 +                        }
 +                    }
-+                }
+                 }
 +                // CraftBukkit end
              }
          }
@@ -4219,7 +4016,7 @@
          }
      }
  
-@@ -3065,8 +4065,7 @@
+@@ -3064,8 +4065,7 @@
          return true;
      }
  
@@ -4229,7 +4026,7 @@
  
      public boolean canTakeItem(ItemStack stack) {
          return false;
-@@ -3079,7 +4078,7 @@
+@@ -3078,7 +4078,7 @@
  
      @Override
      public EntityDimensions getDimensions(Pose pose) {
@@ -4238,7 +4035,7 @@
      }
  
      public ImmutableList<Pose> getDismountPoses() {
-@@ -3087,20 +4086,21 @@
+@@ -3086,20 +4086,21 @@
      }
  
      public AABB getLocalBoundsForPose(Pose pose) {
@@ -4265,7 +4062,7 @@
      }
  
      public boolean isSleeping() {
-@@ -3112,9 +4112,10 @@
+@@ -3111,9 +4112,10 @@
              this.stopRiding();
          }
  
@@ -4279,7 +4076,7 @@
          }
  
          this.setPose(Pose.SLEEPING);
-@@ -3125,42 +4126,51 @@
+@@ -3124,42 +4126,51 @@
      }
  
      private void setPosToBed(BlockPos pos) {
@@ -4348,7 +4145,7 @@
      }
  
      @Override
-@@ -3184,9 +4194,9 @@
+@@ -3183,9 +4194,9 @@
      public ItemStack eat(Level world, ItemStack stack) {
          if (stack.isEdible()) {
              world.gameEvent(this, GameEvent.EAT, this.eyeBlockPosition());
@@ -4360,7 +4157,7 @@
                  stack.shrink(1);
              }
  
-@@ -3198,10 +4208,16 @@
+@@ -3197,10 +4208,16 @@
  
      private void addEatEffect(ItemStack stack, Level world, LivingEntity targetEntity) {
          Item item = stack.getItem();
@@ -4380,41 +4177,7 @@
                  }
              }
          }
-@@ -3209,26 +4225,26 @@
-     }
- 
-     private static byte entityEventForEquipmentBreak(EquipmentSlot slot) {
--        switch(slot) {
--        case MAINHAND:
--            return 47;
--        case OFFHAND:
--            return 48;
--        case HEAD:
--            return 49;
--        case CHEST:
--            return 50;
--        case FEET:
--            return 52;
--        case LEGS:
--            return 51;
--        default:
--            return 47;
-+        switch (slot) {
-+            case MAINHAND:
-+                return 47;
-+            case OFFHAND:
-+                return 48;
-+            case HEAD:
-+                return 49;
-+            case CHEST:
-+                return 50;
-+            case FEET:
-+                return 52;
-+            case LEGS:
-+                return 51;
-+            default:
-+                return 47;
-         }
+@@ -3227,7 +4244,7 @@
      }
  
      public void broadcastBreakEvent(EquipmentSlot slot) {
@@ -4423,7 +4186,7 @@
      }
  
      public void broadcastBreakEvent(InteractionHand hand) {
-@@ -3239,6 +4255,7 @@
+@@ -3238,6 +4255,7 @@
      public AABB getBoundingBoxForCulling() {
          if (this.getItemBySlot(EquipmentSlot.HEAD).is(Items.DRAGON_HEAD)) {
              float f = 0.5F;
@@ -4431,7 +4194,7 @@
              return this.getBoundingBox().inflate(0.5D, 0.5D, 0.5D);
          } else {
              return super.getBoundingBoxForCulling();
-@@ -3247,46 +4264,26 @@
+@@ -3246,46 +4264,26 @@
  
      public static EquipmentSlot getEquipmentSlotForItem(ItemStack stack) {
          Item item = stack.getItem();
@@ -4486,7 +4249,7 @@
      }
  
      @Override
-@@ -3294,8 +4291,9 @@
+@@ -3293,8 +4291,9 @@
          if (this.isSpectator()) {
              return false;
          } else {
@@ -4498,7 +4261,7 @@
          }
      }
  
-@@ -3305,22 +4303,43 @@
+@@ -3304,22 +4303,43 @@
      }
  
      public void recreateFromPacket(ClientboundAddMobPacket packet) {

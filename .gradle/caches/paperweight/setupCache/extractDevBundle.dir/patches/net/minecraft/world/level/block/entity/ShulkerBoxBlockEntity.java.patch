@@ -73,60 +73,24 @@
          this.color = ShulkerBoxBlock.getColorFromBlock(state.getBlock());
      }
  
-@@ -66,30 +106,30 @@
- 
-     private void updateAnimation(Level world, BlockPos pos, BlockState state) {
-         this.progressOld = this.progress;
--        switch(this.animationStatus) {
--        case CLOSED:
--            this.progress = 0.0F;
--            break;
--        case OPENING:
--            this.progress += 0.1F;
--            if (this.progress >= 1.0F) {
--                this.animationStatus = ShulkerBoxBlockEntity.AnimationStatus.OPENED;
--                this.progress = 1.0F;
--                doNeighborUpdates(world, pos, state);
--            }
--
--            this.moveCollidedEntities(world, pos, state);
--            break;
--        case CLOSING:
--            this.progress -= 0.1F;
--            if (this.progress <= 0.0F) {
--                this.animationStatus = ShulkerBoxBlockEntity.AnimationStatus.CLOSED;
-+        switch (this.animationStatus) {
-+            case CLOSED:
-                 this.progress = 0.0F;
--                doNeighborUpdates(world, pos, state);
--            }
--            break;
--        case OPENED:
--            this.progress = 1.0F;
-+                break;
-+            case OPENING:
-+                this.progress += 0.1F;
-+                if (this.progress >= 1.0F) {
-+                    this.animationStatus = ShulkerBoxBlockEntity.AnimationStatus.OPENED;
-+                    this.progress = 1.0F;
+@@ -75,7 +115,7 @@
+                 if (this.progress >= 1.0F) {
+                     this.animationStatus = ShulkerBoxBlockEntity.AnimationStatus.OPENED;
+                     this.progress = 1.0F;
+-                    doNeighborUpdates(world, pos, state);
 +                    ShulkerBoxBlockEntity.doNeighborUpdates(world, pos, state);
-+                }
-+
-+                this.moveCollidedEntities(world, pos, state);
-+                break;
-+            case CLOSING:
-+                this.progress -= 0.1F;
-+                if (this.progress <= 0.0F) {
-+                    this.animationStatus = ShulkerBoxBlockEntity.AnimationStatus.CLOSED;
-+                    this.progress = 0.0F;
-+                    ShulkerBoxBlockEntity.doNeighborUpdates(world, pos, state);
-+                }
-+                break;
-+            case OPENED:
-+                this.progress = 1.0F;
-         }
+                 }
  
-     }
+                 this.moveCollidedEntities(world, pos, state);
+@@ -85,7 +125,7 @@
+                 if (this.progress <= 0.0F) {
+                     this.animationStatus = ShulkerBoxBlockEntity.AnimationStatus.CLOSED;
+                     this.progress = 0.0F;
+-                    doNeighborUpdates(world, pos, state);
++                    ShulkerBoxBlockEntity.doNeighborUpdates(world, pos, state);
+                 }
+                 break;
+             case OPENED:
 @@ -99,19 +139,21 @@
      }
  

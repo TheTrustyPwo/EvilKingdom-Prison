@@ -97,7 +97,7 @@
          this.goalSelector.addGoal(3, this.temptGoal);
          this.goalSelector.addGoal(4, new Strider.StriderGoToLavaGoal(this, 1.5D));
          this.goalSelector.addGoal(5, new FollowParentGoal(this, 1.1D));
-@@ -165,33 +170,36 @@
+@@ -165,32 +170,36 @@
      }
  
      public void setSuffocating(boolean cold) {
@@ -130,11 +130,11 @@
      @Override
      public boolean canBeControlledByRider() {
          Entity entity = this.getControllingPassenger();
+-        if (!(entity instanceof Player player)) {
 +
-         if (!(entity instanceof Player)) {
++        if (!(entity instanceof Player)) {
              return false;
          } else {
--            Player player = (Player)entity;
 -            return player.getMainHandItem().is(Items.WARPED_FUNGUS_ON_A_STICK) || player.getOffhandItem().is(Items.WARPED_FUNGUS_ON_A_STICK);
 +            Player entityhuman = (Player) entity;
 +
@@ -142,7 +142,7 @@
          }
      }
  
-@@ -208,32 +216,44 @@
+@@ -207,32 +216,44 @@
  
      @Override
      public Vec3 getDismountLocationForPassenger(LivingEntity passenger) {
@@ -206,7 +206,7 @@
                          }
                      }
                  }
-@@ -250,12 +270,12 @@
+@@ -249,12 +270,12 @@
      }
  
      public float getMoveSpeed() {
@@ -221,7 +221,7 @@
      }
  
      @Override
-@@ -296,10 +316,17 @@
+@@ -295,10 +316,17 @@
              this.playSound(SoundEvents.STRIDER_RETREAT, 1.0F, this.getVoicePitch());
          }
  
@@ -243,7 +243,7 @@
          super.tick();
          this.floatStrider();
          this.checkInsideBlocks();
-@@ -320,8 +347,9 @@
+@@ -319,8 +347,9 @@
  
      private void floatStrider() {
          if (this.isInLava()) {
@@ -255,7 +255,7 @@
                  this.onGround = true;
              } else {
                  this.setDeltaMovement(this.getDeltaMovement().scale(0.5D).add(0.0D, 0.05D, 0.0D));
-@@ -331,7 +359,7 @@
+@@ -330,7 +359,7 @@
      }
  
      public static AttributeSupplier.Builder createAttributes() {
@@ -264,7 +264,7 @@
      }
  
      @Override
-@@ -371,59 +399,58 @@
+@@ -370,59 +399,58 @@
  
      @Override
      public float getWalkTargetValue(BlockPos pos, LevelReader world) {
@@ -342,7 +342,7 @@
      }
  
      @Nullable
-@@ -432,32 +459,36 @@
+@@ -431,32 +459,36 @@
          if (this.isBaby()) {
              return super.finalizeSpawn(world, difficulty, spawnReason, entityData, entityNbt);
          } else {
@@ -391,7 +391,7 @@
          private final Strider strider;
  
          StriderGoToLavaGoal(Strider strider, double speed) {
-@@ -491,7 +522,8 @@
+@@ -490,7 +522,8 @@
          }
      }
  

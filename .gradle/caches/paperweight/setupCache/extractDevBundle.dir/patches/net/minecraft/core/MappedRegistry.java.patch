@@ -1,6 +1,6 @@
 --- a/net/minecraft/core/MappedRegistry.java
 +++ b/net/minecraft/core/MappedRegistry.java
-@@ -37,13 +37,11 @@
+@@ -36,13 +36,11 @@
  public class MappedRegistry<T> extends WritableRegistry<T> {
      private static final Logger LOGGER = LogUtils.getLogger();
      private final ObjectList<Holder.Reference<T>> byId = new ObjectArrayList<>(256);
@@ -19,7 +19,7 @@
      private Lifecycle elementsLifecycle;
      private volatile Map<TagKey<T>, HolderSet.Named<T>> tags = new IdentityHashMap<>();
      private boolean frozen;
-@@ -63,6 +61,7 @@
+@@ -62,6 +60,7 @@
              this.intrusiveHolderCache = new IdentityHashMap<>();
          }
  

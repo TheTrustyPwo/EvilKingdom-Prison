@@ -1,16 +1,15 @@
 --- a/net/minecraft/advancements/AdvancementList.java
 +++ b/net/minecraft/advancements/AdvancementList.java
-@@ -4,15 +4,18 @@
+@@ -4,14 +4,18 @@
  import com.google.common.collect.Sets;
  import com.mojang.logging.LogUtils;
  import java.util.Collection;
 +import java.util.HashMap;
  import java.util.Iterator;
  import java.util.Map;
--import java.util.Set;
- import java.util.Map.Entry;
++import java.util.Map.Entry;
 +import java.util.Objects;
-+import java.util.Set;
+ import java.util.Set;
  import javax.annotation.Nullable;
  import net.minecraft.resources.ResourceLocation;
  import org.slf4j.Logger;
@@ -20,7 +19,7 @@
      private static final Logger LOGGER = LogUtils.getLogger();
      public final Map<ResourceLocation, Advancement> advancements = Maps.newHashMap();
      private final Set<Advancement> roots = Sets.newLinkedHashSet();
-@@ -20,12 +23,18 @@
+@@ -19,12 +23,18 @@
      @Nullable
      private AdvancementList.Listener listener;
  
@@ -42,7 +41,7 @@
          this.advancements.remove(advancement.getId());
          if (advancement.getParent() == null) {
              this.roots.remove(advancement);
-@@ -42,10 +51,14 @@
+@@ -41,10 +51,14 @@
      }
  
      public void remove(Set<ResourceLocation> advancements) {
@@ -60,7 +59,7 @@
              } else {
                  this.remove(advancement);
              }
-@@ -54,20 +67,27 @@
+@@ -53,20 +67,27 @@
      }
  
      public void add(Map<ResourceLocation, Advancement.Builder> map) {
@@ -69,14 +68,14 @@
  
 -        while(!map2.isEmpty()) {
 -            boolean bl = false;
--            Iterator<Entry<ResourceLocation, Advancement.Builder>> iterator = map2.entrySet().iterator();
+-            Iterator<Map.Entry<ResourceLocation, Advancement.Builder>> iterator = map2.entrySet().iterator();
 +        label42:
 +        while (!hashmap.isEmpty()) {
 +            boolean flag = false;
 +            Iterator iterator = hashmap.entrySet().iterator();
  
 -            while(iterator.hasNext()) {
--                Entry<ResourceLocation, Advancement.Builder> entry = iterator.next();
+-                Map.Entry<ResourceLocation, Advancement.Builder> entry = iterator.next();
 -                ResourceLocation resourceLocation = entry.getKey();
 -                Advancement.Builder builder = entry.getValue();
 -                if (builder.canBuild(this.advancements::get)) {
@@ -100,12 +99,12 @@
                      iterator.remove();
                      if (advancement.getParent() == null) {
                          this.roots.add(advancement);
-@@ -83,15 +103,21 @@
+@@ -82,15 +103,21 @@
                  }
              }
  
 -            if (!bl) {
--                for(Entry<ResourceLocation, Advancement.Builder> entry2 : map2.entrySet()) {
+-                for(Map.Entry<ResourceLocation, Advancement.Builder> entry2 : map2.entrySet()) {
 -                    LOGGER.error("Couldn't load advancement {}: {}", entry2.getKey(), entry2.getValue());
 +            if (!flag) {
 +                iterator = hashmap.entrySet().iterator();
@@ -127,7 +126,7 @@
      }
  
      public void clear() {
-@@ -114,24 +140,33 @@
+@@ -113,24 +140,33 @@
  
      @Nullable
      public Advancement get(ResourceLocation id) {

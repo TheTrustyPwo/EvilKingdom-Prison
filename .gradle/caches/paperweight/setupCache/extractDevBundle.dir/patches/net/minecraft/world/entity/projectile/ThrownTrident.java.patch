@@ -90,13 +90,13 @@
      public boolean isFoil() {
 -        return this.entityData.get(ID_FOIL);
 +        return (Boolean) this.entityData.get(ThrownTrident.ID_FOIL);
-     }
- 
++    }
++
 +    // Paper start
 +    public void setFoil(boolean foil) {
 +        this.entityData.set(ThrownTrident.ID_FOIL, foil);
-+    }
-+
+     }
+ 
 +    public int getLoyalty() {
 +        return this.entityData.get(ThrownTrident.ID_LOYALTY);
 +    }
@@ -109,14 +109,14 @@
      @Nullable
      @Override
      protected EntityHitResult findHitEntity(Vec3 currentPosition, Vec3 nextPosition) {
-@@ -112,46 +129,54 @@
+@@ -112,45 +129,54 @@
      protected void onHitEntity(EntityHitResult entityHitResult) {
          Entity entity = entityHitResult.getEntity();
          float f = 8.0F;
-+
-         if (entity instanceof LivingEntity) {
--            LivingEntity livingEntity = (LivingEntity)entity;
+-        if (entity instanceof LivingEntity livingEntity) {
 -            f += EnchantmentHelper.getDamageBonus(this.tridentItem, livingEntity.getMobType());
++
++        if (entity instanceof LivingEntity) {
 +            LivingEntity entityliving = (LivingEntity) entity;
 +
 +            f += EnchantmentHelper.getDamageBonus(this.tridentItem, entityliving.getMobType());
@@ -185,7 +185,7 @@
      }
  
      public boolean isChanneling() {
-@@ -184,7 +209,7 @@
+@@ -183,7 +209,7 @@
          }
  
          this.dealtDamage = nbt.getBoolean("DealtDamage");
@@ -194,7 +194,7 @@
      }
  
      @Override
-@@ -196,8 +221,9 @@
+@@ -195,8 +221,9 @@
  
      @Override
      public void tickDespawn() {

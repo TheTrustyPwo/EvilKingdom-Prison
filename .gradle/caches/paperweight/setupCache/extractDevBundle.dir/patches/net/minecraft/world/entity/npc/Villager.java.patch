@@ -600,13 +600,12 @@
          if (entity != null) {
              this.tellWitnessesThatIWasMurdered(entity);
          }
-@@ -589,30 +685,38 @@
+@@ -589,29 +685,38 @@
      }
  
      private void tellWitnessesThatIWasMurdered(Entity killer) {
 -        Level optional = this.level;
--        if (optional instanceof ServerLevel) {
--            ServerLevel serverLevel = (ServerLevel)optional;
+-        if (optional instanceof ServerLevel serverLevel) {
 -            Optional<NearestVisibleLivingEntities> optional = this.brain.getMemory(MemoryModuleType.NEAREST_VISIBLE_LIVING_ENTITIES);
 +        Level world = this.level;
 +
@@ -656,7 +655,7 @@
                      }
  
                  }
-@@ -631,14 +735,16 @@
+@@ -630,14 +735,16 @@
  
      private void eatUntilFull() {
          if (this.hungry() && this.countFoodPointsInInventory() != 0) {
@@ -679,7 +678,7 @@
                              this.foodLevel += integer;
                              this.getInventory().removeItem(i, 1);
                              if (!this.hungry()) {
-@@ -653,7 +759,7 @@
+@@ -652,7 +759,7 @@
      }
  
      public int getPlayerReputation(Player player) {
@@ -688,7 +687,7 @@
              return true;
          });
      }
-@@ -673,6 +779,7 @@
+@@ -672,6 +779,7 @@
  
      private boolean shouldIncreaseLevel() {
          int i = this.getVillagerData().getLevel();
@@ -696,7 +695,7 @@
          return VillagerData.canLevelUp(i) && this.villagerXp >= VillagerData.getMaxXpPerLevel(i);
      }
  
-@@ -683,7 +790,9 @@
+@@ -682,7 +790,9 @@
  
      @Override
      protected Component getTypeName() {
@@ -707,7 +706,7 @@
      }
  
      @Override
-@@ -721,37 +830,53 @@
+@@ -720,37 +830,53 @@
      }
  
      @Override
@@ -781,7 +780,7 @@
              this.releaseAllPois();
              this.discard();
          } else {
-@@ -762,21 +887,31 @@
+@@ -761,21 +887,31 @@
  
      @Override
      protected void pickUpItem(ItemEntity item) {
@@ -822,7 +821,7 @@
              }
          }
  
-@@ -785,7 +920,8 @@
+@@ -784,7 +920,8 @@
      @Override
      public boolean wantsToPickUp(ItemStack stack) {
          Item item = stack.getItem();
@@ -832,7 +831,7 @@
      }
  
      public boolean hasExcessFood() {
-@@ -797,9 +933,10 @@
+@@ -796,9 +933,10 @@
      }
  
      private int countFoodPointsInInventory() {
@@ -846,7 +845,7 @@
          }).sum();
      }
  
-@@ -809,13 +946,16 @@
+@@ -808,13 +946,16 @@
  
      @Override
      protected void updateTrades() {
@@ -870,7 +869,7 @@
              }
          }
      }
-@@ -830,25 +970,28 @@
+@@ -829,25 +970,28 @@
      }
  
      private void maybeDecayGossip() {
@@ -910,7 +909,7 @@
                      list.forEach(GolemSensor::golemDetected);
                  }
              }
-@@ -856,30 +999,43 @@
+@@ -855,30 +999,43 @@
      }
  
      public boolean wantsToSpawnGolem(long time) {
@@ -971,7 +970,7 @@
                  }
              }
          }
-@@ -889,17 +1045,18 @@
+@@ -888,17 +1045,18 @@
  
      @Nullable
      private BlockPos findSpawnPositionForGolemInColumn(BlockPos pos, double x, double z) {
@@ -1000,7 +999,7 @@
              }
          }
  
-@@ -909,6 +1066,15 @@
+@@ -908,6 +1066,15 @@
      @Override
      public void onReputationEventFrom(ReputationEventType interaction, Entity entity) {
          if (interaction == ReputationEventType.ZOMBIE_VILLAGER_CURED) {
@@ -1016,7 +1015,7 @@
              this.gossips.add(entity.getUUID(), GossipType.MAJOR_POSITIVE, 20);
              this.gossips.add(entity.getUUID(), GossipType.MINOR_POSITIVE, 25);
          } else if (interaction == ReputationEventType.TRADE) {
-@@ -940,7 +1106,7 @@
+@@ -939,7 +1106,7 @@
      }
  
      public void setGossips(Tag nbt) {
@@ -1025,7 +1024,7 @@
      }
  
      @Override
-@@ -952,7 +1118,7 @@
+@@ -951,7 +1118,7 @@
      @Override
      public void startSleeping(BlockPos pos) {
          super.startSleeping(pos);
@@ -1034,7 +1033,7 @@
          this.brain.eraseMemory(MemoryModuleType.WALK_TARGET);
          this.brain.eraseMemory(MemoryModuleType.CANT_REACH_WALK_TARGET_SINCE);
      }
-@@ -960,15 +1126,12 @@
+@@ -959,15 +1126,12 @@
      @Override
      public void stopSleeping() {
          super.stopSleeping();

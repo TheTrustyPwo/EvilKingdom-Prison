@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/level/block/state/StateHolder.java
 +++ b/net/minecraft/world/level/block/state/StateHolder.java
-@@ -40,11 +40,13 @@
+@@ -39,11 +39,13 @@
      private final ImmutableMap<Property<?>, Comparable<?>> values;
      private Table<Property<?>, Comparable<?>, S> neighbours;
      protected final MapCodec<S> propertiesCodec;
@@ -14,7 +14,7 @@
      }
  
      public <T extends Comparable<T>> S cycle(Property<T> property) {
-@@ -85,11 +87,11 @@
+@@ -84,11 +86,11 @@
      }
  
      public <T extends Comparable<T>> boolean hasProperty(Property<T> property) {
@@ -28,7 +28,7 @@
          if (comparable == null) {
              throw new IllegalArgumentException("Cannot get property " + property + " as it does not exist in " + this.owner);
          } else {
-@@ -98,24 +100,18 @@
+@@ -97,24 +99,18 @@
      }
  
      public <T extends Comparable<T>> Optional<T> getOptionalValue(Property<T> property) {
@@ -60,7 +60,7 @@
      }
  
      public void populateNeighbours(Map<Map<Property<?>, Comparable<?>>, S> states) {
-@@ -134,7 +130,7 @@
+@@ -133,7 +129,7 @@
                  }
              }
  

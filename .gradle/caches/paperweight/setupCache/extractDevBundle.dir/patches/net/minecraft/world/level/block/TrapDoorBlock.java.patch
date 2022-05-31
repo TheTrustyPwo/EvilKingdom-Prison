@@ -19,7 +19,7 @@
      public static final BooleanProperty OPEN = BlockStateProperties.OPEN;
      public static final EnumProperty<Half> HALF = BlockStateProperties.HALF;
      public static final BooleanProperty POWERED = BlockStateProperties.POWERED;
-@@ -41,39 +44,39 @@
+@@ -41,24 +44,24 @@
  
      protected TrapDoorBlock(BlockBehaviour.Properties settings) {
          super(settings);
@@ -34,53 +34,39 @@
 +        if (!(Boolean) state.getValue(TrapDoorBlock.OPEN)) {
 +            return state.getValue(TrapDoorBlock.HALF) == Half.TOP ? TrapDoorBlock.TOP_AABB : TrapDoorBlock.BOTTOM_AABB;
          } else {
--            switch((Direction)state.getValue(FACING)) {
--            case NORTH:
--            default:
--                return NORTH_OPEN_AABB;
--            case SOUTH:
--                return SOUTH_OPEN_AABB;
--            case WEST:
--                return WEST_OPEN_AABB;
--            case EAST:
--                return EAST_OPEN_AABB;
+-            switch ((Direction)state.getValue(FACING)) {
 +            switch ((Direction) state.getValue(TrapDoorBlock.FACING)) {
-+                case NORTH:
-+                default:
+                 case NORTH:
+                 default:
+-                    return NORTH_OPEN_AABB;
 +                    return TrapDoorBlock.NORTH_OPEN_AABB;
-+                case SOUTH:
+                 case SOUTH:
+-                    return SOUTH_OPEN_AABB;
 +                    return TrapDoorBlock.SOUTH_OPEN_AABB;
-+                case WEST:
+                 case WEST:
+-                    return WEST_OPEN_AABB;
 +                    return TrapDoorBlock.WEST_OPEN_AABB;
-+                case EAST:
+                 case EAST:
+-                    return EAST_OPEN_AABB;
 +                    return TrapDoorBlock.EAST_OPEN_AABB;
              }
          }
      }
- 
-     @Override
+@@ -67,11 +70,11 @@
      public boolean isPathfindable(BlockState state, BlockGetter world, BlockPos pos, PathComputationType type) {
--        switch(type) {
--        case LAND:
--            return state.getValue(OPEN);
--        case WATER:
--            return state.getValue(WATERLOGGED);
--        case AIR:
--            return state.getValue(OPEN);
--        default:
--            return false;
-+        switch (type) {
-+            case LAND:
+         switch (type) {
+             case LAND:
+-                return state.getValue(OPEN);
 +                return (Boolean) state.getValue(TrapDoorBlock.OPEN);
-+            case WATER:
+             case WATER:
+-                return state.getValue(WATERLOGGED);
 +                return (Boolean) state.getValue(TrapDoorBlock.WATERLOGGED);
-+            case AIR:
+             case AIR:
+-                return state.getValue(OPEN);
 +                return (Boolean) state.getValue(TrapDoorBlock.OPEN);
-+            default:
-+                return false;
+             default:
+                 return false;
          }
-     }
- 
 @@ -82,24 +85,26 @@
          if (this.material == Material.METAL) {
              return InteractionResult.PASS;

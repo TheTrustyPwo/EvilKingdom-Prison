@@ -6,9 +6,9 @@
  import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 +import it.unimi.dsi.fastutil.objects.ObjectArrayList; // Paper
  import it.unimi.dsi.fastutil.objects.ObjectIterator;
- import it.unimi.dsi.fastutil.objects.Object2IntMap.Entry;
  import java.util.Arrays;
-@@ -28,7 +29,7 @@
+ import java.util.Collection;
+@@ -27,7 +28,7 @@
  
  public class GossipContainer {
      public static final int DISCARD_THRESHOLD = 2;
@@ -17,7 +17,7 @@
  
      @VisibleForDebug
      public Map<UUID, Object2IntMap<GossipType>> getGossipEntries() {
-@@ -59,8 +60,21 @@
+@@ -58,8 +59,21 @@
          });
      }
  
@@ -40,7 +40,7 @@
          if (list.isEmpty()) {
              return Collections.emptyList();
          } else {
-@@ -153,9 +167,9 @@
+@@ -152,9 +166,9 @@
  
      }
  
@@ -53,7 +53,7 @@
          }).map(Dynamic::getValue)));
      }
  
-@@ -180,11 +194,23 @@
+@@ -179,11 +193,23 @@
          final Object2IntMap<GossipType> entries = new Object2IntOpenHashMap<>();
  
          public int weightedValue(Predicate<GossipType> gossipTypeFilter) {
@@ -82,7 +82,7 @@
          }
  
          public Stream<GossipContainer.GossipEntry> unpack(UUID target) {
-@@ -227,6 +253,28 @@
+@@ -226,6 +252,28 @@
          public void remove(GossipType gossipType) {
              this.entries.removeInt(gossipType);
          }

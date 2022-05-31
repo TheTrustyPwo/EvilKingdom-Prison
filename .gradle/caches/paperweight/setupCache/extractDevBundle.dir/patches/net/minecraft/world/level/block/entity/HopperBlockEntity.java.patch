@@ -148,7 +148,7 @@
                      setChanged(world, pos, state);
                      return true;
                  }
-@@ -128,120 +175,395 @@
+@@ -128,119 +175,395 @@
      }
  
      private boolean inventoryFull() {
@@ -579,9 +579,9 @@
      }
  
      public static ItemStack addItem(@Nullable Container from, Container to, ItemStack stack, @Nullable Direction side) {
-         if (to instanceof WorldlyContainer && side != null) {
--            WorldlyContainer worldlyContainer = (WorldlyContainer)to;
+-        if (to instanceof WorldlyContainer worldlyContainer && side != null) {
 -            int[] is = worldlyContainer.getSlotsForFace(side);
++        if (to instanceof WorldlyContainer && side != null) {
 +            WorldlyContainer iworldinventory = (WorldlyContainer) to;
 +            int[] aint = iworldinventory.getSlotsForFace(side);
  
@@ -600,7 +600,7 @@
              }
          }
  
-@@ -249,47 +571,58 @@
+@@ -248,47 +571,58 @@
      }
  
      private static boolean canPlaceItemInContainer(Container inventory, ItemStack stack, int slot, @Nullable Direction side) {
@@ -687,7 +687,7 @@
                      }
                  }
  
-@@ -302,79 +635,81 @@
+@@ -301,79 +635,81 @@
  
      @Nullable
      private static Container getAttachedContainer(Level world, BlockPos pos, BlockState state) {
@@ -804,7 +804,7 @@
      }
  
      private void setCooldown(int transferCooldown) {
-@@ -400,16 +735,16 @@
+@@ -399,16 +735,16 @@
      }
  
      public static void entityInside(Level world, BlockPos pos, BlockState state, Entity entity, HopperBlockEntity blockEntity) {

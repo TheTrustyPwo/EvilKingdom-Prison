@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/level/StructureFeatureManager.java
 +++ b/net/minecraft/world/level/StructureFeatureManager.java
-@@ -58,7 +58,12 @@
+@@ -56,7 +56,12 @@
      }
  
      public List<StructureStart> startsForFeature(SectionPos sectionPos, ConfiguredStructureFeature<?, ?> configuredStructureFeature) {
@@ -11,10 +11,10 @@
 +    public List<StructureStart> startsForFeature(SectionPos sectionPos, ConfiguredStructureFeature<?, ?> configuredStructureFeature, ServerLevelAccessor world) {
 +        LongSet longSet = (world == null ? this.level : world).getChunk(sectionPos.x(), sectionPos.z(), ChunkStatus.STRUCTURE_REFERENCES).getReferencesForFeature(configuredStructureFeature);
 +        // Paper end - add world option
-         Builder<StructureStart> builder = ImmutableList.builder();
+         ImmutableList.Builder<StructureStart> builder = ImmutableList.builder();
          this.fillStartsForFeature(configuredStructureFeature, longSet, builder::add);
          return builder.build();
-@@ -108,7 +113,12 @@
+@@ -106,7 +111,12 @@
      }
  
      public StructureStart getStructureWithPieceAt(BlockPos pos, ConfiguredStructureFeature<?, ?> configuredStructureFeature) {

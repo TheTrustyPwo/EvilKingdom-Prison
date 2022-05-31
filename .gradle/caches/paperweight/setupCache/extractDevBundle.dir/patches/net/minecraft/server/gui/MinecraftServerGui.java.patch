@@ -16,12 +16,8 @@
      private static final Font MONOSPACED = new Font("Monospaced", 0, 12);
      private static final Logger LOGGER = LogUtils.getLogger();
      private static final String TITLE = "Minecraft server";
-@@ -42,33 +44,44 @@
-     private final Collection<Runnable> finalizers = Lists.newArrayList();
-     final AtomicBoolean isClosing = new AtomicBoolean();
- 
--    public static MinecraftServerGui showFrameFor(DedicatedServer server) {
-+    public static MinecraftServerGui showFrameFor(final DedicatedServer server) {
+@@ -45,30 +47,41 @@
+     public static MinecraftServerGui showFrameFor(final DedicatedServer server) {
          try {
              UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
 -        } catch (Exception var3) {

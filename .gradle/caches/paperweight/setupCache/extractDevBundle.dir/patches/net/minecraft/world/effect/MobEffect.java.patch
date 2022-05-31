@@ -1,14 +1,13 @@
 --- a/net/minecraft/world/effect/MobEffect.java
 +++ b/net/minecraft/world/effect/MobEffect.java
-@@ -1,14 +1,17 @@
+@@ -1,13 +1,17 @@
  package net.minecraft.world.effect;
  
  import com.google.common.collect.Maps;
 +import java.util.Iterator;
  import java.util.Map;
--import java.util.UUID;
- import java.util.Map.Entry;
-+import java.util.UUID;
++import java.util.Map.Entry;
+ import java.util.UUID;
  import javax.annotation.Nullable;
  import net.minecraft.Util;
  import net.minecraft.core.Registry;
@@ -19,7 +18,7 @@
  import net.minecraft.world.damagesource.DamageSource;
  import net.minecraft.world.entity.Entity;
  import net.minecraft.world.entity.LivingEntity;
-@@ -17,8 +20,12 @@
+@@ -16,8 +20,12 @@
  import net.minecraft.world.entity.ai.attributes.AttributeMap;
  import net.minecraft.world.entity.ai.attributes.AttributeModifier;
  import net.minecraft.world.entity.player.Player;
@@ -32,7 +31,7 @@
      private final Map<Attribute, AttributeModifier> attributeModifiers = Maps.newHashMap();
      private final MobEffectCategory category;
      private final int color;
-@@ -27,7 +34,7 @@
+@@ -26,7 +34,7 @@
  
      @Nullable
      public static MobEffect byId(int rawId) {
@@ -41,7 +40,7 @@
      }
  
      public static int getId(MobEffect type) {
-@@ -42,71 +49,74 @@
+@@ -41,71 +49,74 @@
      public void applyEffectTick(LivingEntity entity, int amplifier) {
          if (this == MobEffects.REGENERATION) {
              if (entity.getHealth() < entity.getMaxHealth()) {
@@ -148,7 +147,7 @@
          } else {
              return this == MobEffects.HUNGER;
          }
-@@ -141,8 +151,9 @@
+@@ -140,8 +151,9 @@
      }
  
      public MobEffect addAttributeModifier(Attribute attribute, String uuid, double amount, AttributeModifier.Operation operation) {
@@ -160,11 +159,11 @@
          return this;
      }
  
-@@ -151,29 +162,38 @@
+@@ -150,29 +162,38 @@
      }
  
      public void removeAttributeModifiers(LivingEntity entity, AttributeMap attributes, int amplifier) {
--        for(Entry<Attribute, AttributeModifier> entry : this.attributeModifiers.entrySet()) {
+-        for(Map.Entry<Attribute, AttributeModifier> entry : this.attributeModifiers.entrySet()) {
 -            AttributeInstance attributeInstance = attributes.getInstance(entry.getKey());
 -            if (attributeInstance != null) {
 -                attributeInstance.removeModifier(entry.getValue());
@@ -182,7 +181,7 @@
      }
  
      public void addAttributeModifiers(LivingEntity entity, AttributeMap attributes, int amplifier) {
--        for(Entry<Attribute, AttributeModifier> entry : this.attributeModifiers.entrySet()) {
+-        for(Map.Entry<Attribute, AttributeModifier> entry : this.attributeModifiers.entrySet()) {
 -            AttributeInstance attributeInstance = attributes.getInstance(entry.getKey());
 -            if (attributeInstance != null) {
 -                AttributeModifier attributeModifier = entry.getValue();

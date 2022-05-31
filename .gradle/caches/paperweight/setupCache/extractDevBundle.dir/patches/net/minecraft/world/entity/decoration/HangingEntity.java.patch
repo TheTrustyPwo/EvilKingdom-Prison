@@ -211,19 +211,20 @@
          }
      }
  
-@@ -138,8 +180,9 @@
+@@ -137,8 +179,10 @@
+ 
      @Override
      public boolean skipAttackInteraction(Entity attacker) {
-         if (attacker instanceof Player) {
--            Player player = (Player)attacker;
+-        if (attacker instanceof Player player) {
 -            return !this.level.mayInteract(player, this.pos) ? true : this.hurt(DamageSource.playerAttack(player), 0.0F);
++        if (attacker instanceof Player) {
 +            Player entityhuman = (Player) attacker;
 +
 +            return !this.level.mayInteract(entityhuman, this.pos) ? true : this.hurt(DamageSource.playerAttack(entityhuman), 0.0F);
          } else {
              return false;
          }
-@@ -156,6 +199,22 @@
+@@ -155,6 +199,22 @@
              return false;
          } else {
              if (!this.isRemoved() && !this.level.isClientSide) {
@@ -246,7 +247,7 @@
                  this.kill();
                  this.markHurt();
                  this.dropItem(source.getEntity());
-@@ -168,27 +227,40 @@
+@@ -167,27 +227,40 @@
      @Override
      public void move(MoverType movementType, Vec3 movement) {
          if (!this.level.isClientSide && !this.isRemoved() && movement.lengthSqr() > 0.0D) {
@@ -294,7 +295,7 @@
      }
  
      @Override
-@@ -206,10 +278,11 @@
+@@ -205,10 +278,11 @@
  
      @Override
      public ItemEntity spawnAtLocation(ItemStack stack, float yOffset) {
@@ -310,55 +311,15 @@
      }
  
      @Override
-@@ -231,28 +304,29 @@
-     @Override
-     public float rotate(Rotation rotation) {
-         if (this.direction.getAxis() != Direction.Axis.Y) {
--            switch(rotation) {
--            case CLOCKWISE_180:
--                this.direction = this.direction.getOpposite();
--                break;
--            case COUNTERCLOCKWISE_90:
--                this.direction = this.direction.getCounterClockWise();
--                break;
--            case CLOCKWISE_90:
--                this.direction = this.direction.getClockWise();
-+            switch (rotation) {
-+                case CLOCKWISE_180:
-+                    this.direction = this.direction.getOpposite();
-+                    break;
-+                case COUNTERCLOCKWISE_90:
-+                    this.direction = this.direction.getCounterClockWise();
-+                    break;
-+                case CLOCKWISE_90:
-+                    this.direction = this.direction.getClockWise();
-             }
+@@ -243,6 +317,7 @@
          }
  
          float f = Mth.wrapDegrees(this.getYRot());
--        switch(rotation) {
--        case CLOCKWISE_180:
--            return f + 180.0F;
--        case COUNTERCLOCKWISE_90:
--            return f + 90.0F;
--        case CLOCKWISE_90:
--            return f + 270.0F;
--        default:
--            return f;
 +
-+        switch (rotation) {
-+            case CLOCKWISE_180:
-+                return f + 180.0F;
-+            case COUNTERCLOCKWISE_90:
-+                return f + 90.0F;
-+            case CLOCKWISE_90:
-+                return f + 270.0F;
-+            default:
-+                return f;
-         }
-     }
- 
-@@ -262,10 +336,8 @@
+         switch (rotation) {
+             case CLOCKWISE_180:
+                 return f + 180.0F;
+@@ -261,10 +336,8 @@
      }
  
      @Override

@@ -1,6 +1,6 @@
 --- a/net/minecraft/commands/arguments/selector/options/EntitySelectorOptions.java
 +++ b/net/minecraft/commands/arguments/selector/options/EntitySelectorOptions.java
-@@ -69,6 +69,19 @@
+@@ -68,6 +68,19 @@
      public static final DynamicCommandExceptionType ERROR_ENTITY_TYPE_INVALID = new DynamicCommandExceptionType((entity) -> {
          return new TranslatableComponent("argument.entity.options.type.invalid", entity);
      });
@@ -20,7 +20,7 @@
  
      private static void register(String id, EntitySelectorOptions.Modifier handler, Predicate<EntitySelectorParser> condition, Component description) {
          OPTIONS.put(id, new EntitySelectorOptions.Option(handler, condition, description));
-@@ -316,6 +329,12 @@
+@@ -315,6 +328,12 @@
  
                      if (reader.isTag()) {
                          TagKey<EntityType<?>> tagKey = TagKey.create(Registry.ENTITY_TYPE_REGISTRY, ResourceLocation.read(reader.getReader()));

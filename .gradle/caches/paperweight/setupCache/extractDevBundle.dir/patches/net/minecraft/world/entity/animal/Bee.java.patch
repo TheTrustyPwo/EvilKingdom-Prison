@@ -689,13 +689,12 @@
                          return true;
                      }
  
-@@ -743,27 +948,87 @@
+@@ -743,26 +948,87 @@
  
          @Override
          public void start() {
 -            BlockEntity blockEntity = Bee.this.level.getBlockEntity(Bee.this.hivePos);
--            if (blockEntity instanceof BeehiveBlockEntity) {
--                BeehiveBlockEntity beehiveBlockEntity = (BeehiveBlockEntity)blockEntity;
+-            if (blockEntity instanceof BeehiveBlockEntity beehiveBlockEntity) {
 -                beehiveBlockEntity.addOccupant(Bee.this, Bee.this.hasNectar());
 +            if (!Bee.this.level.isLoadedAndInBounds(Bee.this.hivePos)) return; // Paper
 +            BlockEntity tileentity = Bee.this.level.getBlockEntity(Bee.this.hivePos);
@@ -704,11 +703,11 @@
 +                BeehiveBlockEntity tileentitybeehive = (BeehiveBlockEntity) tileentity;
 +
 +                tileentitybeehive.addOccupant(Bee.this, Bee.this.hasNectar());
-             }
- 
-         }
-     }
- 
++            }
++
++        }
++    }
++
 +    private class BeeLocateHiveGoal extends Bee.BaseBeeGoal {
 +
 +        BeeLocateHiveGoal() {
@@ -746,7 +745,7 @@
 +                } while (Bee.this.goToHiveGoal.isTargetBlacklisted(blockposition));
 +
 +                Bee.this.hivePos = blockposition;
-+            }
+             }
 +        }
 +
 +        private List<BlockPos> findNearbyHivesWithSpace() {
@@ -755,13 +754,13 @@
 +            Stream<PoiRecord> stream = villageplace.getInRange((villageplacetype) -> {
 +                return villageplacetype == PoiType.BEEHIVE || villageplacetype == PoiType.BEE_NEST;
 +            }, blockposition, 20, PoiManager.Occupancy.ANY);
-+
+ 
 +            return (List) stream.map(PoiRecord::getPos).filter(Bee.this::doesHiveHaveSpace).sorted(Comparator.comparingDouble((blockposition1) -> {
 +                return blockposition1.distSqr(blockposition);
 +            })).collect(Collectors.toList());
-+        }
-+    }
-+
+         }
+     }
+ 
      @VisibleForDebug
      public class BeeGoToHiveGoal extends Bee.BaseBeeGoal {
 +
@@ -783,7 +782,7 @@
              this.setFlags(EnumSet.of(Goal.Flag.MOVE));
          }
  
-@@ -806,8 +1071,9 @@
+@@ -805,8 +1071,9 @@
                              Bee.this.pathfindRandomlyTowards(Bee.this.hivePos);
                          }
                      } else {
@@ -795,7 +794,7 @@
                              this.dropAndBlacklistHive();
                          } else if (this.lastPath != null && Bee.this.navigation.getPath().sameAs(this.lastPath)) {
                              ++this.ticksStuck;
-@@ -826,7 +1092,7 @@
+@@ -825,7 +1092,7 @@
  
          private boolean pathfindDirectlyTowards(BlockPos pos) {
              Bee.this.navigation.setMaxVisitedNodesMultiplier(10.0F);
@@ -804,7 +803,7 @@
              return Bee.this.navigation.getPath() != null && Bee.this.navigation.getPath().canReach();
          }
  
-@@ -837,7 +1103,7 @@
+@@ -836,7 +1103,7 @@
          private void blacklistTarget(BlockPos pos) {
              this.blacklistedTargets.add(pos);
  
@@ -813,7 +812,7 @@
                  this.blacklistedTargets.remove(0);
              }
  
-@@ -864,17 +1130,21 @@
+@@ -863,17 +1130,21 @@
              if (Bee.this.closerThan(pos, 2)) {
                  return true;
              } else {
@@ -838,7 +837,7 @@
              this.setFlags(EnumSet.of(Goal.Flag.MOVE));
          }
  
-@@ -922,18 +1192,17 @@
+@@ -921,18 +1192,17 @@
          }
      }
  
@@ -864,7 +863,7 @@
          }
  
          @Override
-@@ -944,38 +1213,44 @@
+@@ -943,38 +1213,44 @@
          @Override
          public void tick() {
              if (Bee.this.random.nextInt(this.adjustedTickDelay(30)) == 0) {
@@ -936,7 +935,7 @@
                              Bee.this.incrementNumCropsGrownSincePollination();
                          }
                      }
-@@ -985,310 +1260,120 @@
+@@ -984,310 +1260,120 @@
          }
      }
  

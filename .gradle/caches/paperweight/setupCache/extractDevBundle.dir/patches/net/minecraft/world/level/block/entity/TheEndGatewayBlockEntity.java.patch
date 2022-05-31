@@ -105,11 +105,12 @@
      }
  
      @Override
-@@ -157,96 +177,139 @@
+@@ -156,96 +176,140 @@
+     }
  
      public static void teleportEntity(Level world, BlockPos pos, BlockState state, Entity entity, TheEndGatewayBlockEntity blockEntity) {
-         if (world instanceof ServerLevel && !blockEntity.isCoolingDown()) {
--            ServerLevel serverLevel = (ServerLevel)world;
+-        if (world instanceof ServerLevel serverLevel && !blockEntity.isCoolingDown()) {
++        if (world instanceof ServerLevel && !blockEntity.isCoolingDown()) {
 +            ServerLevel worldserver = (ServerLevel) world;
 +
              blockEntity.teleportCooldown = 100;
@@ -293,7 +294,7 @@
                              break;
                          }
                      }
-@@ -254,7 +317,7 @@
+@@ -253,7 +317,7 @@
              }
          }
  
@@ -302,7 +303,7 @@
      }
  
      private static LevelChunk getChunk(Level world, Vec3 pos) {
-@@ -263,27 +326,31 @@
+@@ -262,27 +326,31 @@
  
      @Nullable
      private static BlockPos findValidSpawnInChunk(LevelChunk chunk) {
@@ -349,7 +350,7 @@
      }
  
      private static void spawnGatewayPortal(ServerLevel world, BlockPos pos, EndGatewayConfiguration config) {
-@@ -297,9 +364,13 @@
+@@ -296,9 +364,13 @@
  
      public int getParticleAmount() {
          int i = 0;

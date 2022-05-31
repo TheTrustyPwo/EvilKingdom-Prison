@@ -703,15 +703,7 @@
          if (i != 0) {
 -            for(Direction direction : Direction.Plane.HORIZONTAL) {
 -                RedstoneSide redstoneSide = state.getValue(PROPERTY_BY_DIRECTION.get(direction));
--                switch(redstoneSide) {
--                case UP:
--                    this.spawnParticlesAlongLine(world, random, pos, COLORS[i], direction, Direction.UP, -0.5F, 0.5F);
--                case SIDE:
--                    this.spawnParticlesAlongLine(world, random, pos, COLORS[i], Direction.DOWN, direction, 0.0F, 0.5F);
--                    break;
--                case NONE:
--                default:
--                    this.spawnParticlesAlongLine(world, random, pos, COLORS[i], Direction.DOWN, direction, 0.0F, 0.3F);
+-                switch (redstoneSide) {
 +            Iterator iterator = Direction.Plane.HORIZONTAL.iterator();
 +
 +            while (iterator.hasNext()) {
@@ -719,60 +711,48 @@
 +                RedstoneSide blockpropertyredstoneside = (RedstoneSide) state.getValue((Property) RedStoneWireBlock.PROPERTY_BY_DIRECTION.get(enumdirection));
 +
 +                switch (blockpropertyredstoneside) {
-+                    case UP:
+                     case UP:
+-                        this.spawnParticlesAlongLine(world, random, pos, COLORS[i], direction, Direction.UP, -0.5F, 0.5F);
 +                        this.spawnParticlesAlongLine(world, random, pos, RedStoneWireBlock.COLORS[i], enumdirection, Direction.UP, -0.5F, 0.5F);
-+                    case SIDE:
+                     case SIDE:
+-                        this.spawnParticlesAlongLine(world, random, pos, COLORS[i], Direction.DOWN, direction, 0.0F, 0.5F);
 +                        this.spawnParticlesAlongLine(world, random, pos, RedStoneWireBlock.COLORS[i], Direction.DOWN, enumdirection, 0.0F, 0.5F);
-+                        break;
-+                    case NONE:
-+                    default:
+                         break;
+                     case NONE:
+                     default:
+-                        this.spawnParticlesAlongLine(world, random, pos, COLORS[i], Direction.DOWN, direction, 0.0F, 0.3F);
 +                        this.spawnParticlesAlongLine(world, random, pos, RedStoneWireBlock.COLORS[i], Direction.DOWN, enumdirection, 0.0F, 0.3F);
                  }
              }
  
-@@ -422,33 +636,33 @@
- 
-     @Override
+@@ -424,11 +638,11 @@
      public BlockState rotate(BlockState state, Rotation rotation) {
--        switch(rotation) {
--        case CLOCKWISE_180:
--            return state.setValue(NORTH, state.getValue(SOUTH)).setValue(EAST, state.getValue(WEST)).setValue(SOUTH, state.getValue(NORTH)).setValue(WEST, state.getValue(EAST));
--        case COUNTERCLOCKWISE_90:
--            return state.setValue(NORTH, state.getValue(EAST)).setValue(EAST, state.getValue(SOUTH)).setValue(SOUTH, state.getValue(WEST)).setValue(WEST, state.getValue(NORTH));
--        case CLOCKWISE_90:
--            return state.setValue(NORTH, state.getValue(WEST)).setValue(EAST, state.getValue(NORTH)).setValue(SOUTH, state.getValue(EAST)).setValue(WEST, state.getValue(SOUTH));
--        default:
--            return state;
-+        switch (rotation) {
-+            case CLOCKWISE_180:
+         switch (rotation) {
+             case CLOCKWISE_180:
+-                return state.setValue(NORTH, state.getValue(SOUTH)).setValue(EAST, state.getValue(WEST)).setValue(SOUTH, state.getValue(NORTH)).setValue(WEST, state.getValue(EAST));
 +                return (BlockState) ((BlockState) ((BlockState) ((BlockState) state.setValue(RedStoneWireBlock.NORTH, (RedstoneSide) state.getValue(RedStoneWireBlock.SOUTH))).setValue(RedStoneWireBlock.EAST, (RedstoneSide) state.getValue(RedStoneWireBlock.WEST))).setValue(RedStoneWireBlock.SOUTH, (RedstoneSide) state.getValue(RedStoneWireBlock.NORTH))).setValue(RedStoneWireBlock.WEST, (RedstoneSide) state.getValue(RedStoneWireBlock.EAST));
-+            case COUNTERCLOCKWISE_90:
+             case COUNTERCLOCKWISE_90:
+-                return state.setValue(NORTH, state.getValue(EAST)).setValue(EAST, state.getValue(SOUTH)).setValue(SOUTH, state.getValue(WEST)).setValue(WEST, state.getValue(NORTH));
 +                return (BlockState) ((BlockState) ((BlockState) ((BlockState) state.setValue(RedStoneWireBlock.NORTH, (RedstoneSide) state.getValue(RedStoneWireBlock.EAST))).setValue(RedStoneWireBlock.EAST, (RedstoneSide) state.getValue(RedStoneWireBlock.SOUTH))).setValue(RedStoneWireBlock.SOUTH, (RedstoneSide) state.getValue(RedStoneWireBlock.WEST))).setValue(RedStoneWireBlock.WEST, (RedstoneSide) state.getValue(RedStoneWireBlock.NORTH));
-+            case CLOCKWISE_90:
+             case CLOCKWISE_90:
+-                return state.setValue(NORTH, state.getValue(WEST)).setValue(EAST, state.getValue(NORTH)).setValue(SOUTH, state.getValue(EAST)).setValue(WEST, state.getValue(SOUTH));
 +                return (BlockState) ((BlockState) ((BlockState) ((BlockState) state.setValue(RedStoneWireBlock.NORTH, (RedstoneSide) state.getValue(RedStoneWireBlock.WEST))).setValue(RedStoneWireBlock.EAST, (RedstoneSide) state.getValue(RedStoneWireBlock.NORTH))).setValue(RedStoneWireBlock.SOUTH, (RedstoneSide) state.getValue(RedStoneWireBlock.EAST))).setValue(RedStoneWireBlock.WEST, (RedstoneSide) state.getValue(RedStoneWireBlock.SOUTH));
-+            default:
-+                return state;
+             default:
+                 return state;
          }
-     }
- 
-     @Override
+@@ -438,9 +652,9 @@
      public BlockState mirror(BlockState state, Mirror mirror) {
--        switch(mirror) {
--        case LEFT_RIGHT:
--            return state.setValue(NORTH, state.getValue(SOUTH)).setValue(SOUTH, state.getValue(NORTH));
--        case FRONT_BACK:
--            return state.setValue(EAST, state.getValue(WEST)).setValue(WEST, state.getValue(EAST));
--        default:
--            return super.mirror(state, mirror);
-+        switch (mirror) {
-+            case LEFT_RIGHT:
+         switch (mirror) {
+             case LEFT_RIGHT:
+-                return state.setValue(NORTH, state.getValue(SOUTH)).setValue(SOUTH, state.getValue(NORTH));
 +                return (BlockState) ((BlockState) state.setValue(RedStoneWireBlock.NORTH, (RedstoneSide) state.getValue(RedStoneWireBlock.SOUTH))).setValue(RedStoneWireBlock.SOUTH, (RedstoneSide) state.getValue(RedStoneWireBlock.NORTH));
-+            case FRONT_BACK:
+             case FRONT_BACK:
+-                return state.setValue(EAST, state.getValue(WEST)).setValue(WEST, state.getValue(EAST));
 +                return (BlockState) ((BlockState) state.setValue(RedStoneWireBlock.EAST, (RedstoneSide) state.getValue(RedStoneWireBlock.WEST))).setValue(RedStoneWireBlock.WEST, (RedstoneSide) state.getValue(RedStoneWireBlock.EAST));
-+            default:
-+                return super.mirror(state, mirror);
+             default:
+                 return super.mirror(state, mirror);
          }
-     }
+@@ -448,7 +662,7 @@
  
      @Override
      protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {

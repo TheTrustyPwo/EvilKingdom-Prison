@@ -1,13 +1,14 @@
 --- a/net/minecraft/world/inventory/GrindstoneMenu.java
 +++ b/net/minecraft/world/inventory/GrindstoneMenu.java
-@@ -1,5 +1,6 @@
+@@ -1,13 +1,14 @@
  package net.minecraft.world.inventory;
  
 +import java.util.Iterator;
  import java.util.Map;
- import java.util.Map.Entry;
++import java.util.Map.Entry;
  import java.util.stream.Collectors;
-@@ -8,7 +9,6 @@
+ import net.minecraft.server.level.ServerLevel;
+ import net.minecraft.world.Container;
  import net.minecraft.world.SimpleContainer;
  import net.minecraft.world.entity.ExperienceOrb;
  import net.minecraft.world.entity.player.Inventory;
@@ -15,7 +16,7 @@
  import net.minecraft.world.item.Item;
  import net.minecraft.world.item.ItemStack;
  import net.minecraft.world.item.Items;
-@@ -17,8 +17,30 @@
+@@ -16,8 +17,30 @@
  import net.minecraft.world.level.Level;
  import net.minecraft.world.level.block.Blocks;
  import net.minecraft.world.phys.Vec3;
@@ -46,7 +47,7 @@
      public static final int MAX_NAME_LENGTH = 35;
      public static final int INPUT_SLOT = 0;
      public static final int ADDITIONAL_SLOT = 1;
-@@ -27,22 +49,31 @@
+@@ -26,14 +49,8 @@
      private static final int INV_SLOT_END = 30;
      private static final int USE_ROW_SLOT_START = 30;
      private static final int USE_ROW_SLOT_END = 39;
@@ -63,11 +64,9 @@
      private final ContainerLevelAccess access;
  
      public GrindstoneMenu(int syncId, Inventory playerInventory) {
-         this(syncId, playerInventory, ContainerLevelAccess.NULL);
-     }
+@@ -42,6 +59,21 @@
  
--    public GrindstoneMenu(int syncId, Inventory playerInventory, ContainerLevelAccess context) {
-+    public GrindstoneMenu(int syncId, Inventory playerInventory, final ContainerLevelAccess context) {
+     public GrindstoneMenu(int syncId, Inventory playerInventory, final ContainerLevelAccess context) {
          super(MenuType.GRINDSTONE, syncId);
 +        this.resultSlots = new ResultContainer();
 +        this.repairSlots = new SimpleContainer(2) {
@@ -87,7 +86,7 @@
          this.access = context;
          this.addSlot(new Slot(this.repairSlots, 0, 49, 19) {
              @Override
-@@ -63,56 +94,64 @@
+@@ -62,56 +94,64 @@
              }
  
              @Override
@@ -138,7 +137,7 @@
 +                    Enchantment enchantment = (Enchantment) entry.getKey();
 +                    Integer integer = (Integer) entry.getValue();
  
--                for(Entry<Enchantment, Integer> entry : map.entrySet()) {
+-                for(Map.Entry<Enchantment, Integer> entry : map.entrySet()) {
 -                    Enchantment enchantment = entry.getKey();
 -                    Integer integer = entry.getValue();
                      if (!enchantment.isCurse()) {
@@ -173,7 +172,7 @@
      }
  
      @Override
-@@ -120,163 +159,178 @@
+@@ -119,163 +159,178 @@
          super.slotsChanged(inventory);
          if (inventory == this.repairSlots) {
              this.createResult();
@@ -271,7 +270,7 @@
          Map<Enchantment, Integer> map = EnchantmentHelper.getEnchantments(source);
 +        Iterator iterator = map.entrySet().iterator();
  
--        for(Entry<Enchantment, Integer> entry : map.entrySet()) {
+-        for(Map.Entry<Enchantment, Integer> entry : map.entrySet()) {
 -            Enchantment enchantment = entry.getKey();
 -            if (!enchantment.isCurse() || EnchantmentHelper.getItemEnchantmentLevel(enchantment, itemStack) == 0) {
 -                itemStack.enchant(enchantment, entry.getValue());
@@ -307,14 +306,15 @@
 -        itemStack.setCount(amount);
 -        Map<Enchantment, Integer> map = EnchantmentHelper.getEnchantments(item).entrySet().stream().filter((entry) -> {
 -            return entry.getKey().isCurse();
-+        itemstack1.setCount(amount);
-+        Map<Enchantment, Integer> map = (Map) EnchantmentHelper.getEnchantments(item).entrySet().stream().filter((entry) -> {
-+            return ((Enchantment) entry.getKey()).isCurse();
-         }).collect(Collectors.toMap(Entry::getKey, Entry::getValue));
+-        }).collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
 -        EnchantmentHelper.setEnchantments(map, itemStack);
 -        itemStack.setRepairCost(0);
 -        if (itemStack.is(Items.ENCHANTED_BOOK) && map.size() == 0) {
 -            itemStack = new ItemStack(Items.BOOK);
++        itemstack1.setCount(amount);
++        Map<Enchantment, Integer> map = (Map) EnchantmentHelper.getEnchantments(item).entrySet().stream().filter((entry) -> {
++            return ((Enchantment) entry.getKey()).isCurse();
++        }).collect(Collectors.toMap(Entry::getKey, Entry::getValue));
 +
 +        EnchantmentHelper.setEnchantments(map, itemstack1);
 +        itemstack1.setRepairCost(0);

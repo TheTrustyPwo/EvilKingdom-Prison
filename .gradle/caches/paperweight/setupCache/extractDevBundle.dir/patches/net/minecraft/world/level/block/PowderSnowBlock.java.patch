@@ -57,12 +57,11 @@
                  world.destroyBlock(pos, false);
              }
  
-@@ -78,26 +86,29 @@
+@@ -78,24 +86,29 @@
  
      @Override
      public void fallOn(Level world, BlockState state, BlockPos pos, Entity entity, float fallDistance) {
--        if (!((double)fallDistance < 4.0D) && entity instanceof LivingEntity) {
--            LivingEntity livingEntity = (LivingEntity)entity;
+-        if (!((double)fallDistance < 4.0D) && entity instanceof LivingEntity livingEntity) {
 -            LivingEntity.Fallsounds fallsounds = livingEntity.getFallSounds();
 -            SoundEvent soundEvent = (double)fallDistance < 7.0D ? fallsounds.small() : fallsounds.big();
 -            entity.playSound(soundEvent, 1.0F, 1.0F);
@@ -77,9 +76,9 @@
  
      @Override
      public VoxelShape getCollisionShape(BlockState state, BlockGetter world, BlockPos pos, CollisionContext context) {
-         if (context instanceof EntityCollisionContext) {
--            EntityCollisionContext entityCollisionContext = (EntityCollisionContext)context;
+-        if (context instanceof EntityCollisionContext entityCollisionContext) {
 -            Entity entity = entityCollisionContext.getEntity();
++        if (context instanceof EntityCollisionContext) {
 +            EntityCollisionContext voxelshapecollisionentity = (EntityCollisionContext) context;
 +            Entity entity = voxelshapecollisionentity.getEntity();
 +
@@ -97,7 +96,7 @@
                      return super.getCollisionShape(state, world, pos, context);
                  }
              }
-@@ -112,11 +123,7 @@
+@@ -110,11 +123,7 @@
      }
  
      public static boolean canEntityWalkOnPowderSnow(Entity entity) {

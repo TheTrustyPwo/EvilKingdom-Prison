@@ -1,6 +1,6 @@
 --- a/net/minecraft/server/PlayerAdvancements.java
 +++ b/net/minecraft/server/PlayerAdvancements.java
-@@ -19,16 +19,15 @@
+@@ -19,14 +19,14 @@
  import java.io.File;
  import java.io.FileOutputStream;
  import java.io.IOException;
@@ -13,13 +13,11 @@
 +import java.util.Iterator;
  import java.util.List;
  import java.util.Map;
--import java.util.Set;
- import java.util.Map.Entry;
-+import java.util.Set;
++import java.util.Map.Entry;
+ import java.util.Set;
  import java.util.stream.Collectors;
  import java.util.stream.Stream;
- import javax.annotation.Nullable;
-@@ -41,6 +40,7 @@
+@@ -40,6 +40,7 @@
  import net.minecraft.advancements.CriterionProgress;
  import net.minecraft.advancements.CriterionTrigger;
  import net.minecraft.advancements.CriterionTriggerInstance;
@@ -27,7 +25,7 @@
  import net.minecraft.network.chat.ChatType;
  import net.minecraft.network.chat.TranslatableComponent;
  import net.minecraft.network.protocol.game.ClientboundSelectAdvancementsTabPacket;
-@@ -53,6 +53,7 @@
+@@ -52,6 +53,7 @@
  import org.slf4j.Logger;
  
  public class PlayerAdvancements {
@@ -35,7 +33,7 @@
      private static final Logger LOGGER = LogUtils.getLogger();
      private static final int VISIBILITY_DEPTH = 2;
      private static final Gson GSON = (new GsonBuilder()).registerTypeAdapter(AdvancementProgress.class, new AdvancementProgress.Serializer()).registerTypeAdapter(ResourceLocation.class, new ResourceLocation.Serializer()).setPrettyPrinting().create();
-@@ -70,6 +71,8 @@
+@@ -69,6 +71,8 @@
      private Advancement lastSelectedTab;
      private boolean isFirstPacket = true;
  
@@ -44,7 +42,7 @@
      public PlayerAdvancements(DataFixer dataFixer, PlayerList playerManager, ServerAdvancementManager advancementLoader, File advancementFile, ServerPlayer owner) {
          this.dataFixer = dataFixer;
          this.playerList = playerManager;
-@@ -83,8 +86,12 @@
+@@ -82,8 +86,12 @@
      }
  
      public void stopListening() {
@@ -59,7 +57,7 @@
          }
  
      }
-@@ -101,7 +108,11 @@
+@@ -100,7 +108,11 @@
      }
  
      private void registerListeners(ServerAdvancementManager advancementLoader) {
@@ -72,13 +70,13 @@
              this.registerListeners(advancement);
          }
  
-@@ -109,22 +120,33 @@
+@@ -108,22 +120,33 @@
  
      private void ensureAllVisible() {
          List<Advancement> list = Lists.newArrayList();
 +        Iterator iterator = this.advancements.entrySet().iterator();
  
--        for(Entry<Advancement, AdvancementProgress> entry : this.advancements.entrySet()) {
+-        for(Map.Entry<Advancement, AdvancementProgress> entry : this.advancements.entrySet()) {
 -            if (entry.getValue().isDone()) {
 -                list.add(entry.getKey());
 -                this.progressChanged.add(entry.getKey());
@@ -112,7 +110,7 @@
              if (advancement.getCriteria().isEmpty()) {
                  this.award(advancement, "");
                  advancement.getRewards().grant(this.player);
-@@ -136,47 +158,56 @@
+@@ -135,47 +158,56 @@
      private void load(ServerAdvancementManager advancementLoader) {
          if (this.file.isFile()) {
              try {
@@ -138,14 +136,15 @@
                          throw new JsonParseException("Found null for advancements");
                      }
  
-                     Stream<Entry<ResourceLocation, AdvancementProgress>> stream = map.entrySet().stream().sorted(Comparator.comparing(Entry::getValue));
+-                    Stream<Map.Entry<ResourceLocation, AdvancementProgress>> stream = map.entrySet().stream().sorted(Comparator.comparing(Map.Entry::getValue));
++                    Stream<Entry<ResourceLocation, AdvancementProgress>> stream = map.entrySet().stream().sorted(Comparator.comparing(Entry::getValue));
 +                    Iterator iterator = ((List) stream.collect(Collectors.toList())).iterator();
 +
 +                    while (iterator.hasNext()) {
 +                        Entry<ResourceLocation, AdvancementProgress> entry = (Entry) iterator.next();
 +                        Advancement advancement = advancementLoader.getAdvancement((ResourceLocation) entry.getKey());
  
--                    for(Entry<ResourceLocation, AdvancementProgress> entry : stream.collect(Collectors.toList())) {
+-                    for(Map.Entry<ResourceLocation, AdvancementProgress> entry : stream.collect(Collectors.toList())) {
 -                        Advancement advancement = advancementLoader.getAdvancement(entry.getKey());
                          if (advancement == null) {
 -                            LOGGER.warn("Ignored advancement '{}' in progress file {} - it doesn't exist anymore?", entry.getKey(), this.file);
@@ -187,7 +186,7 @@
              }
          }
  
-@@ -186,12 +217,16 @@
+@@ -185,12 +217,16 @@
      }
  
      public void save() {
@@ -195,7 +194,7 @@
          Map<ResourceLocation, AdvancementProgress> map = Maps.newHashMap();
 +        Iterator iterator = this.advancements.entrySet().iterator();
  
--        for(Entry<Advancement, AdvancementProgress> entry : this.advancements.entrySet()) {
+-        for(Map.Entry<Advancement, AdvancementProgress> entry : this.advancements.entrySet()) {
 -            AdvancementProgress advancementProgress = entry.getValue();
 -            if (advancementProgress.hasProgress()) {
 -                map.put(entry.getKey().getId(), advancementProgress);
@@ -208,7 +207,7 @@
              }
          }
  
-@@ -199,95 +234,120 @@
+@@ -198,95 +234,120 @@
              this.file.getParentFile().mkdirs();
          }
  
@@ -346,7 +345,7 @@
      private void registerListeners(Advancement advancement) {
 -        AdvancementProgress advancementProgress = this.getOrStartProgress(advancement);
 -        if (!advancementProgress.isDone()) {
--            for(Entry<String, Criterion> entry : advancement.getCriteria().entrySet()) {
+-            for(Map.Entry<String, Criterion> entry : advancement.getCriteria().entrySet()) {
 -                CriterionProgress criterionProgress = advancementProgress.getCriterion(entry.getKey());
 -                if (criterionProgress != null && !criterionProgress.isDone()) {
 -                    CriterionTriggerInstance criterionTriggerInstance = entry.getValue().getTrigger();
@@ -374,7 +373,7 @@
                          }
                      }
                  }
-@@ -297,16 +357,21 @@
+@@ -296,16 +357,21 @@
      }
  
      private void unregisterListeners(Advancement advancement) {
@@ -382,7 +381,7 @@
 +        AdvancementProgress advancementprogress = this.getOrStartProgress(advancement);
 +        Iterator iterator = advancement.getCriteria().entrySet().iterator();
  
--        for(Entry<String, Criterion> entry : advancement.getCriteria().entrySet()) {
+-        for(Map.Entry<String, Criterion> entry : advancement.getCriteria().entrySet()) {
 -            CriterionProgress criterionProgress = advancementProgress.getCriterion(entry.getKey());
 -            if (criterionProgress != null && (criterionProgress.isDone() || advancementProgress.isDone())) {
 -                CriterionTriggerInstance criterionTriggerInstance = entry.getValue().getTrigger();
@@ -405,7 +404,7 @@
                      }
                  }
              }
-@@ -318,24 +383,31 @@
+@@ -317,24 +383,31 @@
          if (this.isFirstPacket || !this.visibilityChanged.isEmpty() || !this.progressChanged.isEmpty()) {
              Map<ResourceLocation, AdvancementProgress> map = Maps.newHashMap();
              Set<Advancement> set = Sets.newLinkedHashSet();
@@ -446,7 +445,7 @@
                  this.visibilityChanged.clear();
                  this.progressChanged.clear();
              }
-@@ -345,27 +417,29 @@
+@@ -344,27 +417,29 @@
      }
  
      public void setSelectedTab(@Nullable Advancement advancement) {
@@ -483,7 +482,7 @@
      }
  
      private void startProgress(Advancement advancement, AdvancementProgress progress) {
-@@ -374,31 +448,54 @@
+@@ -373,31 +448,54 @@
      }
  
      private void ensureVisibility(Advancement advancement) {
@@ -547,7 +546,7 @@
              if (i == 0 && this.hasCompletedChildrenOrSelf(advancement)) {
                  return true;
              }
-@@ -407,8 +504,9 @@
+@@ -406,8 +504,9 @@
                  return false;
              }
  
@@ -559,7 +558,7 @@
                  return true;
              }
  
-@@ -423,17 +521,24 @@
+@@ -422,17 +521,24 @@
      }
  
      private boolean hasCompletedChildrenOrSelf(Advancement advancement) {

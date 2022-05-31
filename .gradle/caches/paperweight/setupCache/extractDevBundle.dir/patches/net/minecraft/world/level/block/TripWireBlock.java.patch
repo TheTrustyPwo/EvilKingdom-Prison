@@ -132,7 +132,7 @@
                  this.checkPressed(world, pos);
              }
          }
-@@ -114,73 +137,108 @@
+@@ -114,54 +137,89 @@
  
      @Override
      public void tick(BlockState state, ServerLevel world, BlockPos pos, Random random) {
@@ -230,45 +230,32 @@
  
      @Override
      public BlockState rotate(BlockState state, Rotation rotation) {
--        switch(rotation) {
--        case CLOCKWISE_180:
--            return state.setValue(NORTH, state.getValue(SOUTH)).setValue(EAST, state.getValue(WEST)).setValue(SOUTH, state.getValue(NORTH)).setValue(WEST, state.getValue(EAST));
--        case COUNTERCLOCKWISE_90:
--            return state.setValue(NORTH, state.getValue(EAST)).setValue(EAST, state.getValue(SOUTH)).setValue(SOUTH, state.getValue(WEST)).setValue(WEST, state.getValue(NORTH));
--        case CLOCKWISE_90:
--            return state.setValue(NORTH, state.getValue(WEST)).setValue(EAST, state.getValue(NORTH)).setValue(SOUTH, state.getValue(EAST)).setValue(WEST, state.getValue(SOUTH));
--        default:
--            return state;
-+        switch (rotation) {
-+            case CLOCKWISE_180:
+         switch (rotation) {
+             case CLOCKWISE_180:
+-                return state.setValue(NORTH, state.getValue(SOUTH)).setValue(EAST, state.getValue(WEST)).setValue(SOUTH, state.getValue(NORTH)).setValue(WEST, state.getValue(EAST));
 +                return (BlockState) ((BlockState) ((BlockState) ((BlockState) state.setValue(TripWireBlock.NORTH, (Boolean) state.getValue(TripWireBlock.SOUTH))).setValue(TripWireBlock.EAST, (Boolean) state.getValue(TripWireBlock.WEST))).setValue(TripWireBlock.SOUTH, (Boolean) state.getValue(TripWireBlock.NORTH))).setValue(TripWireBlock.WEST, (Boolean) state.getValue(TripWireBlock.EAST));
-+            case COUNTERCLOCKWISE_90:
+             case COUNTERCLOCKWISE_90:
+-                return state.setValue(NORTH, state.getValue(EAST)).setValue(EAST, state.getValue(SOUTH)).setValue(SOUTH, state.getValue(WEST)).setValue(WEST, state.getValue(NORTH));
 +                return (BlockState) ((BlockState) ((BlockState) ((BlockState) state.setValue(TripWireBlock.NORTH, (Boolean) state.getValue(TripWireBlock.EAST))).setValue(TripWireBlock.EAST, (Boolean) state.getValue(TripWireBlock.SOUTH))).setValue(TripWireBlock.SOUTH, (Boolean) state.getValue(TripWireBlock.WEST))).setValue(TripWireBlock.WEST, (Boolean) state.getValue(TripWireBlock.NORTH));
-+            case CLOCKWISE_90:
+             case CLOCKWISE_90:
+-                return state.setValue(NORTH, state.getValue(WEST)).setValue(EAST, state.getValue(NORTH)).setValue(SOUTH, state.getValue(EAST)).setValue(WEST, state.getValue(SOUTH));
 +                return (BlockState) ((BlockState) ((BlockState) ((BlockState) state.setValue(TripWireBlock.NORTH, (Boolean) state.getValue(TripWireBlock.WEST))).setValue(TripWireBlock.EAST, (Boolean) state.getValue(TripWireBlock.NORTH))).setValue(TripWireBlock.SOUTH, (Boolean) state.getValue(TripWireBlock.EAST))).setValue(TripWireBlock.WEST, (Boolean) state.getValue(TripWireBlock.SOUTH));
-+            default:
-+                return state;
+             default:
+                 return state;
          }
-     }
- 
-     @Override
+@@ -171,9 +229,9 @@
      public BlockState mirror(BlockState state, Mirror mirror) {
--        switch(mirror) {
--        case LEFT_RIGHT:
--            return state.setValue(NORTH, state.getValue(SOUTH)).setValue(SOUTH, state.getValue(NORTH));
--        case FRONT_BACK:
--            return state.setValue(EAST, state.getValue(WEST)).setValue(WEST, state.getValue(EAST));
--        default:
--            return super.mirror(state, mirror);
-+        switch (mirror) {
-+            case LEFT_RIGHT:
+         switch (mirror) {
+             case LEFT_RIGHT:
+-                return state.setValue(NORTH, state.getValue(SOUTH)).setValue(SOUTH, state.getValue(NORTH));
 +                return (BlockState) ((BlockState) state.setValue(TripWireBlock.NORTH, (Boolean) state.getValue(TripWireBlock.SOUTH))).setValue(TripWireBlock.SOUTH, (Boolean) state.getValue(TripWireBlock.NORTH));
-+            case FRONT_BACK:
+             case FRONT_BACK:
+-                return state.setValue(EAST, state.getValue(WEST)).setValue(WEST, state.getValue(EAST));
 +                return (BlockState) ((BlockState) state.setValue(TripWireBlock.EAST, (Boolean) state.getValue(TripWireBlock.WEST))).setValue(TripWireBlock.WEST, (Boolean) state.getValue(TripWireBlock.EAST));
-+            default:
-+                return super.mirror(state, mirror);
+             default:
+                 return super.mirror(state, mirror);
          }
-     }
+@@ -181,6 +239,6 @@
  
      @Override
      protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {

@@ -98,14 +98,13 @@
                  return true;
              }
          }
-@@ -54,13 +91,24 @@
+@@ -54,12 +91,24 @@
          return false;
      }
  
 -    private static boolean tryShearLivingEntity(ServerLevel world, BlockPos pos) {
 -        for(LivingEntity livingEntity : world.getEntitiesOfClass(LivingEntity.class, new AABB(pos), EntitySelector.NO_SPECTATORS)) {
--            if (livingEntity instanceof Shearable) {
--                Shearable shearable = (Shearable)livingEntity;
+-            if (livingEntity instanceof Shearable shearable) {
 -                if (shearable.readyForShearing()) {
 -                    shearable.shear(SoundSource.BLOCKS);
 -                    world.gameEvent((Entity)null, GameEvent.SHEAR, pos);

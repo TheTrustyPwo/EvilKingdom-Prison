@@ -38,28 +38,28 @@
 -    private final ContainerData dataAccess = new ContainerData() {
 -        @Override
 -        public int get(int index) {
--            switch(index) {
--            case 0:
--                return BeaconBlockEntity.this.levels;
--            case 1:
--                return MobEffect.getId(BeaconBlockEntity.this.primaryPower);
--            case 2:
--                return MobEffect.getId(BeaconBlockEntity.this.secondaryPower);
--            default:
--                return 0;
+-            switch (index) {
+-                case 0:
+-                    return BeaconBlockEntity.this.levels;
+-                case 1:
+-                    return MobEffect.getId(BeaconBlockEntity.this.primaryPower);
+-                case 2:
+-                    return MobEffect.getId(BeaconBlockEntity.this.secondaryPower);
+-                default:
+-                    return 0;
 -            }
 -        }
 -
 -        @Override
 -        public void set(int index, int value) {
--            switch(index) {
--            case 0:
--                BeaconBlockEntity.this.levels = value;
--                break;
--            case 1:
--                if (!BeaconBlockEntity.this.level.isClientSide && !BeaconBlockEntity.this.beamSections.isEmpty()) {
--                    BeaconBlockEntity.playSound(BeaconBlockEntity.this.level, BeaconBlockEntity.this.worldPosition, SoundEvents.BEACON_POWER_SELECT);
--                }
+-            switch (index) {
+-                case 0:
+-                    BeaconBlockEntity.this.levels = value;
+-                    break;
+-                case 1:
+-                    if (!BeaconBlockEntity.this.level.isClientSide && !BeaconBlockEntity.this.beamSections.isEmpty()) {
+-                        BeaconBlockEntity.playSound(BeaconBlockEntity.this.level, BeaconBlockEntity.this.worldPosition, SoundEvents.BEACON_POWER_SELECT);
+-                    }
 +    public LockCode lockKey;
 +    private final ContainerData dataAccess;
 +    // CraftBukkit start - add fields and methods
@@ -67,10 +67,10 @@
 +        return (this.primaryPower != null) ? CraftPotionUtil.toBukkit(new MobEffectInstance(this.primaryPower, BeaconBlockEntity.getLevel(this.levels), BeaconBlockEntity.getAmplification(this.levels, this.primaryPower, this.secondaryPower), true, true)) : null;
 +    }
  
--                BeaconBlockEntity.this.primaryPower = BeaconBlockEntity.getValidEffectById(value);
--                break;
--            case 2:
--                BeaconBlockEntity.this.secondaryPower = BeaconBlockEntity.getValidEffectById(value);
+-                    BeaconBlockEntity.this.primaryPower = BeaconBlockEntity.getValidEffectById(value);
+-                    break;
+-                case 2:
+-                    BeaconBlockEntity.this.secondaryPower = BeaconBlockEntity.getValidEffectById(value);
 -            }
 +    public PotionEffect getSecondaryEffect() {
 +        return (BeaconBlockEntity.hasSecondaryEffect(this.levels, this.primaryPower, this.secondaryPower)) ? CraftPotionUtil.toBukkit(new MobEffectInstance(this.secondaryPower, BeaconBlockEntity.getLevel(this.levels), BeaconBlockEntity.getAmplification(this.levels, this.primaryPower, this.secondaryPower), true, true)) : null;

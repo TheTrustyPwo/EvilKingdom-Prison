@@ -8,16 +8,17 @@
      public static final int MAX_DRAW_DURATION = 20;
      public static final int DEFAULT_RANGE = 15;
  
-@@ -24,66 +25,90 @@
+@@ -23,66 +24,91 @@
+ 
      @Override
      public void releaseUsing(ItemStack stack, Level world, LivingEntity user, int remainingUseTicks) {
-         if (user instanceof Player) {
--            Player player = (Player)user;
+-        if (user instanceof Player player) {
 -            boolean bl = player.getAbilities().instabuild || EnchantmentHelper.getItemEnchantmentLevel(Enchantments.INFINITY_ARROWS, stack) > 0;
 -            ItemStack itemStack = player.getProjectile(stack);
 -            if (!itemStack.isEmpty() || bl) {
 -                if (itemStack.isEmpty()) {
 -                    itemStack = new ItemStack(Items.ARROW);
++        if (user instanceof Player) {
 +            Player entityhuman = (Player) user;
 +            boolean flag = entityhuman.getAbilities().instabuild || EnchantmentHelper.getItemEnchantmentLevel(Enchantments.INFINITY_ARROWS, stack) > 0;
 +            ItemStack itemstack1 = entityhuman.getProjectile(stack);
@@ -71,13 +72,13 @@
                          if (EnchantmentHelper.getItemEnchantmentLevel(Enchantments.FLAMING_ARROWS, stack) > 0) {
 -                            abstractArrow.setSecondsOnFire(100);
 +                            entityarrow.setSecondsOnFire(100);
-+                        }
+                         }
 +                        // CraftBukkit start
 +                        org.bukkit.event.entity.EntityShootBowEvent event = org.bukkit.craftbukkit.v1_18_R2.event.CraftEventFactory.callEntityShootBowEvent(entityhuman, stack, itemstack1, entityarrow, entityhuman.getUsedItemHand(), f, !flag1);
 +                        if (event.isCancelled()) {
 +                            event.getProjectile().remove();
 +                            return;
-                         }
++                        }
 +                        flag1 = !event.shouldConsumeItem();
 +                        // CraftBukkit end
  
@@ -132,7 +133,7 @@
          f = (f * f + f * 2.0F) / 3.0F;
          if (f > 1.0F) {
              f = 1.0F;
-@@ -104,19 +129,20 @@
+@@ -103,19 +129,20 @@
  
      @Override
      public InteractionResultHolder<ItemStack> use(Level world, Player user, InteractionHand hand) {

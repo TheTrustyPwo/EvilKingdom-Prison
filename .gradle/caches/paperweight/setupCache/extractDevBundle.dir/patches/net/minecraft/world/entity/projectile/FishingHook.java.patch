@@ -375,14 +375,14 @@
 +
 +                        worldserver.sendParticles(ParticleTypes.FISHING, d0, d1, d2, 0, (double) f4, 0.01D, (double) (-f3), 1.0D);
 +                        worldserver.sendParticles(ParticleTypes.FISHING, d0, d1, d2, 0, (double) (-f4), 0.01D, (double) f3, 1.0D);
-+                    }
+                     }
 +                } else {
 +                    // CraftBukkit start
 +                    PlayerFishEvent playerFishEvent = new PlayerFishEvent((Player) this.getPlayerOwner().getBukkitEntity(), null, (FishHook) this.getBukkitEntity(), PlayerFishEvent.State.BITE);
 +                    this.level.getCraftServer().getPluginManager().callEvent(playerFishEvent);
 +                    if (playerFishEvent.isCancelled()) {
 +                        return;
-                     }
++                    }
 +                    // CraftBukkit end
 +                    this.playSound(SoundEvents.FISHING_BOBBER_SPLASH, 0.25F, 1.0F + (this.random.nextFloat() - this.random.nextFloat()) * 0.4F);
 +                    double d3 = this.getY() + 0.5D;
@@ -473,32 +473,24 @@
  
 -        for(int i = -1; i <= 2; ++i) {
 -            FishingHook.OpenWaterType openWaterType2 = this.getOpenWaterTypeForArea(pos.offset(-2, i, -2), pos.offset(2, i, 2));
--            switch(openWaterType2) {
--            case INVALID:
--                return false;
--            case ABOVE_WATER:
--                if (openWaterType == FishingHook.OpenWaterType.INVALID) {
--                    return false;
--                }
--                break;
--            case INSIDE_WATER:
--                if (openWaterType == FishingHook.OpenWaterType.ABOVE_WATER) {
+-            switch (openWaterType2) {
 +        for (int i = -1; i <= 2; ++i) {
 +            FishingHook.OpenWaterType entityfishinghook_waterposition1 = this.getOpenWaterTypeForArea(pos.offset(-2, i, -2), pos.offset(2, i, 2));
 +
 +            switch (entityfishinghook_waterposition1) {
-+                case INVALID:
+                 case INVALID:
                      return false;
--                }
-+                case ABOVE_WATER:
+                 case ABOVE_WATER:
+-                    if (openWaterType == FishingHook.OpenWaterType.INVALID) {
 +                    if (entityfishinghook_waterposition == FishingHook.OpenWaterType.INVALID) {
-+                        return false;
-+                    }
-+                    break;
-+                case INSIDE_WATER:
+                         return false;
+                     }
+                     break;
+                 case INSIDE_WATER:
+-                    if (openWaterType == FishingHook.OpenWaterType.ABOVE_WATER) {
 +                    if (entityfishinghook_waterposition == FishingHook.OpenWaterType.ABOVE_WATER) {
-+                        return false;
-+                    }
+                         return false;
+                     }
              }
  
 -            openWaterType = openWaterType2;

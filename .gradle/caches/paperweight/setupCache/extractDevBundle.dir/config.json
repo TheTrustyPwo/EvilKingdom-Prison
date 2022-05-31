@@ -164,7 +164,7 @@
     "dep": {
       "url": "https://repo.papermc.io/repository/maven-public/",
       "coordinates": [
-        "net.minecraftforge:forgeflower:1.5.498.29"
+        "net.minecraftforge:forgeflower:1.5.605.7"
       ]
     },
     "args": [

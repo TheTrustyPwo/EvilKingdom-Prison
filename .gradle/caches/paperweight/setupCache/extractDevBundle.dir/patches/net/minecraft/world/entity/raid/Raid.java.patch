@@ -734,7 +734,7 @@
          entity.setDropChance(EquipmentSlot.HEAD, 2.0F);
      }
  
-@@ -698,33 +780,34 @@
+@@ -698,13 +780,14 @@
      }
  
      private int getPotentialBonusSpawns(Raid.RaiderType member, Random random, int wave, DifficultyInstance localDifficulty, boolean extra) {
@@ -745,55 +745,35 @@
 +        boolean flag1 = enumdifficulty == Difficulty.EASY;
 +        boolean flag2 = enumdifficulty == Difficulty.NORMAL;
          int j;
--        switch(member) {
--        case WITCH:
--            if (bl || wave <= 2 || wave == 4) {
--                return 0;
--            }
- 
--            j = 1;
--            break;
--        case PILLAGER:
--        case VINDICATOR:
--            if (bl) {
--                j = random.nextInt(2);
--            } else if (bl2) {
-+        switch (member) {
-+            case WITCH:
-+                if (flag1 || wave <= 2 || wave == 4) {
-+                    return 0;
-+                }
 +
-                 j = 1;
--            } else {
--                j = 2;
--            }
--            break;
--        case RAVAGER:
--            j = !bl && extra ? 1 : 0;
--            break;
--        default:
--            return 0;
-+                break;
-+            case PILLAGER:
-+            case VINDICATOR:
-+                if (flag1) {
-+                    j = random.nextInt(2);
-+                } else if (flag2) {
-+                    j = 1;
-+                } else {
-+                    j = 2;
-+                }
-+                break;
-+            case RAVAGER:
-+                j = !flag1 && extra ? 1 : 0;
-+                break;
-+            default:
-+                return 0;
-         }
+         switch (member) {
+             case WITCH:
+-                if (bl || wave <= 2 || wave == 4) {
++                if (flag1 || wave <= 2 || wave == 4) {
+                     return 0;
+                 }
  
-         return j > 0 ? random.nextInt(j + 1) : 0;
-@@ -749,62 +832,69 @@
+@@ -712,16 +795,16 @@
+                 break;
+             case PILLAGER:
+             case VINDICATOR:
+-                if (bl) {
++                if (flag1) {
+                     j = random.nextInt(2);
+-                } else if (bl2) {
++                } else if (flag2) {
+                     j = 1;
+                 } else {
+                     j = 2;
+                 }
+                 break;
+             case RAVAGER:
+-                j = !bl && extra ? 1 : 0;
++                j = !flag1 && extra ? 1 : 0;
+                 break;
+             default:
+                 return 0;
+@@ -749,13 +832,16 @@
          nbt.putInt("CX", this.center.getX());
          nbt.putInt("CY", this.center.getY());
          nbt.putInt("CZ", this.center.getZ());
@@ -814,27 +794,7 @@
          return nbt;
      }
  
-     public int getNumGroups(Difficulty difficulty) {
--        switch(difficulty) {
--        case EASY:
--            return 3;
--        case NORMAL:
--            return 5;
--        case HARD:
--            return 7;
--        default:
--            return 0;
-+        switch (difficulty) {
-+            case EASY:
-+                return 3;
-+            case NORMAL:
-+                return 5;
-+            case HARD:
-+                return 7;
-+            default:
-+                return 0;
-         }
-     }
+@@ -774,37 +860,41 @@
  
      public float getEnchantOdds() {
          int i = this.getBadOmenLevel();

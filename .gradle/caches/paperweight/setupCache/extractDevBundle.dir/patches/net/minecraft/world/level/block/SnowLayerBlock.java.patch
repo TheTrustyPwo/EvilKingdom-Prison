@@ -8,7 +8,7 @@
      public static final int MAX_HEIGHT = 8;
      public static final IntegerProperty LAYERS = BlockStateProperties.LAYERS;
      protected static final VoxelShape[] SHAPE_BY_LAYER = new VoxelShape[]{Shapes.empty(), Block.box(0.0D, 0.0D, 0.0D, 16.0D, 2.0D, 16.0D), Block.box(0.0D, 0.0D, 0.0D, 16.0D, 4.0D, 16.0D), Block.box(0.0D, 0.0D, 0.0D, 16.0D, 6.0D, 16.0D), Block.box(0.0D, 0.0D, 0.0D, 16.0D, 8.0D, 16.0D), Block.box(0.0D, 0.0D, 0.0D, 16.0D, 10.0D, 16.0D), Block.box(0.0D, 0.0D, 0.0D, 16.0D, 12.0D, 16.0D), Block.box(0.0D, 0.0D, 0.0D, 16.0D, 14.0D, 16.0D), Block.box(0.0D, 0.0D, 0.0D, 16.0D, 16.0D, 16.0D)};
-@@ -28,41 +29,41 @@
+@@ -28,14 +29,14 @@
  
      protected SnowLayerBlock(BlockBehaviour.Properties settings) {
          super(settings);
@@ -18,26 +18,14 @@
  
      @Override
      public boolean isPathfindable(BlockState state, BlockGetter world, BlockPos pos, PathComputationType type) {
--        switch(type) {
--        case LAND:
--            return state.getValue(LAYERS) < 5;
--        case WATER:
--            return false;
--        case AIR:
--            return false;
--        default:
--            return false;
-+        switch (type) {
-+            case LAND:
+         switch (type) {
+             case LAND:
+-                return state.getValue(LAYERS) < 5;
 +                return (Integer) state.getValue(SnowLayerBlock.LAYERS) < 5;
-+            case WATER:
-+                return false;
-+            case AIR:
-+                return false;
-+            default:
-+                return false;
-         }
-     }
+             case WATER:
+                 return false;
+             case AIR:
+@@ -47,22 +48,22 @@
  
      @Override
      public VoxelShape getShape(BlockState state, BlockGetter world, BlockPos pos, CollisionContext context) {

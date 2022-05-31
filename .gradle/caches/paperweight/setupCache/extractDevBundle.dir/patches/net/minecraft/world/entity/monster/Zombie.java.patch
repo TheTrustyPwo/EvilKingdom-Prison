@@ -457,7 +457,7 @@
      }
  
      @Override
-@@ -430,32 +505,37 @@
+@@ -430,31 +505,37 @@
      @Nullable
      @Override
      public SpawnGroupData finalizeSpawn(ServerLevelAccessor world, DifficultyInstance difficulty, MobSpawnType spawnReason, @Nullable SpawnGroupData entityData, @Nullable CompoundTag entityNbt) {
@@ -473,8 +473,7 @@
 +            object = new Zombie.ZombieGroupData(Zombie.getSpawnAsBabyOdds(world.getRandom()), true);
          }
  
--        if (entityData instanceof Zombie.ZombieGroupData) {
--            Zombie.ZombieGroupData zombieGroupData = (Zombie.ZombieGroupData)entityData;
+-        if (entityData instanceof Zombie.ZombieGroupData zombieGroupData) {
 -            if (zombieGroupData.isBaby) {
 +        if (object instanceof Zombie.ZombieGroupData) {
 +            Zombie.ZombieGroupData entityzombie_groupdatazombie = (Zombie.ZombieGroupData) object;
@@ -514,7 +513,7 @@
                      }
                  }
              }
-@@ -466,9 +546,10 @@
+@@ -465,9 +546,10 @@
          }
  
          if (this.getItemBySlot(EquipmentSlot.HEAD).isEmpty()) {
@@ -528,7 +527,7 @@
              if (j == 10 && i == 31 && this.random.nextFloat() < 0.25F) {
                  this.setItemSlot(EquipmentSlot.HEAD, new ItemStack(this.random.nextFloat() < 0.1F ? Blocks.JACK_O_LANTERN : Blocks.CARVED_PUMPKIN));
                  this.armorDropChances[EquipmentSlot.HEAD.getIndex()] = 0.0F;
-@@ -476,7 +557,7 @@
+@@ -475,7 +557,7 @@
          }
  
          this.handleAttributes(f);
@@ -537,7 +536,7 @@
      }
  
      public static boolean getSpawnAsBabyOdds(Random random) {
-@@ -485,10 +566,11 @@
+@@ -484,10 +566,11 @@
  
      protected void handleAttributes(float chanceMultiplier) {
          this.randomizeReinforcementsChance();
@@ -553,7 +552,7 @@
          }
  
          if (this.random.nextFloat() < chanceMultiplier * 0.05F) {
-@@ -500,7 +582,7 @@
+@@ -499,7 +582,7 @@
      }
  
      protected void randomizeReinforcementsChance() {
@@ -562,18 +561,18 @@
      }
  
      @Override
-@@ -512,13 +594,16 @@
+@@ -511,12 +594,16 @@
      protected void dropCustomDeathLoot(DamageSource source, int lootingMultiplier, boolean allowDrops) {
          super.dropCustomDeathLoot(source, lootingMultiplier, allowDrops);
          Entity entity = source.getEntity();
-+
-         if (entity instanceof Creeper) {
--            Creeper creeper = (Creeper)entity;
+-        if (entity instanceof Creeper creeper) {
 -            if (creeper.canDropMobsSkull()) {
 -                ItemStack itemStack = this.getSkull();
 -                if (!itemStack.isEmpty()) {
 -                    creeper.increaseDroppedSkulls();
 -                    this.spawnAtLocation(itemStack);
++
++        if (entity instanceof Creeper) {
 +            Creeper entitycreeper = (Creeper) entity;
 +
 +            if (entitycreeper.canDropMobsSkull()) {
@@ -585,7 +584,7 @@
                  }
              }
          }
-@@ -529,19 +614,20 @@
+@@ -527,19 +614,20 @@
          return new ItemStack(Items.ZOMBIE_HEAD);
      }
  
@@ -611,7 +610,7 @@
          }
  
          @Override
-@@ -551,6 +637,7 @@
+@@ -549,6 +637,7 @@
      }
  
      public static class ZombieGroupData implements SpawnGroupData {

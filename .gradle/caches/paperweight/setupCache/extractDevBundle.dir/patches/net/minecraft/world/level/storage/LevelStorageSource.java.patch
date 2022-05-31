@@ -167,7 +167,7 @@
                      }
                  }
              }
-@@ -157,85 +180,98 @@
+@@ -157,83 +180,98 @@
      @Nullable
      <T> T readLevelData(File file, BiFunction<File, DataFixer, T> levelDataParser) {
          if (!file.exists()) {
@@ -200,8 +200,7 @@
      private static DataPackConfig getDataPacks(File file, DataFixer dataFixer) {
          try {
 -            Tag tag = readLightweightData(file);
--            if (tag instanceof CompoundTag) {
--                CompoundTag compoundTag = (CompoundTag)tag;
+-            if (tag instanceof CompoundTag compoundTag) {
 -                CompoundTag compoundTag2 = compoundTag.getCompound("Data");
 -                int i = compoundTag2.contains("DataVersion", 99) ? compoundTag2.getInt("DataVersion") : -1;
 -                Dynamic<Tag> dynamic = dataFixer.update(DataFixTypes.LEVEL.getType(), new Dynamic<>(NbtOps.INSTANCE, compoundTag2), i, SharedConstants.getCurrentVersion().getWorldVersion());
@@ -271,8 +270,7 @@
 +        return (file1, datafixer) -> {
              try {
 -                Tag tag = readLightweightData(filex);
--                if (tag instanceof CompoundTag) {
--                    CompoundTag compoundTag = (CompoundTag)tag;
+-                if (tag instanceof CompoundTag compoundTag) {
 -                    CompoundTag compoundTag2 = compoundTag.getCompound("Data");
 -                    int i = compoundTag2.contains("DataVersion", 99) ? compoundTag2.getInt("DataVersion") : -1;
 -                    Dynamic<Tag> dynamic = dataFixer.update(DataFixTypes.LEVEL.getType(), new Dynamic<>(NbtOps.INSTANCE, compoundTag2), i, SharedConstants.getCurrentVersion().getWorldVersion());
@@ -314,7 +312,7 @@
                  return null;
              }
          };
-@@ -243,24 +279,26 @@
+@@ -241,24 +279,26 @@
  
      @Nullable
      private static Tag readLightweightData(File file) throws IOException {
@@ -346,7 +344,7 @@
      }
  
      public Path getBaseDir() {
-@@ -271,19 +309,38 @@
+@@ -269,19 +309,38 @@
          return this.backupDir;
      }
  
@@ -390,7 +388,7 @@
              this.lock = DirectoryLock.create(this.levelPath);
          }
  
-@@ -292,13 +349,13 @@
+@@ -290,13 +349,13 @@
          }
  
          public Path getLevelPath(LevelResource savePath) {
@@ -407,7 +405,7 @@
          }
  
          private void checkLock() {
-@@ -315,39 +372,42 @@
+@@ -313,39 +372,42 @@
          @Nullable
          public LevelSummary getSummary() {
              this.checkLock();
@@ -464,7 +462,7 @@
              }
  
          }
-@@ -359,50 +419,53 @@
+@@ -357,50 +419,53 @@
          public void deleteLevel() throws IOException {
              this.checkLock();
              final Path path = this.levelPath.resolve("session.lock");
@@ -481,7 +479,7 @@
                  try {
                      Files.walkFileTree(this.levelPath, new SimpleFileVisitor<Path>() {
 -                        @Override
--                        public FileVisitResult visitFile(Path path, BasicFileAttributes basicFileAttributes) throws IOException {
+-                        public FileVisitResult visitFile(Path pathx, BasicFileAttributes basicFileAttributes) throws IOException {
 -                            if (!path.equals(path)) {
 -                                LevelStorageSource.LOGGER.debug("Deleting {}", (Object)path);
 -                                Files.delete(path);
@@ -495,7 +493,7 @@
                          }
  
 -                        @Override
--                        public FileVisitResult postVisitDirectory(Path path, IOException iOException) throws IOException {
+-                        public FileVisitResult postVisitDirectory(Path pathx, IOException iOException) throws IOException {
 -                            if (iOException != null) {
 -                                throw iOException;
 +                        public FileVisitResult postVisitDirectory(Path path1, IOException ioexception) throws IOException {
@@ -536,7 +534,7 @@
                  }
              }
  
-@@ -411,13 +474,16 @@
+@@ -409,13 +474,16 @@
          public void renameLevel(String name) throws IOException {
              this.checkLock();
              File file = new File(LevelStorageSource.this.baseDir.toFile(), this.levelId);
@@ -559,7 +557,7 @@
                  }
  
              }
-@@ -425,50 +491,51 @@
+@@ -423,50 +491,51 @@
  
          public long makeWorldBackup() throws IOException {
              this.checkLock();

@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/level/chunk/ChunkStatus.java
 +++ b/net/minecraft/world/level/chunk/ChunkStatus.java
-@@ -28,145 +28,158 @@
+@@ -28,142 +28,158 @@
  import net.minecraft.world.level.levelgen.structure.templatesystem.StructureManager;
  
  public class ChunkStatus {
@@ -9,8 +9,7 @@
      private static final EnumSet<Heightmap.Types> PRE_FEATURES = EnumSet.of(Heightmap.Types.OCEAN_FLOOR_WG, Heightmap.Types.WORLD_SURFACE_WG);
      public static final EnumSet<Heightmap.Types> POST_FEATURES = EnumSet.of(Heightmap.Types.OCEAN_FLOOR, Heightmap.Types.WORLD_SURFACE, Heightmap.Types.MOTION_BLOCKING, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES);
 -    private static final ChunkStatus.LoadingTask PASSTHROUGH_LOAD_TASK = (targetStatus, world, structureManager, lightingProvider, function, chunk) -> {
--        if (chunk instanceof ProtoChunk) {
--            ProtoChunk protoChunk = (ProtoChunk)chunk;
+-        if (chunk instanceof ProtoChunk protoChunk) {
 -            if (!chunk.getStatus().isOrAfter(targetStatus)) {
 -                protoChunk.setStatus(targetStatus);
 +    private static final ChunkStatus.LoadingTask PASSTHROUGH_LOAD_TASK = (chunkstatus, worldserver, definedstructuremanager, lightenginethreaded, function, ichunkaccess) -> {
@@ -113,8 +112,7 @@
          } else {
 -            WorldGenRegion worldGenRegion = new WorldGenRegion(world, chunks, targetStatus, 0);
 -            return generator.fillFromNoise(executor, Blender.of(worldGenRegion), world.structureFeatureManager().forWorldGenRegion(worldGenRegion), chunk).thenApply((chunkx) -> {
--                if (chunkx instanceof ProtoChunk) {
--                    ProtoChunk protoChunk = (ProtoChunk)chunkx;
+-                if (chunkx instanceof ProtoChunk protoChunk) {
 -                    BelowZeroRetrogen belowZeroRetrogen = protoChunk.getBelowZeroRetrogen();
 -                    if (belowZeroRetrogen != null) {
 -                        BelowZeroRetrogen.replaceOldBedrock(protoChunk);
@@ -153,8 +151,7 @@
      });
 -    public static final ChunkStatus CARVERS = registerSimple("carvers", SURFACE, 8, PRE_FEATURES, ChunkStatus.ChunkType.PROTOCHUNK, (targetStatus, world, generator, chunks, chunk) -> {
 -        WorldGenRegion worldGenRegion = new WorldGenRegion(world, chunks, targetStatus, 0);
--        if (chunk instanceof ProtoChunk) {
--            ProtoChunk protoChunk = (ProtoChunk)chunk;
+-        if (chunk instanceof ProtoChunk protoChunk) {
 -            Blender.addAroundOldChunksCarvingMaskFilter(worldGenRegion, protoChunk);
 +    public static final ChunkStatus CARVERS = ChunkStatus.registerSimple("carvers", ChunkStatus.SURFACE, 8, ChunkStatus.PRE_FEATURES, ChunkStatus.ChunkType.PROTOCHUNK, (chunkstatus, worldserver, chunkgenerator, list, ichunkaccess) -> {
 +        WorldGenRegion regionlimitedworldaccess = new WorldGenRegion(worldserver, list, chunkstatus, 0);
@@ -244,7 +241,7 @@
          }
  
      });
-@@ -180,35 +193,37 @@
+@@ -177,35 +193,37 @@
      private final EnumSet<Heightmap.Types> heightmapsAfter;
  
      private static CompletableFuture<Either<ChunkAccess, ChunkHolder.ChunkLoadingFailure>> lightChunk(ChunkStatus status, ThreadedLevelLightEngine lightingProvider, ChunkAccess chunk) {
@@ -292,7 +289,7 @@
          Collections.reverse(list);
          return list;
      }
-@@ -218,19 +233,15 @@
+@@ -215,19 +233,15 @@
      }
  
      public static ChunkStatus getStatusAroundFullChunk(int level) {
@@ -315,7 +312,7 @@
      }
  
      ChunkStatus(String id, @Nullable ChunkStatus previous, int taskMargin, EnumSet<Heightmap.Types> heightMapTypes, ChunkStatus.ChunkType chunkType, ChunkStatus.GenerationTask generationTask, ChunkStatus.LoadingTask loadTask) {
-@@ -256,14 +267,15 @@
+@@ -253,14 +267,15 @@
          return this.parent;
      }
  
@@ -338,7 +335,7 @@
      }
  
      public CompletableFuture<Either<ChunkAccess, ChunkHolder.ChunkLoadingFailure>> load(ServerLevel world, StructureManager structureManager, ThreadedLevelLightEngine lightingProvider, Function<ChunkAccess, CompletableFuture<Either<ChunkAccess, ChunkHolder.ChunkLoadingFailure>>> function, ChunkAccess chunk) {
-@@ -278,8 +290,19 @@
+@@ -275,8 +290,19 @@
          return this.chunkType;
      }
  
@@ -359,7 +356,7 @@
      }
  
      public EnumSet<Heightmap.Types> heightmapsAfter() {
-@@ -290,32 +313,37 @@
+@@ -287,32 +313,37 @@
          return this.getIndex() >= chunkStatus.getIndex();
      }
  

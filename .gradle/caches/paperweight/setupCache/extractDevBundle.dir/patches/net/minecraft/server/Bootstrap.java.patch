@@ -139,9 +139,8 @@
          });
      }
  
--    private static void checkGameruleTranslations(Set<String> translations) {
+     private static void checkGameruleTranslations(final Set<String> translations) {
 -        final Language language = Language.getInstance();
-+    private static void checkGameruleTranslations(final Set<String> translations) {
 +        final Language localelanguage = Language.getInstance();
 +
          GameRules.visitGameRuleTypes(new GameRules.GameRuleTypeVisitor() {

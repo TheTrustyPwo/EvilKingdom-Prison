@@ -23,17 +23,14 @@
  
      @Override
      public VoxelShape getShape(BlockState state, BlockGetter world, BlockPos pos, CollisionContext context) {
--        switch((Direction.Axis)state.getValue(AXIS)) {
--        case Z:
--            return Z_AXIS_AABB;
--        case X:
--        default:
--            return X_AXIS_AABB;
+-        switch ((Direction.Axis)state.getValue(AXIS)) {
 +        switch ((Direction.Axis) state.getValue(NetherPortalBlock.AXIS)) {
-+            case Z:
+             case Z:
+-                return Z_AXIS_AABB;
 +                return NetherPortalBlock.Z_AXIS_AABB;
-+            case X:
-+            default:
+             case X:
+             default:
+-                return X_AXIS_AABB;
 +                return NetherPortalBlock.X_AXIS_AABB;
          }
      }
@@ -128,36 +125,22 @@
          }
  
      }
-@@ -116,24 +131,24 @@
- 
-     @Override
-     public BlockState rotate(BlockState state, Rotation rotation) {
--        switch(rotation) {
--        case COUNTERCLOCKWISE_90:
--        case CLOCKWISE_90:
--            switch((Direction.Axis)state.getValue(AXIS)) {
--            case Z:
--                return state.setValue(AXIS, Direction.Axis.X);
--            case X:
--                return state.setValue(AXIS, Direction.Axis.Z);
-+        switch (rotation) {
-+            case COUNTERCLOCKWISE_90:
-+            case CLOCKWISE_90:
+@@ -119,11 +134,11 @@
+         switch (rotation) {
+             case COUNTERCLOCKWISE_90:
+             case CLOCKWISE_90:
+-                switch ((Direction.Axis)state.getValue(AXIS)) {
 +                switch ((Direction.Axis) state.getValue(NetherPortalBlock.AXIS)) {
-+                    case Z:
+                     case Z:
+-                        return state.setValue(AXIS, Direction.Axis.X);
 +                        return (BlockState) state.setValue(NetherPortalBlock.AXIS, Direction.Axis.X);
-+                    case X:
+                     case X:
+-                        return state.setValue(AXIS, Direction.Axis.Z);
 +                        return (BlockState) state.setValue(NetherPortalBlock.AXIS, Direction.Axis.Z);
-+                    default:
-+                        return state;
-+                }
-             default:
-                 return state;
--            }
--        default:
--            return state;
-         }
-     }
+                     default:
+                         return state;
+                 }
+@@ -134,6 +149,6 @@
  
      @Override
      protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {

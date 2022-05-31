@@ -1,8 +1,17 @@
 --- a/net/minecraft/world/level/chunk/ChunkGenerator.java
 +++ b/net/minecraft/world/level/chunk/ChunkGenerator.java
-@@ -8,20 +8,22 @@
- import com.mojang.serialization.codecs.RecordCodecBuilder.Instance;
- import com.mojang.serialization.codecs.RecordCodecBuilder.Mu;
+@@ -1,22 +1,26 @@
+ package net.minecraft.world.level.chunk;
+ 
+ import com.google.common.base.Stopwatch;
+-import com.mojang.datafixers.Products;
++import com.mojang.datafixers.Products.P1;
+ import com.mojang.datafixers.util.Pair;
+ import com.mojang.logging.LogUtils;
+ import com.mojang.serialization.Codec;
+-import com.mojang.serialization.codecs.RecordCodecBuilder;
++import com.mojang.serialization.codecs.RecordCodecBuilder.Instance;
++import com.mojang.serialization.codecs.RecordCodecBuilder.Mu;
  import it.unimi.dsi.fastutil.ints.IntArraySet;
 -import it.unimi.dsi.fastutil.ints.IntSet;
  import it.unimi.dsi.fastutil.longs.LongSet;
@@ -21,11 +30,7 @@
  import java.util.Optional;
  import java.util.Random;
  import java.util.Set;
--import java.util.Map.Entry;
- import java.util.concurrent.CompletableFuture;
- import java.util.concurrent.Executor;
- import java.util.concurrent.TimeUnit;
-@@ -42,6 +44,7 @@
+@@ -40,6 +44,7 @@
  import net.minecraft.core.Registry;
  import net.minecraft.core.RegistryAccess;
  import net.minecraft.core.SectionPos;
@@ -33,7 +38,7 @@
  import net.minecraft.network.protocol.game.DebugPackets;
  import net.minecraft.resources.RegistryOps;
  import net.minecraft.resources.ResourceKey;
-@@ -52,7 +55,6 @@
+@@ -50,7 +55,6 @@
  import net.minecraft.world.level.ChunkPos;
  import net.minecraft.world.level.LevelHeightAccessor;
  import net.minecraft.world.level.LevelReader;
@@ -41,7 +46,7 @@
  import net.minecraft.world.level.StructureFeatureManager;
  import net.minecraft.world.level.WorldGenLevel;
  import net.minecraft.world.level.biome.Biome;
-@@ -86,106 +88,193 @@
+@@ -84,105 +88,193 @@
  import org.slf4j.Logger;
  
  public abstract class ChunkGenerator implements BiomeManager.NoiseBiomeSource {
@@ -62,9 +67,10 @@
      public final long ringPlacementSeed;
 +    public org.spigotmc.SpigotWorldConfig conf; // Spigot
  
-     protected static final <T extends ChunkGenerator> P1<Mu<T>, Registry<StructureSet>> commonCodec(Instance<T> instance) {
+-    protected static final <T extends ChunkGenerator> Products.P1<RecordCodecBuilder.Mu<T>, Registry<StructureSet>> commonCodec(RecordCodecBuilder.Instance<T> instance) {
 -        return instance.group(RegistryOps.retrieveRegistry(Registry.STRUCTURE_SET_REGISTRY).forGetter((chunkGenerator) -> {
 -            return chunkGenerator.structureSets;
++    protected static final <T extends ChunkGenerator> P1<Mu<T>, Registry<StructureSet>> commonCodec(Instance<T> instance) {
 +        return instance.group(RegistryOps.retrieveRegistry(Registry.STRUCTURE_SET_REGISTRY).forGetter((chunkgenerator) -> {
 +            return chunkgenerator.structureSets;
          }));
@@ -94,8 +100,8 @@
      public Stream<Holder<StructureSet>> possibleStructureSets() {
 -        return this.structureOverrides.isPresent() ? this.structureOverrides.get().stream() : this.structureSets.holders().map(Holder::hackyErase);
 +        return this.structureOverrides.isPresent() ? ((HolderSet) this.structureOverrides.get()).stream() : this.structureSets.holders().map(Holder::hackyErase);
-     }
- 
++    }
++
 +    // Spigot start
 +    private Stream<StructureSet> possibleStructureSetsSpigot() {
 +        return this.possibleStructureSets().map(Holder::value).map((structureset) -> {
@@ -152,9 +158,9 @@
 +            }
 +            return structureset;
 +        });
-+    }
+     }
 +    // Spigot end
-+
+ 
      private void generatePositions() {
          Set<Holder<Biome>> set = this.runtimeBiomeSource.possibleBiomes();
 -        this.possibleStructureSets().forEach((holder) -> {
@@ -178,8 +184,7 @@
              }
  
 -            StructurePlacement structurePlacement = structureSet.placement();
--            if (structurePlacement instanceof ConcentricRingsStructurePlacement) {
--                ConcentricRingsStructurePlacement concentricRingsStructurePlacement = (ConcentricRingsStructurePlacement)structurePlacement;
+-            if (structurePlacement instanceof ConcentricRingsStructurePlacement concentricRingsStructurePlacement) {
 -                if (structureSet.structures().stream().anyMatch((structureSelectionEntry) -> {
 -                    return structureSelectionEntry.generatesInMatchingBiome(set::contains);
 +            StructurePlacement structureplacement = structureset.placement();
@@ -284,7 +289,7 @@
              return list;
          }), Util.backgroundExecutor());
      }
-@@ -200,7 +289,10 @@
+@@ -197,7 +289,10 @@
  
      public CompletableFuture<ChunkAccess> createBiomes(Registry<Biome> biomeRegistry, Executor executor, Blender blender, StructureFeatureManager structureAccessor, ChunkAccess chunk) {
          return CompletableFuture.supplyAsync(Util.wrapThreadWithTaskName("init_biomes", () -> {
@@ -296,7 +301,7 @@
              return chunk;
          }), Util.backgroundExecutor());
      }
-@@ -215,69 +307,110 @@
+@@ -212,69 +307,110 @@
      public abstract void applyCarvers(WorldGenRegion chunkRegion, long seed, BiomeManager biomeAccess, StructureFeatureManager structureAccessor, ChunkAccess chunk, GenerationStep.Carving generationStep);
  
      @Nullable
@@ -370,11 +375,11 @@
                      }
                  }
  
--                List<Entry<StructurePlacement, Set<Holder<ConfiguredStructureFeature<?, ?>>>>> list = new ArrayList<>(map.size());
+-                List<Map.Entry<StructurePlacement, Set<Holder<ConfiguredStructureFeature<?, ?>>>>> list = new ArrayList<>(map.size());
 +                List<Entry<StructurePlacement, Set<Holder<ConfiguredStructureFeature<?, ?>>>>> list = new ArrayList(map.size());
 +                Iterator iterator2 = map.entrySet().iterator();
  
--                for(Entry<StructurePlacement, Set<Holder<ConfiguredStructureFeature<?, ?>>>> entry : map.entrySet()) {
+-                for(Map.Entry<StructurePlacement, Set<Holder<ConfiguredStructureFeature<?, ?>>>> entry : map.entrySet()) {
 -                    StructurePlacement structurePlacement2 = entry.getKey();
 -                    if (structurePlacement2 instanceof ConcentricRingsStructurePlacement) {
 -                        ConcentricRingsStructurePlacement concentricRingsStructurePlacement = (ConcentricRingsStructurePlacement)structurePlacement2;
@@ -414,7 +419,7 @@
 +                        boolean flag1 = false;
 +                        Iterator iterator3 = list.iterator();
  
--                        for(Entry<StructurePlacement, Set<Holder<ConfiguredStructureFeature<?, ?>>>> entry2 : list) {
+-                        for(Map.Entry<StructurePlacement, Set<Holder<ConfiguredStructureFeature<?, ?>>>> entry2 : list) {
 -                            RandomSpreadStructurePlacement randomSpreadStructurePlacement = (RandomSpreadStructurePlacement)entry2.getKey();
 -                            Pair<BlockPos, Holder<ConfiguredStructureFeature<?, ?>>> pair2 = getNearestGeneratedStructure(entry2.getValue(), serverLevel, serverLevel.structureFeatureManager(), i, j, k, skipExistingChunks, serverLevel.getSeed(), randomSpreadStructurePlacement);
 -                            if (pair2 != null) {
@@ -444,7 +449,7 @@
                              return pair;
                          }
                      }
-@@ -289,62 +422,73 @@
+@@ -286,62 +422,73 @@
      }
  
      @Nullable
@@ -556,7 +561,7 @@
                                  }
                              }
                          }
-@@ -356,123 +500,193 @@
+@@ -353,123 +500,193 @@
          return null;
      }
  
@@ -824,7 +829,7 @@
                          return true;
                      }
                  }
-@@ -483,12 +697,13 @@
+@@ -480,12 +697,13 @@
      }
  
      private static BoundingBox getWritableArea(ChunkAccess chunk) {
@@ -844,13 +849,13 @@
          return new BoundingBox(i, k, j, i + 15, l, j + 15);
      }
  
-@@ -508,86 +723,106 @@
+@@ -505,86 +723,106 @@
  
      public WeightedRandomList<MobSpawnSettings.SpawnerData> getMobsAt(Holder<Biome> biome, StructureFeatureManager accessor, MobCategory group, BlockPos pos) {
          Map<ConfiguredStructureFeature<?, ?>, LongSet> map = accessor.getAllStructuresAt(pos);
 +        Iterator iterator = map.entrySet().iterator();
  
--        for(Entry<ConfiguredStructureFeature<?, ?>, LongSet> entry : map.entrySet()) {
+-        for(Map.Entry<ConfiguredStructureFeature<?, ?>, LongSet> entry : map.entrySet()) {
 -            ConfiguredStructureFeature<?, ?> configuredStructureFeature = entry.getKey();
 -            StructureSpawnOverride structureSpawnOverride = configuredStructureFeature.spawnOverrides.get(group);
 -            if (structureSpawnOverride != null) {
@@ -1001,7 +1006,7 @@
                      }
  
                  }
-@@ -595,25 +830,27 @@
+@@ -592,25 +830,27 @@
          });
      }
  
@@ -1040,7 +1045,7 @@
      }
  
      protected Holder<Biome> adjustBiome(Holder<Biome> biome) {
-@@ -621,40 +858,44 @@
+@@ -618,40 +858,44 @@
      }
  
      public void createReferences(WorldGenLevel world, StructureFeatureManager structureAccessor, ChunkAccess chunk) {
@@ -1110,7 +1115,7 @@
                      }
                  }
              }
-@@ -670,7 +911,7 @@
+@@ -667,7 +911,7 @@
  
      public abstract int getBaseHeight(int x, int z, Heightmap.Types heightmap, LevelHeightAccessor world);
  
@@ -1119,7 +1124,7 @@
  
      public int getFirstFreeHeight(int x, int z, Heightmap.Types heightmap, LevelHeightAccessor world) {
          return this.getBaseHeight(x, z, heightmap, world);
-@@ -691,13 +932,14 @@
+@@ -688,13 +932,14 @@
      @Nullable
      public List<ChunkPos> getRingPositionsFor(ConcentricRingsStructurePlacement structurePlacement) {
          this.ensureStructuresGenerated();

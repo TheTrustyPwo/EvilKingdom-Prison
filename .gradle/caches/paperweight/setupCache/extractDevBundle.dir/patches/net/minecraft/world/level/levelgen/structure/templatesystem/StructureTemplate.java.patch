@@ -569,7 +569,7 @@
                      }
  
                      world.addFreshEntityWithPassengers(entity);
-@@ -405,20 +482,22 @@
+@@ -405,11 +482,13 @@
      }
  
      private static Optional<Entity> createEntityIgnoreException(ServerLevelAccessor world, CompoundTag nbt) {
@@ -588,69 +588,40 @@
      }
  
      public Vec3i getSize(Rotation rotation) {
--        switch(rotation) {
--        case COUNTERCLOCKWISE_90:
--        case CLOCKWISE_90:
--            return new Vec3i(this.size.getZ(), this.size.getY(), this.size.getX());
--        default:
--            return this.size;
-+        switch (rotation) {
-+            case COUNTERCLOCKWISE_90:
-+            case CLOCKWISE_90:
-+                return new Vec3i(this.size.getZ(), this.size.getY(), this.size.getX());
-+            default:
-+                return this.size;
-         }
-     }
- 
-@@ -426,87 +505,92 @@
+@@ -426,7 +505,8 @@
          int i = pos.getX();
          int j = pos.getY();
          int k = pos.getZ();
 -        boolean bl = true;
--        switch(mirror) {
--        case LEFT_RIGHT:
--            k = -k;
--            break;
--        case FRONT_BACK:
--            i = -i;
--            break;
--        default:
--            bl = false;
 +        boolean flag = true;
 +
-+        switch (mirror) {
-+            case LEFT_RIGHT:
-+                k = -k;
-+                break;
-+            case FRONT_BACK:
-+                i = -i;
-+                break;
-+            default:
+         switch (mirror) {
+             case LEFT_RIGHT:
+                 k = -k;
+@@ -435,78 +515,82 @@
+                 i = -i;
+                 break;
+             default:
+-                bl = false;
 +                flag = false;
          }
  
          int l = pivot.getX();
 -        int m = pivot.getZ();
--        switch(rotation) {
--        case COUNTERCLOCKWISE_90:
--            return new BlockPos(l - m + k, j, l + m - i);
--        case CLOCKWISE_90:
--            return new BlockPos(l + m - k, j, m - l + i);
--        case CLOCKWISE_180:
--            return new BlockPos(l + l - i, j, m + m - k);
--        default:
--            return bl ? new BlockPos(i, j, k) : pos;
 +        int i1 = pivot.getZ();
 +
-+        switch (rotation) {
-+            case COUNTERCLOCKWISE_90:
+         switch (rotation) {
+             case COUNTERCLOCKWISE_90:
+-                return new BlockPos(l - m + k, j, l + m - i);
 +                return new BlockPos(l - i1 + k, j, l + i1 - i);
-+            case CLOCKWISE_90:
+             case CLOCKWISE_90:
+-                return new BlockPos(l + m - k, j, m - l + i);
 +                return new BlockPos(l + i1 - k, j, i1 - l + i);
-+            case CLOCKWISE_180:
+             case CLOCKWISE_180:
+-                return new BlockPos(l + l - i, j, m + m - k);
 +                return new BlockPos(l + l - i, j, i1 + i1 - k);
-+            default:
+             default:
+-                return bl ? new BlockPos(i, j, k) : pos;
 +                return flag ? new BlockPos(i, j, k) : pos;
          }
      }
@@ -660,51 +631,40 @@
 -        double e = point.y;
 -        double f = point.z;
 -        boolean bl = true;
--        switch(mirror) {
--        case LEFT_RIGHT:
--            f = 1.0D - f;
--            break;
--        case FRONT_BACK:
--            d = 1.0D - d;
--            break;
--        default:
--            bl = false;
 +        double d0 = point.x;
 +        double d1 = point.y;
 +        double d2 = point.z;
 +        boolean flag = true;
 +
-+        switch (mirror) {
-+            case LEFT_RIGHT:
+         switch (mirror) {
+             case LEFT_RIGHT:
+-                f = 1.0D - f;
 +                d2 = 1.0D - d2;
-+                break;
-+            case FRONT_BACK:
+                 break;
+             case FRONT_BACK:
+-                d = 1.0D - d;
 +                d0 = 1.0D - d0;
-+                break;
-+            default:
+                 break;
+             default:
+-                bl = false;
 +                flag = false;
          }
  
          int i = pivot.getX();
          int j = pivot.getZ();
--        switch(rotation) {
--        case COUNTERCLOCKWISE_90:
--            return new Vec3((double)(i - j) + f, e, (double)(i + j + 1) - d);
--        case CLOCKWISE_90:
--            return new Vec3((double)(i + j + 1) - f, e, (double)(j - i) + d);
--        case CLOCKWISE_180:
--            return new Vec3((double)(i + i + 1) - d, e, (double)(j + j + 1) - f);
--        default:
--            return bl ? new Vec3(d, e, f) : point;
 +
-+        switch (rotation) {
-+            case COUNTERCLOCKWISE_90:
+         switch (rotation) {
+             case COUNTERCLOCKWISE_90:
+-                return new Vec3((double)(i - j) + f, e, (double)(i + j + 1) - d);
 +                return new Vec3((double) (i - j) + d2, d1, (double) (i + j + 1) - d0);
-+            case CLOCKWISE_90:
+             case CLOCKWISE_90:
+-                return new Vec3((double)(i + j + 1) - f, e, (double)(j - i) + d);
 +                return new Vec3((double) (i + j + 1) - d2, d1, (double) (j - i) + d0);
-+            case CLOCKWISE_180:
+             case CLOCKWISE_180:
+-                return new Vec3((double)(i + i + 1) - d, e, (double)(j + j + 1) - f);
 +                return new Vec3((double) (i + i + 1) - d0, d1, (double) (j + j + 1) - d2);
-+            default:
+             default:
+-                return bl ? new Vec3(d, e, f) : point;
 +                return flag ? new Vec3(d0, d1, d2) : point;
          }
      }
@@ -720,33 +680,25 @@
 -        int i = mirror == Mirror.FRONT_BACK ? offsetX : 0;
 -        int j = mirror == Mirror.LEFT_RIGHT ? offsetZ : 0;
 -        BlockPos blockPos = pos;
--        switch(rotation) {
--        case COUNTERCLOCKWISE_90:
--            blockPos = pos.offset(j, 0, offsetX - i);
--            break;
--        case CLOCKWISE_90:
--            blockPos = pos.offset(offsetZ - j, 0, i);
--            break;
--        case CLOCKWISE_180:
--            blockPos = pos.offset(offsetX - i, 0, offsetZ - j);
--            break;
--        case NONE:
--            blockPos = pos.offset(i, 0, j);
 +        int k = mirror == Mirror.FRONT_BACK ? offsetX : 0;
 +        int l = mirror == Mirror.LEFT_RIGHT ? offsetZ : 0;
 +        BlockPos blockposition1 = pos;
 +
-+        switch (rotation) {
-+            case COUNTERCLOCKWISE_90:
+         switch (rotation) {
+             case COUNTERCLOCKWISE_90:
+-                blockPos = pos.offset(j, 0, offsetX - i);
 +                blockposition1 = pos.offset(l, 0, offsetX - k);
-+                break;
-+            case CLOCKWISE_90:
+                 break;
+             case CLOCKWISE_90:
+-                blockPos = pos.offset(offsetZ - j, 0, i);
 +                blockposition1 = pos.offset(offsetZ - l, 0, k);
-+                break;
-+            case CLOCKWISE_180:
+                 break;
+             case CLOCKWISE_180:
+-                blockPos = pos.offset(offsetX - i, 0, offsetZ - j);
 +                blockposition1 = pos.offset(offsetX - k, 0, offsetZ - l);
-+                break;
-+            case NONE:
+                 break;
+             case NONE:
+-                blockPos = pos.offset(i, 0, j);
 +                blockposition1 = pos.offset(k, 0, l);
          }
  

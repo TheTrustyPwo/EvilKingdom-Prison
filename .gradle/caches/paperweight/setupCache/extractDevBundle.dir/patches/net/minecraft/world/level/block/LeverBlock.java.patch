@@ -21,65 +21,48 @@
  
      @Override
      public VoxelShape getShape(BlockState state, BlockGetter world, BlockPos pos, CollisionContext context) {
--        switch((AttachFace)state.getValue(FACE)) {
--        case FLOOR:
--            switch(state.getValue(FACING).getAxis()) {
--            case X:
--                return UP_AABB_X;
--            case Z:
--            default:
--                return UP_AABB_Z;
--            }
--        case WALL:
--            switch((Direction)state.getValue(FACING)) {
--            case EAST:
--                return EAST_AABB;
--            case WEST:
--                return WEST_AABB;
--            case SOUTH:
--                return SOUTH_AABB;
--            case NORTH:
--            default:
--                return NORTH_AABB;
--            }
--        case CEILING:
--        default:
--            switch(state.getValue(FACING).getAxis()) {
--            case X:
--                return DOWN_AABB_X;
--            case Z:
+-        switch ((AttachFace)state.getValue(FACE)) {
 +        switch ((AttachFace) state.getValue(LeverBlock.FACE)) {
-+            case FLOOR:
+             case FLOOR:
+-                switch (state.getValue(FACING).getAxis()) {
 +                switch (((Direction) state.getValue(LeverBlock.FACING)).getAxis()) {
-+                    case X:
+                     case X:
+-                        return UP_AABB_X;
 +                        return LeverBlock.UP_AABB_X;
-+                    case Z:
-+                    default:
+                     case Z:
+                     default:
+-                        return UP_AABB_Z;
 +                        return LeverBlock.UP_AABB_Z;
-+                }
-+            case WALL:
+                 }
+             case WALL:
+-                switch ((Direction)state.getValue(FACING)) {
 +                switch ((Direction) state.getValue(LeverBlock.FACING)) {
-+                    case EAST:
+                     case EAST:
+-                        return EAST_AABB;
 +                        return LeverBlock.EAST_AABB;
-+                    case WEST:
+                     case WEST:
+-                        return WEST_AABB;
 +                        return LeverBlock.WEST_AABB;
-+                    case SOUTH:
+                     case SOUTH:
+-                        return SOUTH_AABB;
 +                        return LeverBlock.SOUTH_AABB;
-+                    case NORTH:
-+                    default:
+                     case NORTH:
+                     default:
+-                        return NORTH_AABB;
 +                        return LeverBlock.NORTH_AABB;
-+                }
-+            case CEILING:
+                 }
+             case CEILING:
              default:
--                return DOWN_AABB_Z;
--            }
+-                switch (state.getValue(FACING).getAxis()) {
 +                switch (((Direction) state.getValue(LeverBlock.FACING)).getAxis()) {
-+                    case X:
+                     case X:
+-                        return DOWN_AABB_X;
 +                        return LeverBlock.DOWN_AABB_X;
-+                    case Z:
-+                    default:
+                     case Z:
+                     default:
+-                        return DOWN_AABB_Z;
 +                        return LeverBlock.DOWN_AABB_Z;
-+                }
+                 }
          }
      }
  

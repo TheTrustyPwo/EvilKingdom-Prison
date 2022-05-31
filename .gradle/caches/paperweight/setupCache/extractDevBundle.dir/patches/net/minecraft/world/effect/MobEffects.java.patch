@@ -70,13 +70,14 @@
          @Override
          public boolean isDurationEffectTick(int duration, int amplifier) {
              return true;
-@@ -48,22 +49,33 @@
+@@ -47,22 +48,34 @@
+ 
          @Override
          public void applyEffectTick(LivingEntity entity, int amplifier) {
-             if (entity instanceof ServerPlayer && !entity.isSpectator()) {
--                ServerPlayer serverPlayer = (ServerPlayer)entity;
+-            if (entity instanceof ServerPlayer serverPlayer && !entity.isSpectator()) {
 -                ServerLevel serverLevel = serverPlayer.getLevel();
 -                if (serverLevel.getDifficulty() == Difficulty.PEACEFUL) {
++            if (entity instanceof ServerPlayer && !entity.isSpectator()) {
 +                ServerPlayer entityplayer = (ServerPlayer) entity;
 +                ServerLevel worldserver = entityplayer.getLevel();
 +

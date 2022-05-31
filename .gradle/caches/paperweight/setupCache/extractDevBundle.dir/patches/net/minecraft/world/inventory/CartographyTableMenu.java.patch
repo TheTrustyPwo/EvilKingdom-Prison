@@ -37,7 +37,7 @@
      public static final int MAP_SLOT = 0;
      public static final int ADDITIONAL_SLOT = 1;
      public static final int RESULT_SLOT = 2;
-@@ -22,27 +43,43 @@
+@@ -22,20 +43,8 @@
      private static final int USE_ROW_SLOT_END = 39;
      private final ContainerLevelAccess access;
      long lastSoundTime;
@@ -60,10 +60,9 @@
  
      public CartographyTableMenu(int syncId, Inventory inventory) {
          this(syncId, inventory, ContainerLevelAccess.NULL);
-     }
+@@ -43,6 +52,34 @@
  
--    public CartographyTableMenu(int syncId, Inventory inventory, ContainerLevelAccess context) {
-+    public CartographyTableMenu(int syncId, Inventory inventory, final ContainerLevelAccess context) {
+     public CartographyTableMenu(int syncId, Inventory inventory, final ContainerLevelAccess context) {
          super(MenuType.CARTOGRAPHY_TABLE, syncId);
 +        this.container = new SimpleContainer(2) {
 +            @Override

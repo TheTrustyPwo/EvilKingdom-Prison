@@ -279,32 +279,24 @@
  
 -                                map.put(enchantment, u);
 -                                int v = 0;
--                                switch(enchantment.getRarity()) {
--                                case COMMON:
--                                    v = 1;
--                                    break;
--                                case UNCOMMON:
--                                    v = 2;
--                                    break;
--                                case RARE:
--                                    v = 4;
--                                    break;
--                                case VERY_RARE:
--                                    v = 8;
 +                                map.put(enchantment, i2);
 +                                int j2 = 0;
 +
-+                                switch (enchantment.getRarity()) {
-+                                    case COMMON:
+                                 switch (enchantment.getRarity()) {
+                                     case COMMON:
+-                                        v = 1;
 +                                        j2 = 1;
-+                                        break;
-+                                    case UNCOMMON:
+                                         break;
+                                     case UNCOMMON:
+-                                        v = 2;
 +                                        j2 = 2;
-+                                        break;
-+                                    case RARE:
+                                         break;
+                                     case RARE:
+-                                        v = 4;
 +                                        j2 = 4;
-+                                        break;
-+                                    case VERY_RARE:
+                                         break;
+                                     case VERY_RARE:
+-                                        v = 8;
 +                                        j2 = 8;
                                  }
  

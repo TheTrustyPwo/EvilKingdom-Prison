@@ -8,7 +8,7 @@
  import java.security.PrivilegedActionException;
  import java.security.PrivilegedExceptionAction;
  import java.time.Duration;
-@@ -69,8 +68,24 @@
+@@ -68,8 +67,24 @@
      private static final int DEFAULT_MAX_THREADS = 255;
      private static final String MAX_THREADS_SYSTEM_PROPERTY = "max.bg.threads";
      private static final AtomicInteger WORKER_COUNT = new AtomicInteger(1);
@@ -35,7 +35,7 @@
      private static final ExecutorService IO_POOL = makeIoExecutor();
      public static LongSupplier timeSource = System::nanoTime;
      public static final Ticker TICKER = new Ticker() {
-@@ -85,6 +100,7 @@
+@@ -84,6 +99,7 @@
      }).findFirst().orElseThrow(() -> {
          return new IllegalStateException("No jar file system provider found");
      });
@@ -43,7 +43,7 @@
      private static Consumer<String> thePauser = (message) -> {
      };
  
-@@ -105,21 +121,37 @@
+@@ -104,21 +120,37 @@
      }
  
      public static long getNanos() {
@@ -86,7 +86,7 @@
                      @Override
                      protected void onTermination(Throwable throwable) {
                          if (throwable != null) {
-@@ -135,6 +167,7 @@
+@@ -134,6 +166,7 @@
                  return forkJoinWorkerThread;
              }, Util::onThreadException, true);
          }
@@ -94,16 +94,16 @@
  
          return executorService;
      }
-@@ -352,7 +385,7 @@
+@@ -351,7 +384,7 @@
      }
  
-     public static <K> Strategy<K> identityStrategy() {
+     public static <K> Hash.Strategy<K> identityStrategy() {
 -        return Util.IdentityStrategy.INSTANCE;
-+        return (Strategy<K>) Util.IdentityStrategy.INSTANCE; // Paper - decompile fix
++        return (Hash.Strategy<K>) Util.IdentityStrategy.INSTANCE; // Paper - decompile fix
      }
  
      public static <V> CompletableFuture<List<V>> sequence(List<? extends CompletableFuture<V>> futures) {
-@@ -730,21 +763,7 @@
+@@ -729,21 +762,7 @@
          }
  
          public void openUrl(URL url) {

@@ -18,7 +18,7 @@
          this.storageAccess = chunkIoWorker;
          this.registryAccess = registryManager;
          this.structureManager = structureManager;
-@@ -116,7 +116,7 @@
+@@ -115,7 +115,7 @@
  
                  CompoundTag compoundTag2;
                  try {

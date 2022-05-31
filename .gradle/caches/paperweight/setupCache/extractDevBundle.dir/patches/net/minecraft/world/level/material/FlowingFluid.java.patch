@@ -1,14 +1,16 @@
 --- a/net/minecraft/world/level/material/FlowingFluid.java
 +++ b/net/minecraft/world/level/material/FlowingFluid.java
-@@ -7,6 +7,7 @@
+@@ -7,7 +7,9 @@
  import it.unimi.dsi.fastutil.shorts.Short2BooleanOpenHashMap;
  import it.unimi.dsi.fastutil.shorts.Short2ObjectMap;
  import it.unimi.dsi.fastutil.shorts.Short2ObjectOpenHashMap;
 +import java.util.Iterator;
  import java.util.Map;
- import java.util.Map.Entry;
++import java.util.Map.Entry;
  import net.minecraft.core.BlockPos;
-@@ -28,103 +29,130 @@
+ import net.minecraft.core.Direction;
+ import net.minecraft.tags.BlockTags;
+@@ -27,103 +29,130 @@
  import net.minecraft.world.phys.Vec3;
  import net.minecraft.world.phys.shapes.Shapes;
  import net.minecraft.world.phys.shapes.VoxelShape;
@@ -190,7 +192,7 @@
              }
  
          }
-@@ -132,20 +160,34 @@
+@@ -131,20 +160,34 @@
  
      private void spreadToSides(LevelAccessor world, BlockPos pos, FluidState fluidState, BlockState blockState) {
          int i = fluidState.getAmount() - this.getDropOff(world);
@@ -204,7 +206,7 @@
              Map<Direction, FluidState> map = this.getSpread(world, pos, blockState);
 +            Iterator iterator = map.entrySet().iterator();
  
--            for(Entry<Direction, FluidState> entry : map.entrySet()) {
+-            for(Map.Entry<Direction, FluidState> entry : map.entrySet()) {
 -                Direction direction = entry.getKey();
 -                FluidState fluidState2 = entry.getValue();
 -                BlockPos blockPos = pos.relative(direction);
@@ -233,7 +235,7 @@
                  }
              }
  
-@@ -155,92 +197,104 @@
+@@ -154,92 +197,104 @@
      protected FluidState getNewLiquid(LevelReader world, BlockPos pos, BlockState state) {
          int i = 0;
          int j = 0;
@@ -374,7 +376,7 @@
              }
  
              world.setBlock(pos, fluidState.createLegacyBlock(), 3);
-@@ -248,39 +302,56 @@
+@@ -247,39 +302,56 @@
  
      }
  
@@ -453,7 +455,7 @@
                          if (k < j) {
                              j = k;
                          }
-@@ -293,11 +364,7 @@
+@@ -292,11 +364,7 @@
      }
  
      private boolean isWaterHole(BlockGetter world, Fluid fluid, BlockPos pos, BlockState state, BlockPos fromPos, BlockState fromState) {
@@ -466,7 +468,7 @@
      }
  
      private boolean canPassThrough(BlockGetter world, Fluid fluid, BlockPos pos, BlockState state, Direction face, BlockPos fromPos, BlockState fromState, FluidState fluidState) {
-@@ -312,11 +379,14 @@
+@@ -311,11 +379,14 @@
  
      private int sourceNeighborCount(LevelReader world, BlockPos pos) {
          int i = 0;
@@ -485,7 +487,7 @@
                  ++i;
              }
          }
-@@ -327,30 +397,41 @@
+@@ -326,30 +397,41 @@
      protected Map<Direction, FluidState> getSpread(LevelReader world, BlockPos pos, BlockState state) {
          int i = 1000;
          Map<Direction, FluidState> map = Maps.newEnumMap(Direction.class);
@@ -546,7 +548,7 @@
                  }
  
                  if (j < i) {
-@@ -358,7 +439,7 @@
+@@ -357,7 +439,7 @@
                  }
  
                  if (j <= i) {
@@ -555,7 +557,7 @@
                      i = j;
                  }
              }
-@@ -369,15 +450,13 @@
+@@ -368,15 +450,13 @@
  
      private boolean canHoldFluid(BlockGetter world, BlockPos pos, BlockState state, Fluid fluid) {
          Block block = state.getBlock();
@@ -575,7 +577,7 @@
          } else {
              return false;
          }
-@@ -396,17 +475,30 @@
+@@ -395,17 +475,30 @@
      @Override
      public void tick(Level world, BlockPos pos, FluidState state) {
          if (!state.isSource()) {
@@ -617,7 +619,7 @@
              }
          }
  
-@@ -414,7 +506,7 @@
+@@ -413,7 +506,7 @@
      }
  
      protected static int getLegacyLevel(FluidState state) {
@@ -626,7 +628,7 @@
      }
  
      private static boolean hasSameAbove(FluidState state, BlockGetter world, BlockPos pos) {
-@@ -423,12 +515,12 @@
+@@ -422,12 +515,12 @@
  
      @Override
      public float getHeight(FluidState state, BlockGetter world, BlockPos pos) {
@@ -641,7 +643,7 @@
      }
  
      @Override
-@@ -436,8 +528,8 @@
+@@ -435,8 +528,8 @@
  
      @Override
      public VoxelShape getShape(FluidState state, BlockGetter world, BlockPos pos) {

@@ -14,16 +14,16 @@
      public WitherSkeleton(EntityType<? extends WitherSkeleton> type, Level world) {
          super(type, world);
          this.setPathfindingMalus(BlockPathTypes.LAVA, 8.0F);
-@@ -62,11 +64,13 @@
+@@ -62,10 +64,13 @@
      protected void dropCustomDeathLoot(DamageSource source, int lootingMultiplier, boolean allowDrops) {
          super.dropCustomDeathLoot(source, lootingMultiplier, allowDrops);
          Entity entity = source.getEntity();
-+
-         if (entity instanceof Creeper) {
--            Creeper creeper = (Creeper)entity;
+-        if (entity instanceof Creeper creeper) {
 -            if (creeper.canDropMobsSkull()) {
 -                creeper.increaseDroppedSkulls();
 -                this.spawnAtLocation(Items.WITHER_SKELETON_SKULL);
++
++        if (entity instanceof Creeper) {
 +            Creeper entitycreeper = (Creeper) entity;
 +
 +            if (entitycreeper.canDropMobsSkull()) {
@@ -32,7 +32,7 @@
              }
          }
  
-@@ -78,16 +82,16 @@
+@@ -77,16 +82,16 @@
      }
  
      @Override
@@ -53,7 +53,7 @@
      }
  
      @Override
-@@ -101,7 +105,7 @@
+@@ -100,7 +105,7 @@
              return false;
          } else {
              if (target instanceof LivingEntity) {
@@ -62,7 +62,7 @@
              }
  
              return true;
-@@ -110,13 +114,14 @@
+@@ -109,13 +114,14 @@
  
      @Override
      protected AbstractArrow getArrow(ItemStack arrow, float damageModifier) {

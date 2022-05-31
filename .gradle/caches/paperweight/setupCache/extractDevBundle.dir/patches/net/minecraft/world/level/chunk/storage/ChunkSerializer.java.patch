@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/level/chunk/storage/ChunkSerializer.java
 +++ b/net/minecraft/world/level/chunk/storage/ChunkSerializer.java
-@@ -3,15 +3,19 @@
+@@ -3,14 +3,19 @@
  import com.google.common.collect.Maps;
  import com.mojang.logging.LogUtils;
  import com.mojang.serialization.Codec;
@@ -14,14 +14,13 @@
  import java.util.EnumSet;
 +import java.util.Iterator;
  import java.util.Map;
--import java.util.Objects;
- import java.util.Map.Entry;
-+import java.util.Objects;
++import java.util.Map.Entry;
+ import java.util.Objects;
 +import java.util.Optional;
  import javax.annotation.Nullable;
  import net.minecraft.SharedConstants;
  import net.minecraft.core.BlockPos;
-@@ -24,8 +28,11 @@
+@@ -23,8 +28,11 @@
  import net.minecraft.nbt.LongArrayTag;
  import net.minecraft.nbt.NbtOps;
  import net.minecraft.nbt.ShortTag;
@@ -33,7 +32,7 @@
  import net.minecraft.world.entity.EntityType;
  import net.minecraft.world.entity.ai.village.poi.PoiManager;
  import net.minecraft.world.level.ChunkPos;
-@@ -38,7 +45,6 @@
+@@ -37,7 +45,6 @@
  import net.minecraft.world.level.block.state.BlockState;
  import net.minecraft.world.level.chunk.CarvingMask;
  import net.minecraft.world.level.chunk.ChunkAccess;
@@ -41,7 +40,7 @@
  import net.minecraft.world.level.chunk.ChunkStatus;
  import net.minecraft.world.level.chunk.DataLayer;
  import net.minecraft.world.level.chunk.ImposterProtoChunk;
-@@ -62,344 +68,680 @@
+@@ -61,344 +68,680 @@
  import org.slf4j.Logger;
  
  public class ChunkSerializer {
@@ -513,9 +512,9 @@
  
 -            return protoChunk2;
 +            return new InProgressChunkHolder(protochunk1, tasksToExecuteOnMain); // Paper - Async chunk loading
-         }
-     }
- 
++        }
++    }
++
 +    // Paper start - async chunk save for unload
 +    public record AsyncSaveData(
 +        DataLayer[] blockLight,
@@ -561,7 +560,7 @@
 +            if (blockEntityNbt != null) {
 +                blockEntitiesSerialized.add(blockEntityNbt);
 +            }
-+        }
+         }
 +
 +        return new AsyncSaveData(
 +            blockLight,
@@ -571,9 +570,9 @@
 +            blockEntitiesSerialized,
 +            world.getGameTime()
 +        );
-+    }
+     }
 +    // Paper end
-+
+ 
      private static void logErrors(ChunkPos chunkPos, int y, String message) {
 -        LOGGER.error("Recoverable errors when loading section [" + chunkPos.x + ", " + y + ", " + chunkPos.z + "]: " + message);
 +        ChunkSerializer.LOGGER.error("Recoverable errors when loading section [" + chunkPos.x + ", " + y + ", " + chunkPos.z + "]: " + message);
@@ -831,7 +830,7 @@
 +        while (iterator1.hasNext()) {
 +            Entry<Heightmap.Types, Heightmap> entry = (Entry) iterator1.next();
  
--        for(Entry<Heightmap.Types, Heightmap> entry : chunk.getHeightmaps()) {
+-        for(Map.Entry<Heightmap.Types, Heightmap> entry : chunk.getHeightmaps()) {
              if (chunk.getStatus().heightmapsAfter().contains(entry.getKey())) {
 -                compoundTag5.put(entry.getKey().getSerializationKey(), new LongArrayTag(entry.getValue().getRawData()));
 +                nbttagcompound3.put(((Heightmap.Types) entry.getKey()).getSerializationKey(), new LongArrayTag(((Heightmap) entry.getValue()).getRawData()));
@@ -922,7 +921,7 @@
                          }
                      }
                  }
-@@ -410,48 +752,60 @@
+@@ -409,48 +752,60 @@
  
      @Nullable
      private static ListTag getListOfCompoundsOrNull(CompoundTag nbt, String key) {
@@ -942,7 +941,7 @@
 +        Registry<ConfiguredStructureFeature<?, ?>> iregistry = context.registryAccess().registryOrThrow(Registry.CONFIGURED_STRUCTURE_FEATURE_REGISTRY);
 +        Iterator iterator = starts.entrySet().iterator();
  
--        for(Entry<ConfiguredStructureFeature<?, ?>, StructureStart> entry : starts.entrySet()) {
+-        for(Map.Entry<ConfiguredStructureFeature<?, ?>, StructureStart> entry : starts.entrySet()) {
 -            ResourceLocation resourceLocation = registry.getKey(entry.getKey());
 -            compoundTag2.put(resourceLocation.toString(), entry.getValue().createTag(context, pos));
 +        while (iterator.hasNext()) {
@@ -958,7 +957,7 @@
 +        CompoundTag nbttagcompound2 = new CompoundTag();
 +        Iterator iterator1 = references.entrySet().iterator();
  
--        for(Entry<ConfiguredStructureFeature<?, ?>, LongSet> entry2 : references.entrySet()) {
+-        for(Map.Entry<ConfiguredStructureFeature<?, ?>, LongSet> entry2 : references.entrySet()) {
 -            if (!entry2.getValue().isEmpty()) {
 -                ResourceLocation resourceLocation2 = registry.getKey(entry2.getKey());
 -                compoundTag3.put(resourceLocation2.toString(), new LongArrayTag(entry2.getValue()));
@@ -1009,7 +1008,7 @@
                  }
              }
          }
-@@ -459,23 +813,28 @@
+@@ -458,23 +813,28 @@
          return map;
      }
  
@@ -1052,7 +1051,7 @@
                              return false;
                          } else {
                              return true;
-@@ -489,19 +848,27 @@
+@@ -488,19 +848,27 @@
      }
  
      public static ListTag packOffsets(ShortList[] lists) {

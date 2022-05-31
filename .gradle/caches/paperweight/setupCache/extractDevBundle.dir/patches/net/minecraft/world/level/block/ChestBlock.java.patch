@@ -44,7 +44,7 @@
      };
      private static final DoubleBlockCombiner.Combiner<ChestBlockEntity, Optional<MenuProvider>> MENU_PROVIDER_COMBINER = new DoubleBlockCombiner.Combiner<ChestBlockEntity, Optional<MenuProvider>>() {
 -        @Override
--        public Optional<MenuProvider> acceptDouble(ChestBlockEntity first, ChestBlockEntity second) {
+         public Optional<MenuProvider> acceptDouble(final ChestBlockEntity first, final ChestBlockEntity second) {
 -            final Container container = new CompoundContainer(first, second);
 -            return Optional.of(new MenuProvider() {
 -                @Nullable
@@ -58,7 +58,6 @@
 -                        return null;
 -                    }
 -                }
-+        public Optional<MenuProvider> acceptDouble(final ChestBlockEntity first, final ChestBlockEntity second) {
 +            final CompoundContainer inventorylargechest = new CompoundContainer(first, second);
  
 -                @Override
@@ -168,25 +167,20 @@
 +        if (state.getValue(ChestBlock.TYPE) == ChestType.SINGLE) {
 +            return ChestBlock.AABB;
          } else {
--            switch(getConnectedDirection(state)) {
--            case NORTH:
--            default:
--                return NORTH_AABB;
--            case SOUTH:
--                return SOUTH_AABB;
--            case WEST:
--                return WEST_AABB;
--            case EAST:
--                return EAST_AABB;
+-            switch (getConnectedDirection(state)) {
 +            switch (ChestBlock.getConnectedDirection(state)) {
-+                case NORTH:
-+                default:
+                 case NORTH:
+                 default:
+-                    return NORTH_AABB;
 +                    return ChestBlock.NORTH_AABB;
-+                case SOUTH:
+                 case SOUTH:
+-                    return SOUTH_AABB;
 +                    return ChestBlock.SOUTH_AABB;
-+                case WEST:
+                 case WEST:
+-                    return WEST_AABB;
 +                    return ChestBlock.WEST_AABB;
-+                case EAST:
+                 case EAST:
+-                    return EAST_AABB;
 +                    return ChestBlock.EAST_AABB;
              }
          }
@@ -339,16 +333,15 @@
 -        return this.combine(state, world, pos, false).<Optional<MenuProvider>>apply(MENU_PROVIDER_COMBINER).orElse((MenuProvider)null);
 +        // CraftBukkit start
 +        return this.getMenuProvider(state, world, pos, false);
-     }
- 
--    public static DoubleBlockCombiner.Combiner<ChestBlockEntity, Float2FloatFunction> opennessCombiner(LidBlockEntity progress) {
++    }
++
 +    @Nullable
 +    public MenuProvider getMenuProvider(BlockState iblockdata, Level world, BlockPos blockposition, boolean ignoreObstructions) {
 +        return (MenuProvider) ((Optional) this.combine(iblockdata, world, blockposition, ignoreObstructions).apply(ChestBlock.MENU_PROVIDER_COMBINER)).orElse((Object) null);
 +        // CraftBukkit end
-+    }
-+
-+    public static DoubleBlockCombiner.Combiner<ChestBlockEntity, Float2FloatFunction> opennessCombiner(final LidBlockEntity progress) {
+     }
+ 
+     public static DoubleBlockCombiner.Combiner<ChestBlockEntity, Float2FloatFunction> opennessCombiner(final LidBlockEntity progress) {
          return new DoubleBlockCombiner.Combiner<ChestBlockEntity, Float2FloatFunction>() {
 -            @Override
              public Float2FloatFunction acceptDouble(ChestBlockEntity first, ChestBlockEntity second) {

@@ -32,7 +32,7 @@
      }
  
      @Override
-@@ -70,34 +73,39 @@
+@@ -70,33 +73,39 @@
  
      @Override
      public int getAnalogOutputSignal(BlockState state, Level world, BlockPos pos) {
@@ -43,8 +43,8 @@
      @Override
      public void playerDestroy(Level world, Player player, BlockPos pos, BlockState state, @Nullable BlockEntity blockEntity, ItemStack stack) {
          super.playerDestroy(world, player, pos, state, blockEntity, stack);
-         if (!world.isClientSide && blockEntity instanceof BeehiveBlockEntity) {
--            BeehiveBlockEntity beehiveBlockEntity = (BeehiveBlockEntity)blockEntity;
+-        if (!world.isClientSide && blockEntity instanceof BeehiveBlockEntity beehiveBlockEntity) {
++        if (!world.isClientSide && blockEntity instanceof BeehiveBlockEntity) {
 +            BeehiveBlockEntity tileentitybeehive = (BeehiveBlockEntity) blockEntity;
 +
              if (EnchantmentHelper.getItemEnchantmentLevel(Enchantments.SILK_TOUCH, stack) == 0) {
@@ -81,7 +81,7 @@
                  }
              }
          }
-@@ -105,43 +113,56 @@
+@@ -104,43 +113,56 @@
      }
  
      public static void dropHoneycomb(Level world, BlockPos pos) {
@@ -154,13 +154,12 @@
              if (!CampfireBlock.isSmokeyPos(world, pos)) {
                  if (this.hiveContainsBees(world, pos)) {
                      this.angerNearbyBees(world, pos);
-@@ -159,10 +180,12 @@
+@@ -158,9 +180,12 @@
      }
  
      private boolean hiveContainsBees(Level world, BlockPos pos) {
 -        BlockEntity blockEntity = world.getBlockEntity(pos);
--        if (blockEntity instanceof BeehiveBlockEntity) {
--            BeehiveBlockEntity beehiveBlockEntity = (BeehiveBlockEntity)blockEntity;
+-        if (blockEntity instanceof BeehiveBlockEntity beehiveBlockEntity) {
 -            return !beehiveBlockEntity.isEmpty();
 +        BlockEntity tileentity = world.getBlockEntity(pos);
 +
@@ -171,13 +170,12 @@
          } else {
              return false;
          }
-@@ -170,22 +193,24 @@
+@@ -168,21 +193,24 @@
  
      public void releaseBeesAndResetHoneyLevel(Level world, BlockState state, BlockPos pos, @Nullable Player player, BeehiveBlockEntity.BeeReleaseStatus beeState) {
          this.resetHoneyLevel(world, state, pos);
 -        BlockEntity blockEntity = world.getBlockEntity(pos);
--        if (blockEntity instanceof BeehiveBlockEntity) {
--            BeehiveBlockEntity beehiveBlockEntity = (BeehiveBlockEntity)blockEntity;
+-        if (blockEntity instanceof BeehiveBlockEntity beehiveBlockEntity) {
 -            beehiveBlockEntity.emptyAllLivingFromHive(player, state, beeState);
 +        BlockEntity tileentity = world.getBlockEntity(pos);
 +
@@ -203,7 +201,7 @@
                  this.trySpawnDripParticles(world, pos, state);
              }
          }
-@@ -193,20 +218,23 @@
+@@ -190,20 +218,23 @@
      }
  
      private void trySpawnDripParticles(Level world, BlockPos pos, BlockState state) {
@@ -240,7 +238,7 @@
                      }
                  }
              }
-@@ -215,7 +243,7 @@
+@@ -212,7 +243,7 @@
      }
  
      private void spawnParticle(Level world, BlockPos pos, VoxelShape shape, double height) {
@@ -249,7 +247,7 @@
      }
  
      private void spawnFluidParticle(Level world, double minX, double maxX, double minZ, double maxZ, double height) {
-@@ -224,12 +252,12 @@
+@@ -221,12 +252,12 @@
  
      @Override
      public BlockState getStateForPlacement(BlockPlaceContext ctx) {
@@ -264,7 +262,7 @@
      }
  
      @Override
-@@ -252,25 +280,30 @@
+@@ -249,25 +280,30 @@
      @Override
      public void playerWillDestroy(Level world, BlockPos pos, BlockState state, Player player) {
          if (!world.isClientSide && player.isCreative() && world.getGameRules().getBoolean(GameRules.RULE_DOBLOCKDROPS)) {
@@ -312,7 +310,7 @@
                  }
              }
          }
-@@ -280,12 +313,15 @@
+@@ -277,12 +313,15 @@
  
      @Override
      public List<ItemStack> getDrops(BlockState state, LootContext.Builder builder) {
@@ -333,7 +331,7 @@
              }
          }
  
-@@ -295,10 +331,12 @@
+@@ -292,10 +331,12 @@
      @Override
      public BlockState updateShape(BlockState state, Direction direction, BlockState neighborState, LevelAccessor world, BlockPos pos, BlockPos neighborPos) {
          if (world.getBlockState(neighborPos).getBlock() instanceof FireBlock) {

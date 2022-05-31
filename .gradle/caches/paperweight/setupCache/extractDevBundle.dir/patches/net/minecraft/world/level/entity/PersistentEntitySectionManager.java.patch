@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/level/entity/PersistentEntitySectionManager.java
 +++ b/net/minecraft/world/level/entity/PersistentEntitySectionManager.java
-@@ -5,18 +5,21 @@
+@@ -5,17 +5,21 @@
  import com.google.common.collect.Sets;
  import com.mojang.logging.LogUtils;
  import it.unimi.dsi.fastutil.longs.Long2ObjectMap;
@@ -9,7 +9,6 @@
  import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap;
  import it.unimi.dsi.fastutil.longs.LongOpenHashSet;
  import it.unimi.dsi.fastutil.longs.LongSet;
--import it.unimi.dsi.fastutil.longs.Long2ObjectMap.Entry;
 +import it.unimi.dsi.fastutil.objects.ObjectIterator;
  import java.io.IOException;
  import java.io.UncheckedIOException;
@@ -23,7 +22,7 @@
  import java.util.function.Consumer;
  import java.util.stream.Collectors;
  import java.util.stream.Stream;
-@@ -26,24 +29,30 @@
+@@ -25,24 +29,30 @@
  import net.minecraft.util.CsvOutput;
  import net.minecraft.util.VisibleForDebug;
  import net.minecraft.world.entity.Entity;
@@ -60,7 +59,7 @@
          this.sectionStorage = new EntitySectionStorage<>(entityClass, this.chunkVisibility);
          this.chunkVisibility.defaultReturnValue(Visibility.HIDDEN);
          this.chunkLoadStatuses.defaultReturnValue(PersistentEntitySectionManager.ChunkLoadStatus.FRESH);
-@@ -52,6 +61,75 @@
+@@ -51,6 +61,75 @@
          this.entityGetter = new LevelEntityGetterAdapter<>(this.visibleEntityStorage, this.sectionStorage);
      }
  
@@ -136,7 +135,7 @@
      void removeSectionIfEmpty(long sectionPos, EntitySection<T> section) {
          if (section.isEmpty()) {
              this.sectionStorage.remove(sectionPos);
-@@ -60,8 +138,24 @@
+@@ -59,8 +138,24 @@
      }
  
      private boolean addEntityUuid(T entity) {
@@ -162,7 +161,7 @@
              return false;
          } else {
              return true;
-@@ -73,18 +167,22 @@
+@@ -72,18 +167,22 @@
      }
  
      private boolean addEntity(T entity, boolean existing) {
@@ -190,7 +189,7 @@
              if (visibility.isAccessible()) {
                  this.startTracking(entity);
              }
-@@ -102,76 +200,86 @@
+@@ -101,76 +200,86 @@
      }
  
      public void addLegacyChunkEntities(Stream<T> entities) {
@@ -305,7 +304,7 @@
                  }).forEach(this::startTicking);
              }
  
-@@ -179,52 +287,71 @@
+@@ -178,52 +287,71 @@
      }
  
      public void ensureChunkQueuedForLoad(long chunkPos) {
@@ -396,7 +395,7 @@
              return false;
          } else {
              this.chunkLoadStatuses.remove(chunkPos);
-@@ -238,46 +365,58 @@
+@@ -237,46 +365,58 @@
      }
  
      private void processUnloads() {
@@ -443,7 +442,7 @@
 +        while (objectiterator.hasNext()) {
 +            Entry<PersistentEntitySectionManager.ChunkLoadStatus> entry = (Entry) objectiterator.next();
  
--        for(Entry<PersistentEntitySectionManager.ChunkLoadStatus> entry : Long2ObjectMaps.fastIterable(this.chunkLoadStatuses)) {
+-        for(Long2ObjectMap.Entry<PersistentEntitySectionManager.ChunkLoadStatus> entry : Long2ObjectMaps.fastIterable(this.chunkLoadStatuses)) {
              if (entry.getValue() == PersistentEntitySectionManager.ChunkLoadStatus.LOADED) {
 -                longSet.add(entry.getLongKey());
 +                longset.add(entry.getLongKey());
@@ -471,7 +470,7 @@
                  });
              }
  
-@@ -285,14 +424,16 @@
+@@ -284,14 +424,16 @@
      }
  
      public void saveAll() {
@@ -493,7 +492,7 @@
                  });
              });
          }
-@@ -300,9 +441,16 @@
+@@ -299,9 +441,16 @@
          this.permanentStorage.flush(true);
      }
  
@@ -512,7 +511,7 @@
          this.permanentStorage.close();
      }
  
-@@ -313,13 +461,18 @@
+@@ -312,13 +461,18 @@
      public LevelEntityGetter<T> getEntityGetter() {
          return this.entityGetter;
      }
@@ -533,7 +532,7 @@
      }
  
      public boolean areEntitiesLoaded(long chunkPos) {
-@@ -327,16 +480,19 @@
+@@ -326,16 +480,19 @@
      }
  
      public void dumpSections(Writer writer) throws IOException {
@@ -562,7 +561,7 @@
                      }
                  }
  
-@@ -346,57 +502,94 @@
+@@ -345,57 +502,94 @@
  
      @VisibleForDebug
      public String gatherStats() {
@@ -684,7 +683,7 @@
                      PersistentEntitySectionManager.this.startTicking(this.entity);
                  }
  
-@@ -405,11 +598,14 @@
+@@ -404,11 +598,14 @@
  
          @Override
          public void onRemove(Entity.RemovalReason reason) {
@@ -700,7 +699,7 @@
              if (visibility.isTicking()) {
                  PersistentEntitySectionManager.this.stopTicking(this.entity);
              }
-@@ -423,14 +619,8 @@
+@@ -422,14 +619,8 @@
              }
  
              PersistentEntitySectionManager.this.knownUuids.remove(this.entity.getUUID());

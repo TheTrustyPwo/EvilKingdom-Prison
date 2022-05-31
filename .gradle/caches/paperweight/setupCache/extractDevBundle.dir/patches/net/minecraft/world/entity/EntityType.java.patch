@@ -513,8 +513,7 @@
 +        }).orElse(null); // CraftBukkit - decompile error
      }
  
--    public static Stream<Entity> loadEntitiesRecursive(List<? extends Tag> entityNbtList, Level world) {
-+    public static Stream<Entity> loadEntitiesRecursive(final List<? extends Tag> entityNbtList, final Level world) {
+     public static Stream<Entity> loadEntitiesRecursive(final List<? extends Tag> entityNbtList, final Level world) {
          final Spliterator<? extends Tag> spliterator = entityNbtList.spliterator();
 +
          return StreamSupport.stream(new Spliterator<Entity>() {

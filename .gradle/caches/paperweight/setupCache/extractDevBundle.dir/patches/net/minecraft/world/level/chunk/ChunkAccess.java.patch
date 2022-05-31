@@ -1,16 +1,14 @@
 --- a/net/minecraft/world/level/chunk/ChunkAccess.java
 +++ b/net/minecraft/world/level/chunk/ChunkAccess.java
-@@ -11,8 +11,8 @@
+@@ -11,6 +11,7 @@
  import java.util.Collections;
  import java.util.EnumSet;
  import java.util.Map;
--import java.util.Set;
- import java.util.Map.Entry;
-+import java.util.Set;
++import java.util.Map.Entry;
+ import java.util.Set;
  import java.util.function.Supplier;
  import java.util.stream.Stream;
- import javax.annotation.Nullable;
-@@ -55,12 +55,13 @@
+@@ -54,12 +55,13 @@
  import org.slf4j.Logger;
  
  public abstract class ChunkAccess implements BlockGetter, BiomeManager.NoiseBiomeSource, FeatureAccess {
@@ -25,7 +23,7 @@
      private long inhabitedTime;
      /** @deprecated */
      @Nullable
-@@ -79,8 +80,55 @@
+@@ -78,8 +80,55 @@
      protected final LevelHeightAccessor levelHeightAccessor;
      protected final LevelChunkSection[] sections;
  
@@ -82,7 +80,7 @@
          this.upgradeData = upgradeData;
          this.levelHeightAccessor = heightLimitView;
          this.sections = new LevelChunkSection[heightLimitView.getSectionsCount()];
-@@ -91,17 +139,21 @@
+@@ -90,17 +139,21 @@
              if (this.sections.length == sectionArrayInitializer.length) {
                  System.arraycopy(sectionArrayInitializer, 0, this.sections, 0, this.sections.length);
              } else {
@@ -108,7 +106,7 @@
              }
          }
  
-@@ -111,6 +163,7 @@
+@@ -110,6 +163,7 @@
          return GameEventDispatcher.NOOP;
      }
  
@@ -116,7 +114,7 @@
      @Nullable
      public abstract BlockState setBlockState(BlockPos pos, BlockState state, boolean moved);
  
-@@ -120,12 +173,13 @@
+@@ -119,12 +173,13 @@
  
      @Nullable
      public LevelChunkSection getHighestSection() {
@@ -135,7 +133,7 @@
              }
          }
  
-@@ -133,12 +187,14 @@
+@@ -132,12 +187,14 @@
      }
  
      public int getHighestSectionPosition() {
@@ -152,7 +150,16 @@
          set.addAll(this.blockEntities.keySet());
          return set;
      }
-@@ -160,8 +216,8 @@
+@@ -150,7 +207,7 @@
+         return this.getSections()[yIndex];
+     }
+ 
+-    public Collection<Map.Entry<Heightmap.Types, Heightmap>> getHeightmaps() {
++    public Collection<Entry<Heightmap.Types, Heightmap>> getHeightmaps() {
+         return Collections.unmodifiableSet(this.heightmaps.entrySet());
+     }
+ 
+@@ -159,8 +216,8 @@
      }
  
      public Heightmap getOrCreateHeightmapUnprimed(Heightmap.Types type) {
@@ -163,7 +170,7 @@
          });
      }
  
-@@ -170,14 +226,15 @@
+@@ -169,14 +226,15 @@
      }
  
      public int getHeight(Heightmap.Types type, int x, int z) {
@@ -182,7 +189,7 @@
          }
  
          return heightmap.getFirstAvailable(x & 15, z & 15) - 1;
-@@ -189,13 +246,13 @@
+@@ -188,13 +246,13 @@
  
      @Nullable
      @Override
@@ -200,7 +207,7 @@
          this.unsaved = true;
      }
  
-@@ -210,15 +267,15 @@
+@@ -209,15 +267,15 @@
      }
  
      @Override
@@ -221,7 +228,7 @@
          this.unsaved = true;
      }
  
-@@ -243,8 +300,8 @@
+@@ -242,8 +300,8 @@
              upperHeight = this.getMaxBuildHeight() - 1;
          }
  
@@ -232,7 +239,7 @@
                  return false;
              }
          }
-@@ -254,10 +311,11 @@
+@@ -253,10 +311,11 @@
  
      public void setUnsaved(boolean needsSaving) {
          this.unsaved = needsSaving;
@@ -245,7 +252,7 @@
      }
  
      public abstract ChunkStatus getStatus();
-@@ -265,7 +323,7 @@
+@@ -264,7 +323,7 @@
      public abstract void removeBlockEntity(BlockPos pos);
  
      public void markPosForPostprocessing(BlockPos pos) {
@@ -254,7 +261,7 @@
      }
  
      public ShortList[] getPostProcessing() {
-@@ -273,7 +331,7 @@
+@@ -272,7 +331,7 @@
      }
  
      public void addPackedPostProcess(short packedPos, int index) {
@@ -263,7 +270,7 @@
      }
  
      public void setBlockEntityNbt(CompoundTag nbt) {
-@@ -282,7 +340,7 @@
+@@ -281,7 +340,7 @@
  
      @Nullable
      public CompoundTag getBlockEntityNbt(BlockPos pos) {
@@ -272,7 +279,7 @@
      }
  
      @Nullable
-@@ -364,7 +422,7 @@
+@@ -363,7 +422,7 @@
      @Deprecated
      public Holder<Biome> carverBiome(Supplier<Holder<Biome>> biomeSupplier) {
          if (this.carverBiome == null) {
@@ -281,7 +288,7 @@
          }
  
          return this.carverBiome;
-@@ -373,30 +431,54 @@
+@@ -372,30 +431,54 @@
      @Override
      public Holder<Biome> getNoiseBiome(int biomeX, int biomeY, int biomeZ) {
          try {
@@ -309,9 +316,9 @@
              });
 -            throw new ReportedException(crashReport);
 +            throw new ReportedException(crashreport);
-         }
-     }
- 
++        }
++    }
++
 +    // CraftBukkit start
 +    public void setBiome(int i, int j, int k, Holder<Biome> biome) {
 +        try {
@@ -329,10 +336,10 @@
 +                return CrashReportCategory.formatLocation(this, i, j, k);
 +            });
 +            throw new ReportedException(crashreport);
-+        }
-+    }
+         }
+     }
 +    // CraftBukkit end
-+
+ 
      public void fillBiomesFromNoise(BiomeResolver biomeSupplier, Climate.Sampler sampler) {
 -        ChunkPos chunkPos = this.getPos();
 -        int i = QuartPos.fromBlock(chunkPos.getMinBlockX());
@@ -353,7 +360,7 @@
          }
  
      }
-@@ -417,7 +499,28 @@
+@@ -416,7 +499,28 @@
      public LevelHeightAccessor getHeightAccessorForGeneration() {
          return this;
      }

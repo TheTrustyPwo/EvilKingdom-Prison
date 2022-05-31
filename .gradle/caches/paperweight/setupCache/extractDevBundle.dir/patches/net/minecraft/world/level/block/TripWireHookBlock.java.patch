@@ -21,25 +21,20 @@
  
      @Override
      public VoxelShape getShape(BlockState state, BlockGetter world, BlockPos pos, CollisionContext context) {
--        switch((Direction)state.getValue(FACING)) {
--        case EAST:
--        default:
--            return EAST_AABB;
--        case WEST:
--            return WEST_AABB;
--        case SOUTH:
--            return SOUTH_AABB;
--        case NORTH:
--            return NORTH_AABB;
+-        switch ((Direction)state.getValue(FACING)) {
 +        switch ((Direction) state.getValue(TripWireHookBlock.FACING)) {
-+            case EAST:
-+            default:
+             case EAST:
+             default:
+-                return EAST_AABB;
 +                return TripWireHookBlock.EAST_AABB;
-+            case WEST:
+             case WEST:
+-                return WEST_AABB;
 +                return TripWireHookBlock.WEST_AABB;
-+            case SOUTH:
+             case SOUTH:
+-                return SOUTH_AABB;
 +                return TripWireHookBlock.SOUTH_AABB;
-+            case NORTH:
+             case NORTH:
+-                return NORTH_AABB;
 +                return TripWireHookBlock.NORTH_AABB;
          }
      }

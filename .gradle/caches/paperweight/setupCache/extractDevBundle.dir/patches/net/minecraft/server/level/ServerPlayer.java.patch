@@ -316,8 +316,8 @@
 +        final double x = getX() + inFront * Math.cos(rads);
 +        final double z = getZ() + inFront * Math.sin(rads);
 +        return new BlockPos(x, getY(), z);
-     }
- 
++    }
++
 +    public ChunkPos getChunkInFront(double inFront) {
 +        double rads = Math.toRadians(net.minecraft.server.MCUtil.normalizeYaw(this.yRot + 90)); // MC rotates yaw 90 for some odd reason
 +        final double x = getX() + (inFront * 16) * Math.cos(rads);
@@ -362,9 +362,9 @@
 +        }
 +
 +        return blockposition;
-+    }
+     }
 +    // CraftBukkit end
-+
+ 
      public void fudgeSpawnLocation(ServerLevel world) {
 -        BlockPos blockPos = world.getSharedSpawnPos();
 -        if (world.dimensionType().hasSkyLight() && world.getServer().getWorldData().getGameType() != GameType.ADVENTURE) {
@@ -533,8 +533,8 @@
              });
          }
 +        this.getBukkitEntity().setExtraData(nbt); // CraftBukkit
- 
-     }
++
++    }
  
 +    // CraftBukkit start - World fallback code, either respawn location or global spawn
 +    public void spawnIn(Level world) {
@@ -556,9 +556,9 @@
 +            this.setPosRaw(position.x(), position.y(), position.z()); // Paper - don't register to chunks yet
 +        }
 +        this.gameMode.setLevel((ServerLevel) world);
-+    }
+     }
 +    // CraftBukkit end
-+
+ 
      public void setExperiencePoints(int points) {
 -        float f = (float)this.getXpNeededForNextLevel();
 -        float g = (f - 1.0F) / f;
@@ -1819,29 +1819,6 @@
      }
  
      public boolean canChatInColor() {
-@@ -1310,14 +1922,14 @@
-     }
- 
-     private boolean acceptsChat(ChatType type) {
--        switch(this.chatVisibility) {
--        case HIDDEN:
--            return type == ChatType.GAME_INFO;
--        case SYSTEM:
--            return type == ChatType.SYSTEM || type == ChatType.GAME_INFO;
--        case FULL:
--        default:
--            return true;
-+        switch (this.chatVisibility) {
-+            case HIDDEN:
-+                return type == ChatType.GAME_INFO;
-+            case SYSTEM:
-+                return type == ChatType.SYSTEM || type == ChatType.GAME_INFO;
-+            case FULL:
-+            default:
-+                return true;
-         }
-     }
- 
 @@ -1354,17 +1966,62 @@
      }
  

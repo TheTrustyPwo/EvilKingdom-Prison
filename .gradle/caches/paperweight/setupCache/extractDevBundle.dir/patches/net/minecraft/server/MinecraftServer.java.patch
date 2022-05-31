@@ -31,7 +31,7 @@
  import java.util.Arrays;
  import java.util.Base64;
  import java.util.Collection;
-@@ -36,12 +40,12 @@
+@@ -36,6 +40,7 @@
  import java.util.Iterator;
  import java.util.List;
  import java.util.Map;
@@ -39,13 +39,7 @@
  import java.util.Objects;
  import java.util.Optional;
  import java.util.Random;
- import java.util.Set;
- import java.util.UUID;
--import java.util.Map.Entry;
- import java.util.concurrent.CompletableFuture;
- import java.util.concurrent.Executor;
- import java.util.concurrent.RejectedExecutionException;
-@@ -49,6 +53,7 @@
+@@ -48,6 +53,7 @@
  import java.util.function.BooleanSupplier;
  import java.util.function.Consumer;
  import java.util.function.Function;
@@ -53,7 +47,7 @@
  import javax.annotation.Nullable;
  import javax.imageio.ImageIO;
  import net.minecraft.CrashReport;
-@@ -65,16 +70,15 @@
+@@ -64,16 +70,15 @@
  import net.minecraft.core.RegistryAccess;
  import net.minecraft.data.worldgen.features.MiscOverworldFeatures;
  import net.minecraft.gametest.framework.GameTestTicker;
@@ -71,7 +65,7 @@
  import net.minecraft.server.level.DemoMode;
  import net.minecraft.server.level.PlayerRespawnLogic;
  import net.minecraft.server.level.ServerChunkCache;
-@@ -104,6 +108,7 @@
+@@ -103,6 +108,7 @@
  import net.minecraft.util.NativeModuleLister;
  import net.minecraft.util.ProgressListener;
  import net.minecraft.util.Unit;
@@ -79,7 +73,7 @@
  import net.minecraft.util.profiling.EmptyProfileResults;
  import net.minecraft.util.profiling.ProfileResults;
  import net.minecraft.util.profiling.ProfilerFiller;
-@@ -133,24 +138,25 @@
+@@ -132,24 +138,25 @@
  import net.minecraft.world.level.Level;
  import net.minecraft.world.level.LevelSettings;
  import net.minecraft.world.level.biome.BiomeManager;
@@ -107,7 +101,7 @@
  import net.minecraft.world.level.storage.ServerLevelData;
  import net.minecraft.world.level.storage.WorldData;
  import net.minecraft.world.level.storage.loot.ItemModifierManager;
-@@ -158,10 +164,30 @@
+@@ -157,10 +164,30 @@
  import net.minecraft.world.level.storage.loot.PredicateManager;
  import net.minecraft.world.phys.Vec2;
  import net.minecraft.world.phys.Vec3;
@@ -138,7 +132,7 @@
      public static final Logger LOGGER = LogUtils.getLogger();
      public static final String VANILLA_BRAND = "vanilla";
      private static final float AVERAGE_TICK_TIME_SMOOTHING = 0.8F;
-@@ -186,28 +212,26 @@
+@@ -185,28 +212,26 @@
      public LevelStorageSource.LevelStorageAccess storageSource;
      public final PlayerDataStorage playerDataStorage;
      private final List<Runnable> tickables = Lists.newArrayList();
@@ -177,7 +171,7 @@
      private boolean stopped;
      private int tickCount;
      protected final Proxy proxy;
-@@ -218,14 +242,19 @@
+@@ -217,14 +242,19 @@
      @Nullable
      private String motd;
      private int playerIdleTimeout;
@@ -200,7 +194,7 @@
      private volatile boolean isReady;
      private long lastOverloadWarning;
      private final MinecraftSessionService sessionService;
-@@ -235,16 +264,16 @@
+@@ -234,16 +264,16 @@
      private final GameProfileCache profileCache;
      private long lastServerStatus;
      public final Thread serverThread;
@@ -221,7 +215,7 @@
      private boolean enforceWhitelist;
      private float averageTickTime;
      public final Executor executor;
-@@ -255,192 +284,488 @@
+@@ -254,192 +284,488 @@
      protected WorldData worldData;
      private volatile boolean isSaving;
  
@@ -569,11 +563,10 @@
 +                }
 +
 +                worlddata = new PrimaryLevelData(worldsettings, generatorsettings, Lifecycle.stable());
-             }
++            }
 +            worlddata.checkName(name); // CraftBukkit - Migration did not rewrite the level.dat; This forces 1.8 to take the last loaded world as respawn (in this case the end)
 +            // Paper - move down
- 
--            serverLevelData.setInitialized(true);
++
 +            ServerLevelData iworlddataserver = worlddata;
 +            WorldGenSettings generatorsettings = worlddata.worldGenSettings();
 +            boolean flag = generatorsettings.isDebug();
@@ -586,11 +579,12 @@
 +                worlddimension = generatorsettings.dimensions().get(dimensionKey);
 +            } else {
 +                worlddimension = iregistry.get(dimensionKey);
-+            }
+             }
 +            // Paper end
 +            Holder<DimensionType> holder;
 +            ChunkGenerator chunkgenerator;
-+
+ 
+-            serverLevelData.setInitialized(true);
 +            if (worlddimension == null) {
 +                holder = this.registryAccess().registryOrThrow(Registry.DIMENSION_TYPE_REGISTRY).getOrCreateHolder(DimensionType.OVERWORLD_LOCATION);
 +                chunkgenerator = WorldGenSettings.makeDefaultOverworld(this.registryHolder, (new Random()).nextLong());
@@ -674,7 +668,7 @@
 +            scoreboard.removePlayerTeam(scoreboard.getPlayerTeam(teamName)); // Clean up after ourselves
          }
  
--        for(Entry<ResourceKey<LevelStem>, LevelStem> entry : registry.entrySet()) {
+-        for(Map.Entry<ResourceKey<LevelStem>, LevelStem> entry : registry.entrySet()) {
 -            ResourceKey<LevelStem> resourceKey = entry.getKey();
 -            if (resourceKey != LevelStem.OVERWORLD) {
 -                ResourceKey<Level> resourceKey2 = ResourceKey.create(Registry.DIMENSION_REGISTRY, resourceKey.location());
@@ -818,7 +812,7 @@
              }
  
          }
-@@ -449,61 +774,87 @@
+@@ -448,61 +774,87 @@
      private void setupDebugLevel(WorldData properties) {
          properties.setDifficulty(Difficulty.PEACEFUL);
          properties.setDifficultyLocked(true);
@@ -942,7 +936,7 @@
              }
          }
  
-@@ -524,44 +875,55 @@
+@@ -523,44 +875,55 @@
      public abstract boolean shouldRconBroadcast();
  
      public boolean saveAllChunks(boolean suppressLogs, boolean flush, boolean force) {
@@ -1014,7 +1008,7 @@
      }
  
      @Override
-@@ -569,50 +931,107 @@
+@@ -568,50 +931,107 @@
          this.stopServer();
      }
  
@@ -1140,7 +1134,7 @@
                  }
              }
          }
-@@ -622,10 +1041,30 @@
+@@ -621,10 +1041,30 @@
  
          try {
              this.storageSource.close();
@@ -1174,7 +1168,7 @@
      }
  
      public String getLocalIp() {
-@@ -640,40 +1079,146 @@
+@@ -639,40 +1079,146 @@
          return this.running;
      }
  
@@ -1197,11 +1191,11 @@
 -                LOGGER.error("Error while shutting down", (Throwable)var3);
 +            } catch (InterruptedException interruptedexception) {
 +                MinecraftServer.LOGGER.error("Error while shutting down", interruptedexception);
-             }
-         }
- 
-     }
- 
++            }
++        }
++
++    }
++
 +    // Spigot Start
 +    private static double calcTps(double avg, double exp, double tps)
 +    {
@@ -1249,17 +1243,17 @@
 +            total = total.add(x.multiply(dec(t)));
 +            if (++index == size) {
 +                index = 0;
-+            }
-+        }
-+
+             }
+         }
+ 
 +        public double getAverage() {
 +            return total.divide(dec(time), 30, java.math.RoundingMode.HALF_UP).doubleValue();
 +        }
-+    }
+     }
 +    private static final java.math.BigDecimal TPS_BASE = new java.math.BigDecimal(1E9).multiply(new java.math.BigDecimal(SAMPLE_INTERVAL));
 +    // Paper End
 +    // Spigot End
-+
+ 
      protected void runServer() {
          try {
 +            long serverStartTime = Util.getNanos(); // Paper
@@ -1331,7 +1325,7 @@
                      this.nextTickTime += 50L;
                      this.startMetricsRecordingTick();
                      this.profiler.push("tick");
-@@ -688,32 +1233,56 @@
+@@ -687,32 +1233,56 @@
                      JvmProfiler.INSTANCE.onServerTick(this.averageTickTime);
                  }
              } else {
@@ -1401,7 +1395,7 @@
              }
  
          }
-@@ -721,95 +1290,137 @@
+@@ -720,94 +1290,137 @@
      }
  
      private static CrashReport constructOrExtractCrashReport(Throwable throwable) {
@@ -1409,8 +1403,7 @@
 +        ReportedException reportedexception = null;
  
 -        for(Throwable throwable2 = throwable; throwable2 != null; throwable2 = throwable2.getCause()) {
--            if (throwable2 instanceof ReportedException) {
--                ReportedException reportedException2 = (ReportedException)throwable2;
+-            if (throwable2 instanceof ReportedException reportedException2) {
 -                reportedException = reportedException2;
 +        for (Throwable throwable1 = throwable; throwable1 != null; throwable1 = throwable1.getCause()) {
 +            if (throwable1 instanceof ReportedException) {
@@ -1576,7 +1569,7 @@
              }
  
          });
-@@ -823,95 +1434,206 @@
+@@ -821,95 +1434,206 @@
          return new File(".");
      }
  
@@ -1820,7 +1813,7 @@
  
          this.profiler.pop();
      }
-@@ -937,12 +1659,12 @@
+@@ -935,12 +1659,12 @@
      }
  
      public final ServerLevel overworld() {
@@ -1835,7 +1828,7 @@
      }
  
      public Set<ResourceKey<Level>> levelKeys() {
-@@ -971,7 +1693,7 @@
+@@ -969,7 +1693,7 @@
  
      @DontObfuscate
      public String getServerModName() {
@@ -1844,7 +1837,7 @@
      }
  
      public SystemReport fillSystemReport(SystemReport details) {
-@@ -980,25 +1702,30 @@
+@@ -978,25 +1702,30 @@
          });
          if (this.playerList != null) {
              details.setDetail("Player Count", () -> {
@@ -1884,7 +1877,7 @@
          });
          details.setDetail("World Generation", () -> {
              return this.worldData.worldGenSettingsLifecycle().toString();
-@@ -1020,7 +1747,7 @@
+@@ -1018,7 +1747,7 @@
  
      @Override
      public void sendMessage(Component message, UUID sender) {
@@ -1893,7 +1886,7 @@
      }
  
      public KeyPair getKeyPair() {
-@@ -1048,20 +1775,23 @@
+@@ -1046,20 +1775,23 @@
      }
  
      protected void initializeKeyPair() {
@@ -1925,7 +1918,7 @@
          }
      }
  
-@@ -1070,8 +1800,12 @@
+@@ -1068,8 +1800,12 @@
      }
  
      private void updateMobSpawningFlags() {
@@ -1940,7 +1933,7 @@
          }
  
      }
-@@ -1082,8 +1816,9 @@
+@@ -1080,8 +1816,9 @@
      }
  
      private void sendDifficultyUpdate(ServerPlayer player) {
@@ -1952,7 +1945,7 @@
      }
  
      public boolean isSpawningMonsters() {
-@@ -1187,7 +1922,7 @@
+@@ -1185,7 +1922,7 @@
  
      @Nullable
      public ServerConnectionListener getConnection() {
@@ -1961,7 +1954,7 @@
      }
  
      public boolean isReady() {
-@@ -1301,36 +2036,60 @@
+@@ -1299,36 +2036,60 @@
          return this.functionManager;
      }
  
@@ -2037,7 +2030,7 @@
      }
  
      public static DataPackConfig configurePackRepository(PackRepository resourcePackManager, DataPackConfig dataPackSettings, boolean safeMode) {
-@@ -1340,50 +2099,63 @@
+@@ -1338,50 +2099,63 @@
              return new DataPackConfig(ImmutableList.of("vanilla"), ImmutableList.of());
          } else {
              Set<String> set = Sets.newLinkedHashSet();
@@ -2120,7 +2113,7 @@
                  }
              }
  
-@@ -1399,8 +2171,9 @@
+@@ -1397,8 +2171,9 @@
      }
  
      public CommandSourceStack createCommandSourceStack() {
@@ -2132,7 +2125,7 @@
      }
  
      @Override
-@@ -1466,16 +2239,9 @@
+@@ -1464,16 +2239,9 @@
  
      public int getProfilePermissions(GameProfile profile) {
          if (this.getPlayerList().isOp(profile)) {
@@ -2152,7 +2145,7 @@
          } else {
              return 0;
          }
-@@ -1491,18 +2257,21 @@
+@@ -1489,18 +2257,21 @@
  
      public abstract boolean isSingleplayerOwner(GameProfile profile);
  
@@ -2165,7 +2158,7 @@
 +        Path path1 = path.resolve("levels");
  
          try {
--            for(Entry<ResourceKey<Level>, ServerLevel> entry : this.levels.entrySet()) {
+-            for(Map.Entry<ResourceKey<Level>, ServerLevel> entry : this.levels.entrySet()) {
 -                ResourceLocation resourceLocation = entry.getKey().location();
 -                Path path3 = path2.resolve(resourceLocation.getNamespace()).resolve(resourceLocation.getPath());
 -                Files.createDirectories(path3);
@@ -2182,7 +2175,7 @@
              }
  
              this.dumpGameRules(path.resolve("gamerules.txt"));
-@@ -1511,184 +2280,217 @@
+@@ -1509,184 +2280,217 @@
              this.dumpThreads(path.resolve("threads.txt"));
              this.dumpServerProperties(path.resolve("server.properties.txt"));
              this.dumpNativeModules(path.resolve("modules.txt"));
@@ -2484,7 +2477,7 @@
      private void startMetricsRecordingTick() {
          if (this.willStartRecordingMetrics) {
              this.metricsRecorder = ActiveMetricsRecorder.createStarted(new ServerMetricsSamplersProvider(Util.timeSource, this.isDedicatedServer()), Util.timeSource, Util.ioPool(), new MetricsPersister("server"), this.onMetricsRecordingStopped, (path) -> {
-@@ -1715,9 +2517,9 @@
+@@ -1713,9 +2517,9 @@
      }
  
      public void startRecordingMetrics(Consumer<ProfileResults> resultConsumer, Consumer<Path> dumpConsumer) {
@@ -2496,7 +2489,7 @@
          };
          this.onMetricsRecordingFinished = dumpConsumer;
          this.willStartRecordingMetrics = true;
-@@ -1760,7 +2562,7 @@
+@@ -1758,7 +2562,7 @@
      }
  
      public ServerPlayerGameMode createGameModeForPlayer(ServerPlayer player) {
@@ -2505,7 +2498,7 @@
      }
  
      @Nullable
-@@ -1793,20 +2595,42 @@
+@@ -1791,20 +2595,42 @@
          if (this.debugCommandProfiler == null) {
              return EmptyProfileResults.EMPTY;
          } else {
@@ -2553,16 +2546,7 @@
          final long startNanos;
          final int startTick;
  
-@@ -1815,7 +2639,7 @@
-             this.startTick = tick;
-         }
- 
--        ProfileResults stop(long endTime, int endTick) {
-+        ProfileResults stop(final long endTime, final int endTick) {
-             return new ProfileResults() {
-                 @Override
-                 public List<ResultField> getTimes(String parentPath) {
-@@ -1854,4 +2678,99 @@
+@@ -1852,4 +2678,99 @@
              };
          }
      }

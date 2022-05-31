@@ -68,13 +68,12 @@
                      }
  
                  }
-@@ -68,29 +83,31 @@
+@@ -68,28 +83,31 @@
  
      @Override
      public void tick(BlockState state, ServerLevel world, BlockPos pos, Random random) {
 -        BlockEntity blockEntity = world.getBlockEntity(pos);
--        if (blockEntity instanceof CommandBlockEntity) {
--            CommandBlockEntity commandBlockEntity = (CommandBlockEntity)blockEntity;
+-        if (blockEntity instanceof CommandBlockEntity commandBlockEntity) {
 -            BaseCommandBlock baseCommandBlock = commandBlockEntity.getCommandBlock();
 -            boolean bl = !StringUtil.isNullOrEmpty(baseCommandBlock.getCommand());
 -            CommandBlockEntity.Mode mode = commandBlockEntity.getMode();
@@ -120,7 +119,7 @@
                  }
              }
  
-@@ -106,14 +123,15 @@
+@@ -105,14 +123,15 @@
              executor.setSuccessCount(0);
          }
  
@@ -140,7 +139,7 @@
              return InteractionResult.sidedSuccess(world.isClientSide);
          } else {
              return InteractionResult.PASS;
-@@ -127,29 +145,33 @@
+@@ -126,28 +145,33 @@
  
      @Override
      public int getAnalogOutputSignal(BlockState state, Level world, BlockPos pos) {
@@ -154,8 +153,7 @@
      @Override
      public void setPlacedBy(Level world, BlockPos pos, BlockState state, LivingEntity placer, ItemStack itemStack) {
 -        BlockEntity blockEntity = world.getBlockEntity(pos);
--        if (blockEntity instanceof CommandBlockEntity) {
--            CommandBlockEntity commandBlockEntity = (CommandBlockEntity)blockEntity;
+-        if (blockEntity instanceof CommandBlockEntity commandBlockEntity) {
 -            BaseCommandBlock baseCommandBlock = commandBlockEntity.getCommandBlock();
 +        BlockEntity tileentity = world.getBlockEntity(pos);
 +
@@ -186,7 +184,7 @@
                  }
              }
  
-@@ -163,65 +185,71 @@
+@@ -161,65 +185,71 @@
  
      @Override
      public BlockState rotate(BlockState state, Rotation rotation) {

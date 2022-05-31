@@ -24,29 +24,24 @@
 -        Direction direction = state.getValue(FACING);
 -        boolean bl = !state.getValue(OPEN);
 -        boolean bl2 = state.getValue(HINGE) == DoorHingeSide.RIGHT;
--        switch(direction) {
--        case EAST:
--        default:
--            return bl ? EAST_AABB : (bl2 ? NORTH_AABB : SOUTH_AABB);
--        case SOUTH:
--            return bl ? SOUTH_AABB : (bl2 ? EAST_AABB : WEST_AABB);
--        case WEST:
--            return bl ? WEST_AABB : (bl2 ? SOUTH_AABB : NORTH_AABB);
--        case NORTH:
--            return bl ? NORTH_AABB : (bl2 ? WEST_AABB : EAST_AABB);
+-        switch (direction) {
 +        Direction enumdirection = (Direction) state.getValue(DoorBlock.FACING);
 +        boolean flag = !(Boolean) state.getValue(DoorBlock.OPEN);
 +        boolean flag1 = state.getValue(DoorBlock.HINGE) == DoorHingeSide.RIGHT;
 +
 +        switch (enumdirection) {
-+            case EAST:
-+            default:
+             case EAST:
+             default:
+-                return bl ? EAST_AABB : (bl2 ? NORTH_AABB : SOUTH_AABB);
 +                return flag ? DoorBlock.EAST_AABB : (flag1 ? DoorBlock.NORTH_AABB : DoorBlock.SOUTH_AABB);
-+            case SOUTH:
+             case SOUTH:
+-                return bl ? SOUTH_AABB : (bl2 ? EAST_AABB : WEST_AABB);
 +                return flag ? DoorBlock.SOUTH_AABB : (flag1 ? DoorBlock.EAST_AABB : DoorBlock.WEST_AABB);
-+            case WEST:
+             case WEST:
+-                return bl ? WEST_AABB : (bl2 ? SOUTH_AABB : NORTH_AABB);
 +                return flag ? DoorBlock.WEST_AABB : (flag1 ? DoorBlock.SOUTH_AABB : DoorBlock.NORTH_AABB);
-+            case NORTH:
+             case NORTH:
+-                return bl ? NORTH_AABB : (bl2 ? WEST_AABB : EAST_AABB);
 +                return flag ? DoorBlock.NORTH_AABB : (flag1 ? DoorBlock.WEST_AABB : DoorBlock.EAST_AABB);
          }
      }
@@ -65,31 +60,20 @@
      }
  
      @Override
-@@ -89,15 +89,15 @@
- 
-     @Override
+@@ -91,11 +91,11 @@
      public boolean isPathfindable(BlockState state, BlockGetter world, BlockPos pos, PathComputationType type) {
--        switch(type) {
--        case LAND:
--            return state.getValue(OPEN);
--        case WATER:
--            return false;
--        case AIR:
--            return state.getValue(OPEN);
--        default:
--            return false;
-+        switch (type) {
-+            case LAND:
+         switch (type) {
+             case LAND:
+-                return state.getValue(OPEN);
 +                return (Boolean) state.getValue(DoorBlock.OPEN);
-+            case WATER:
-+                return false;
-+            case AIR:
+             case WATER:
+                 return false;
+             case AIR:
+-                return state.getValue(OPEN);
 +                return (Boolean) state.getValue(DoorBlock.OPEN);
-+            default:
-+                return false;
+             default:
+                 return false;
          }
-     }
- 
 @@ -112,11 +112,13 @@
      @Nullable
      @Override

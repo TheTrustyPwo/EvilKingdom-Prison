@@ -154,7 +154,7 @@
                          });
                      }
  
-@@ -189,58 +206,147 @@
+@@ -189,57 +206,147 @@
                  }).dispense(pointer, stack);
              }
          });
@@ -277,13 +277,12 @@
              public ItemStack execute(BlockSource pointer, ItemStack stack) {
 -                BlockPos blockPos = pointer.getPos().relative(pointer.getBlockState().getValue(DispenserBlock.FACING));
 -                List<LivingEntity> list = pointer.getLevel().getEntitiesOfClass(LivingEntity.class, new AABB(blockPos), (entity) -> {
--                    if (!(entity instanceof Saddleable)) {
+-                    if (!(entity instanceof Saddleable saddleable)) {
 +                BlockPos blockposition = pointer.getPos().relative((Direction) pointer.getBlockState().getValue(DispenserBlock.FACING));
 +                List<LivingEntity> list = pointer.getLevel().getEntitiesOfClass(LivingEntity.class, new AABB(blockposition), (entityliving) -> {
 +                    if (!(entityliving instanceof Saddleable)) {
                          return false;
                      } else {
--                        Saddleable saddleable = (Saddleable)entity;
 -                        return !saddleable.isSaddled() && saddleable.isSaddleable();
 +                        Saddleable isaddleable = (Saddleable) entityliving;
 +
@@ -326,7 +325,7 @@
                      this.setSuccess(true);
                      return stack;
                  } else {
-@@ -248,71 +354,168 @@
+@@ -247,71 +354,168 @@
                  }
              }
          });
@@ -538,7 +537,7 @@
                  return stack;
              }
  
-@@ -324,21 +527,50 @@
+@@ -323,21 +527,50 @@
          DispenserBlock.registerBehavior(Items.FIRE_CHARGE, new DefaultDispenseItemBehavior() {
              @Override
              public ItemStack execute(BlockSource pointer, ItemStack stack) {
@@ -604,7 +603,7 @@
                  return stack;
              }
  
-@@ -353,51 +585,124 @@
+@@ -352,51 +585,124 @@
          DispenserBlock.registerBehavior(Items.JUNGLE_BOAT, new BoatDispenseItemBehavior(Boat.Type.JUNGLE));
          DispenserBlock.registerBehavior(Items.DARK_OAK_BOAT, new BoatDispenseItemBehavior(Boat.Type.DARK_OAK));
          DispenserBlock.registerBehavior(Items.ACACIA_BOAT, new BoatDispenseItemBehavior(Boat.Type.ACACIA));
@@ -753,7 +752,7 @@
                                  this.defaultDispenseItemBehavior.dispense(pointer, new ItemStack(item));
                              }
  
-@@ -412,27 +717,57 @@
+@@ -411,27 +717,57 @@
          DispenserBlock.registerBehavior(Items.FLINT_AND_STEEL, new OptionalDispenseItemBehavior() {
              @Override
              protected ItemStack execute(BlockSource pointer, ItemStack stack) {
@@ -825,7 +824,7 @@
                      stack.setCount(0);
                  }
  
-@@ -443,13 +778,64 @@
+@@ -442,13 +778,64 @@
              @Override
              protected ItemStack execute(BlockSource pointer, ItemStack stack) {
                  this.setSuccess(true);
@@ -895,7 +894,7 @@
  
                  return stack;
              }
-@@ -457,40 +843,97 @@
+@@ -456,40 +843,97 @@
          DispenserBlock.registerBehavior(Blocks.TNT, new DefaultDispenseItemBehavior() {
              @Override
              protected ItemStack execute(BlockSource pointer, ItemStack stack) {
@@ -1015,7 +1014,7 @@
                      }
  
                      stack.shrink(1);
-@@ -505,13 +948,38 @@
+@@ -504,13 +948,38 @@
          DispenserBlock.registerBehavior(Blocks.CARVED_PUMPKIN, new OptionalDispenseItemBehavior() {
              @Override
              protected ItemStack execute(BlockSource pointer, ItemStack stack) {
@@ -1061,7 +1060,7 @@
                      }
  
                      stack.shrink(1);
-@@ -524,9 +992,13 @@
+@@ -523,9 +992,13 @@
              }
          });
          DispenserBlock.registerBehavior(Blocks.SHULKER_BOX.asItem(), new ShulkerBoxDispenseBehavior());
@@ -1077,7 +1076,7 @@
          }
  
          DispenserBlock.registerBehavior(Items.GLASS_BOTTLE.asItem(), new OptionalDispenseItemBehavior() {
-@@ -535,10 +1007,10 @@
+@@ -534,10 +1007,10 @@
              private ItemStack takeLiquid(BlockSource pointer, ItemStack emptyBottleStack, ItemStack filledBottleStack) {
                  emptyBottleStack.shrink(1);
                  if (emptyBottleStack.isEmpty()) {
@@ -1090,7 +1089,7 @@
                          this.defaultDispenseItemBehavior.dispense(pointer, filledBottleStack.copy());
                      }
  
-@@ -549,16 +1021,41 @@
+@@ -548,16 +1021,41 @@
              @Override
              public ItemStack execute(BlockSource pointer, ItemStack stack) {
                  this.setSuccess(false);
@@ -1140,7 +1139,7 @@
                      this.setSuccess(true);
                      return this.takeLiquid(pointer, stack, PotionUtils.setPotion(new ItemStack(Items.POTION), Potions.WATER));
                  } else {
-@@ -569,14 +1066,15 @@
+@@ -568,14 +1066,15 @@
          DispenserBlock.registerBehavior(Items.GLOWSTONE, new OptionalDispenseItemBehavior() {
              @Override
              public ItemStack execute(BlockSource pointer, ItemStack stack) {
@@ -1163,7 +1162,7 @@
                          stack.shrink(1);
                      } else {
                          this.setSuccess(false);
-@@ -592,13 +1090,14 @@
+@@ -591,13 +1090,14 @@
          DispenserBlock.registerBehavior(Items.HONEYCOMB, new OptionalDispenseItemBehavior() {
              @Override
              public ItemStack execute(BlockSource pointer, ItemStack stack) {
@@ -1184,7 +1183,7 @@
                      stack.shrink(1);
                      this.setSuccess(true);
                      return stack;
-@@ -610,6 +1109,6 @@
+@@ -609,6 +1109,6 @@
      }
  
      static void setEntityPokingOutOfBlock(BlockSource pointer, Entity entity, Direction direction) {

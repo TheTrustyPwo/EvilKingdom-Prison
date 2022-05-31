@@ -525,31 +525,26 @@
 -            FluidState fluidState = world.getFluidState(pos);
 -            BlockPos blockPos = pos.above();
 -            BlockPos blockPos2 = pos.below();
--            switch(location) {
--            case IN_WATER:
--                return fluidState.is(FluidTags.WATER) && !world.getBlockState(blockPos).isRedstoneConductor(world, blockPos);
--            case IN_LAVA:
--                return fluidState.is(FluidTags.LAVA);
--            case ON_GROUND:
--            default:
--                BlockState blockState2 = world.getBlockState(blockPos2);
--                if (!blockState2.isValidSpawn(world, blockPos2, entityType)) {
--                    return false;
--                } else {
--                    return isValidEmptySpawnBlock(world, pos, blockState, fluidState, entityType) && isValidEmptySpawnBlock(world, blockPos, world.getBlockState(blockPos), world.getFluidState(blockPos), entityType);
--                }
 +            BlockState iblockdata = world.getBlockState(pos);
 +            FluidState fluid = world.getFluidState(pos);
 +            BlockPos blockposition1 = pos.above();
 +            BlockPos blockposition2 = pos.below();
 +
-+            switch (location) {
-+                case IN_WATER:
+             switch (location) {
+                 case IN_WATER:
+-                    return fluidState.is(FluidTags.WATER) && !world.getBlockState(blockPos).isRedstoneConductor(world, blockPos);
 +                    return fluid.is(FluidTags.WATER) && !world.getBlockState(blockposition1).isRedstoneConductor(world, blockposition1);
-+                case IN_LAVA:
+                 case IN_LAVA:
+-                    return fluidState.is(FluidTags.LAVA);
 +                    return fluid.is(FluidTags.LAVA);
-+                case ON_GROUND:
-+                default:
+                 case ON_GROUND:
+                 default:
+-                    BlockState blockState2 = world.getBlockState(blockPos2);
+-                    if (!blockState2.isValidSpawn(world, blockPos2, entityType)) {
+-                        return false;
+-                    } else {
+-                        return isValidEmptySpawnBlock(world, pos, blockState, fluidState, entityType) && isValidEmptySpawnBlock(world, blockPos, world.getBlockState(blockPos), world.getFluidState(blockPos), entityType);
+-                    }
 +                    BlockState iblockdata1 = world.getBlockState(blockposition2);
 +
 +                    return !iblockdata1.isValidSpawn(world, blockposition2, entityType) ? false : NaturalSpawner.isValidEmptySpawnBlock(world, pos, iblockdata, fluid, entityType) && NaturalSpawner.isValidEmptySpawnBlock(world, blockposition1, world.getBlockState(blockposition1), world.getFluidState(blockposition1), entityType);

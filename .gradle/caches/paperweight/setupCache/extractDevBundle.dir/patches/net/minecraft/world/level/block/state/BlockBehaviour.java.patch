@@ -23,7 +23,7 @@
      protected final Material material;
      public final boolean hasCollision;
      protected final float explosionResistance;
-@@ -97,21 +100,20 @@
+@@ -97,8 +100,7 @@
  
      /** @deprecated */
      @Deprecated
@@ -33,28 +33,6 @@
  
      /** @deprecated */
      @Deprecated
-     public boolean isPathfindable(BlockState state, BlockGetter world, BlockPos pos, PathComputationType type) {
--        switch(type) {
--        case LAND:
--            return !state.isCollisionShapeFullBlock(world, pos);
--        case WATER:
--            return world.getFluidState(pos).is(FluidTags.WATER);
--        case AIR:
--            return !state.isCollisionShapeFullBlock(world, pos);
--        default:
--            return false;
-+        switch (type) {
-+            case LAND:
-+                return !state.isCollisionShapeFullBlock(world, pos);
-+            case WATER:
-+                return world.getFluidState(pos).is(FluidTags.WATER);
-+            case AIR:
-+                return !state.isCollisionShapeFullBlock(world, pos);
-+            default:
-+                return false;
-         }
-     }
- 
 @@ -133,14 +135,22 @@
          DebugPackets.sendNeighborsUpdatePacket(world, pos);
      }
@@ -535,8 +513,8 @@
 +        // ret -1 if opacity is dynamic, or -1 if the block is conditionally full opaque, else return opacity in [0, 15]
 +        public final int getOpacityIfCached() {
 +            return this.opacityIfCached;
-         }
- 
++        }
++
 +        protected final boolean conditionallyFullOpaque;
 +        public final boolean isConditionallyFullOpaque() {
 +            return this.conditionallyFullOpaque;
@@ -547,9 +525,9 @@
 +
 +        public final long getBlockCollisionBehavior() {
 +            return this.blockCollisionBehavior;
-+        }
+         }
 +        // Paper end
-+
+ 
          public void initCache() {
 +            this.fluid = this.getBlock().getFluidState(this.asState()); // Paper - moved from getFluid()
 +            this.isTicking = this.getBlock().isRandomlyTicking(this.asState()); // Paper - moved from isTicking()

@@ -5,7 +5,7 @@
  package net.minecraft.stats;
  
  import com.google.common.collect.Maps;
-@@ -12,14 +13,16 @@
+@@ -12,11 +13,14 @@
  import com.mojang.logging.LogUtils;
  import it.unimi.dsi.fastutil.objects.Object2IntMap;
  import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
@@ -19,11 +19,8 @@
 +import java.util.Objects;
  import java.util.Optional;
  import java.util.Set;
--import java.util.Map.Entry;
  import net.minecraft.SharedConstants;
- import net.minecraft.Util;
- import net.minecraft.core.Registry;
-@@ -35,6 +38,7 @@
+@@ -34,6 +38,7 @@
  import org.slf4j.Logger;
  
  public class ServerStatsCounter extends StatsCounter {
@@ -31,7 +28,7 @@
      private static final Logger LOGGER = LogUtils.getLogger();
      private final MinecraftServer server;
      private final File file;
-@@ -43,154 +47,187 @@
+@@ -42,154 +47,187 @@
      public ServerStatsCounter(MinecraftServer server, File file) {
          this.server = server;
          this.file = file;
@@ -216,7 +213,7 @@
 +        CompoundTag nbttagcompound = new CompoundTag();
 +        Iterator iterator = json.entrySet().iterator();
  
--        for(Entry<String, JsonElement> entry : json.entrySet()) {
+-        for(Map.Entry<String, JsonElement> entry : json.entrySet()) {
 -            JsonElement jsonElement = entry.getValue();
 -            if (jsonElement.isJsonObject()) {
 -                compoundTag.put(entry.getKey(), fromJson(jsonElement.getAsJsonObject()));
@@ -247,7 +244,7 @@
          Map<StatType<?>, JsonObject> map = Maps.newHashMap();
 +        ObjectIterator objectiterator = this.stats.object2IntEntrySet().iterator();
  
--        for(it.unimi.dsi.fastutil.objects.Object2IntMap.Entry<Stat<?>> entry : this.stats.object2IntEntrySet()) {
+-        for(Object2IntMap.Entry<Stat<?>> entry : this.stats.object2IntEntrySet()) {
 -            Stat<?> stat = entry.getKey();
 -            map.computeIfAbsent(stat.getType(), (statType) -> {
 +        while (objectiterator.hasNext()) {
@@ -264,7 +261,7 @@
 +        JsonObject jsonobject = new JsonObject();
 +        Iterator iterator = map.entrySet().iterator();
  
--        for(Entry<StatType<?>, JsonObject> entry2 : map.entrySet()) {
+-        for(Map.Entry<StatType<?>, JsonObject> entry2 : map.entrySet()) {
 -            jsonObject.add(Registry.STAT_TYPE.getKey(entry2.getKey()).toString(), entry2.getValue());
 +        while (iterator.hasNext()) {
 +            Entry<StatType<?>, JsonObject> entry = (Entry) iterator.next();
@@ -284,7 +281,7 @@
      }
  
      private static <T> ResourceLocation getKey(Stat<T> stat) {
-@@ -202,12 +239,15 @@
+@@ -201,12 +239,15 @@
      }
  
      public void sendStats(ServerPlayer player) {

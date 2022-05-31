@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/entity/ai/behavior/AcquirePoi.java
 +++ b/net/minecraft/world/entity/ai/behavior/AcquirePoi.java
-@@ -83,7 +83,11 @@
+@@ -82,7 +82,11 @@
                  return true;
              }
          };

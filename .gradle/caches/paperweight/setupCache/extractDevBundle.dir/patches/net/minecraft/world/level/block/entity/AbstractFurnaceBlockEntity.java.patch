@@ -4,9 +4,9 @@
  
  import com.google.common.collect.Lists;
  import com.google.common.collect.Maps;
--import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
- import it.unimi.dsi.fastutil.objects.Object2IntMap.Entry;
-+import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
+-import it.unimi.dsi.fastutil.objects.Object2IntMap;
++import it.unimi.dsi.fastutil.objects.Object2IntMap.Entry;
+ import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 +import it.unimi.dsi.fastutil.objects.ObjectIterator;
 +import java.util.Iterator;
  import java.util.List;
@@ -57,17 +57,17 @@
 -    protected final ContainerData dataAccess = new ContainerData() {
 -        @Override
 -        public int get(int index) {
--            switch(index) {
--            case 0:
--                return AbstractFurnaceBlockEntity.this.litTime;
--            case 1:
--                return AbstractFurnaceBlockEntity.this.litDuration;
--            case 2:
--                return AbstractFurnaceBlockEntity.this.cookingProgress;
--            case 3:
--                return AbstractFurnaceBlockEntity.this.cookingTotalTime;
--            default:
--                return 0;
+-            switch (index) {
+-                case 0:
+-                    return AbstractFurnaceBlockEntity.this.litTime;
+-                case 1:
+-                    return AbstractFurnaceBlockEntity.this.litDuration;
+-                case 2:
+-                    return AbstractFurnaceBlockEntity.this.cookingProgress;
+-                case 3:
+-                    return AbstractFurnaceBlockEntity.this.cookingTotalTime;
+-                default:
+-                    return 0;
 -            }
 -        }
 +    protected final ContainerData dataAccess;
@@ -76,18 +76,18 @@
  
 -        @Override
 -        public void set(int index, int value) {
--            switch(index) {
--            case 0:
--                AbstractFurnaceBlockEntity.this.litTime = value;
--                break;
--            case 1:
--                AbstractFurnaceBlockEntity.this.litDuration = value;
--                break;
--            case 2:
--                AbstractFurnaceBlockEntity.this.cookingProgress = value;
--                break;
--            case 3:
--                AbstractFurnaceBlockEntity.this.cookingTotalTime = value;
+-            switch (index) {
+-                case 0:
+-                    AbstractFurnaceBlockEntity.this.litTime = value;
+-                    break;
+-                case 1:
+-                    AbstractFurnaceBlockEntity.this.litDuration = value;
+-                    break;
+-                case 2:
+-                    AbstractFurnaceBlockEntity.this.cookingProgress = value;
+-                    break;
+-                case 3:
+-                    AbstractFurnaceBlockEntity.this.cookingTotalTime = value;
 +    protected AbstractFurnaceBlockEntity(BlockEntityType<?> blockEntityType, BlockPos pos, BlockState state, RecipeType<? extends AbstractCookingRecipe> recipeType) {
 +        super(blockEntityType, pos, state);
 +        this.items = NonNullList.withSize(3, ItemStack.EMPTY);
@@ -773,7 +773,7 @@
          List<Recipe<?>> list = Lists.newArrayList();
 +        ObjectIterator objectiterator = this.recipesUsed.object2IntEntrySet().iterator();
  
--        for(Entry<ResourceLocation> entry : this.recipesUsed.object2IntEntrySet()) {
+-        for(Object2IntMap.Entry<ResourceLocation> entry : this.recipesUsed.object2IntEntrySet()) {
 -            world.getRecipeManager().byKey(entry.getKey()).ifPresent((recipe) -> {
 -                list.add(recipe);
 -                createExperience(world, pos, entry.getIntValue(), ((AbstractCookingRecipe)recipe).getExperience());

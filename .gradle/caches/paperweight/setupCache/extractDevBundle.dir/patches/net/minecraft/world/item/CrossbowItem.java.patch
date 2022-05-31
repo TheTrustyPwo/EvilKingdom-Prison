@@ -223,7 +223,7 @@
                  }
              }
          }
-@@ -181,122 +210,151 @@
+@@ -181,121 +210,151 @@
      }
  
      private static void clearChargedProjectiles(ItemStack crossbow) {
@@ -395,8 +395,8 @@
      }
  
      private static void onCrossbowShot(Level world, LivingEntity entity, ItemStack stack) {
-         if (entity instanceof ServerPlayer) {
--            ServerPlayer serverPlayer = (ServerPlayer)entity;
+-        if (entity instanceof ServerPlayer serverPlayer) {
++        if (entity instanceof ServerPlayer) {
 +            ServerPlayer entityplayer = (ServerPlayer) entity;
 +
              if (!world.isClientSide) {
@@ -427,7 +427,7 @@
              if (f < 0.2F) {
                  this.startSoundPlayed = false;
                  this.midLoadSoundPlayed = false;
-@@ -304,12 +362,12 @@
+@@ -303,12 +362,12 @@
  
              if (f >= 0.2F && !this.startSoundPlayed) {
                  this.startSoundPlayed = true;
@@ -443,7 +443,7 @@
              }
          }
  
-@@ -317,11 +375,12 @@
+@@ -316,11 +375,12 @@
  
      @Override
      public int getUseDuration(ItemStack stack) {
@@ -457,29 +457,7 @@
          return i == 0 ? 25 : 25 - 5 * i;
      }
  
-@@ -331,20 +390,21 @@
-     }
- 
-     private SoundEvent getStartSound(int stage) {
--        switch(stage) {
--        case 1:
--            return SoundEvents.CROSSBOW_QUICK_CHARGE_1;
--        case 2:
--            return SoundEvents.CROSSBOW_QUICK_CHARGE_2;
--        case 3:
--            return SoundEvents.CROSSBOW_QUICK_CHARGE_3;
--        default:
--            return SoundEvents.CROSSBOW_LOADING_START;
-+        switch (stage) {
-+            case 1:
-+                return SoundEvents.CROSSBOW_QUICK_CHARGE_1;
-+            case 2:
-+                return SoundEvents.CROSSBOW_QUICK_CHARGE_2;
-+            case 3:
-+                return SoundEvents.CROSSBOW_QUICK_CHARGE_3;
-+            default:
-+                return SoundEvents.CROSSBOW_LOADING_START;
-         }
+@@ -343,7 +403,8 @@
      }
  
      private static float getPowerForTime(int useTicks, ItemStack stack) {
@@ -489,7 +467,7 @@
          if (f > 1.0F) {
              f = 1.0F;
          }
-@@ -354,16 +414,19 @@
+@@ -353,16 +414,19 @@
  
      @Override
      public void appendHoverText(ItemStack stack, @Nullable Level world, List<Component> tooltip, TooltipFlag context) {
@@ -517,7 +495,7 @@
                      }
  
                      tooltip.addAll(list2);
-@@ -375,7 +438,7 @@
+@@ -374,7 +438,7 @@
  
      @Override
      public boolean useOnRelease(ItemStack stack) {

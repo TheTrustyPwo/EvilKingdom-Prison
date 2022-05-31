@@ -1,18 +1,18 @@
 --- a/net/minecraft/world/level/GameRules.java
 +++ b/net/minecraft/world/level/GameRules.java
-@@ -10,8 +10,11 @@
+@@ -10,7 +10,11 @@
  import com.mojang.logging.LogUtils;
  import com.mojang.serialization.DynamicLike;
  import java.util.Comparator;
 +import java.util.Iterator;
  import java.util.Map;
- import java.util.Map.Entry;
++import java.util.Map.Entry;
 +import java.util.Objects;
 +import java.util.Optional;
  import java.util.function.BiConsumer;
  import java.util.function.Function;
  import java.util.function.Supplier;
-@@ -26,78 +29,87 @@
+@@ -25,78 +29,87 @@
  import org.slf4j.Logger;
  
  public class GameRules {
@@ -143,14 +143,14 @@
      }
  
      public GameRules() {
--        this.rules = GAME_RULE_TYPES.entrySet().stream().collect(ImmutableMap.toImmutableMap(Entry::getKey, (e) -> {
+-        this.rules = GAME_RULE_TYPES.entrySet().stream().collect(ImmutableMap.toImmutableMap(Map.Entry::getKey, (e) -> {
 -            return e.getValue().createRule();
 +        this.rules = (Map) GameRules.GAME_RULE_TYPES.entrySet().stream().collect(ImmutableMap.toImmutableMap(Entry::getKey, (entry) -> {
 +            return ((GameRules.Type) entry.getValue()).createRule();
          }));
      }
  
-@@ -106,70 +118,201 @@
+@@ -105,70 +118,201 @@
      }
  
      public <T extends GameRules.Value<T>> T getRule(GameRules.Key<T> key) {
@@ -184,7 +184,7 @@
      }
  
      public GameRules copy() {
--        return new GameRules(this.rules.entrySet().stream().collect(ImmutableMap.toImmutableMap(Entry::getKey, (entry) -> {
+-        return new GameRules(this.rules.entrySet().stream().collect(ImmutableMap.toImmutableMap(Map.Entry::getKey, (entry) -> {
 -            return entry.getValue().copy();
 +        return new GameRules((Map) this.rules.entrySet().stream().collect(ImmutableMap.toImmutableMap(Entry::getKey, (entry) -> {
 +            return ((GameRules.Value) entry.getValue()).copy();
@@ -378,7 +378,7 @@
              });
          }
  
-@@ -179,15 +322,18 @@
+@@ -178,15 +322,18 @@
          }
  
          @Override
@@ -400,7 +400,7 @@
              this.value = value;
              this.onChanged(server);
          }
-@@ -198,7 +344,7 @@
+@@ -197,7 +344,7 @@
          }
  
          @Override
@@ -409,7 +409,7 @@
              this.value = Boolean.parseBoolean(value);
          }
  
-@@ -217,55 +363,24 @@
+@@ -216,55 +363,24 @@
              return new GameRules.BooleanValue(this.type, this.value);
          }
  
@@ -471,7 +471,7 @@
              });
          }
  
-@@ -275,15 +390,18 @@
+@@ -274,15 +390,18 @@
          }
  
          @Override
@@ -493,7 +493,7 @@
              this.value = value;
              this.onChanged(server);
          }
-@@ -294,15 +412,15 @@
+@@ -293,15 +412,15 @@
          }
  
          @Override
@@ -512,7 +512,7 @@
                  return false;
              }
          }
-@@ -311,8 +429,8 @@
+@@ -310,8 +429,8 @@
              if (!input.isEmpty()) {
                  try {
                      return Integer.parseInt(input);
@@ -523,7 +523,7 @@
                  }
              }
  
-@@ -334,120 +452,14 @@
+@@ -333,120 +452,14 @@
              return new GameRules.IntegerValue(this.type, this.value);
          }
  

@@ -65,27 +65,20 @@
      protected int getSignalStrength(Level world, BlockPos pos) {
 -        AABB aABB = TOUCH_AABB.move(pos);
 -        List<? extends Entity> list;
--        switch(this.sensitivity) {
--        case EVERYTHING:
--            list = world.getEntities((Entity)null, aABB);
--            break;
--        case MOBS:
--            list = world.getEntitiesOfClass(LivingEntity.class, aABB);
--            break;
--        default:
--            return 0;
 +        AABB axisalignedbb = PressurePlateBlock.TOUCH_AABB.move(pos);
 +        List list;
 +
-+        switch (this.sensitivity) {
-+            case EVERYTHING:
+         switch (this.sensitivity) {
+             case EVERYTHING:
+-                list = world.getEntities((Entity)null, aABB);
 +                list = world.getEntities((Entity) null, axisalignedbb);
-+                break;
-+            case MOBS:
+                 break;
+             case MOBS:
+-                list = world.getEntitiesOfClass(LivingEntity.class, aABB);
 +                list = world.getEntitiesOfClass(LivingEntity.class, axisalignedbb);
-+                break;
-+            default:
-+                return 0;
+                 break;
+             default:
+                 return 0;
          }
  
          if (!list.isEmpty()) {

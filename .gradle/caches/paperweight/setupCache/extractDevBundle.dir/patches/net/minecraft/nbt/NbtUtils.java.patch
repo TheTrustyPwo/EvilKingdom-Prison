@@ -1,6 +1,6 @@
 --- a/net/minecraft/nbt/NbtUtils.java
 +++ b/net/minecraft/nbt/NbtUtils.java
-@@ -40,14 +40,14 @@
+@@ -39,14 +39,14 @@
  import org.slf4j.Logger;
  
  public final class NbtUtils {
@@ -17,7 +17,7 @@
          return nbt.getDouble(1);
      }).thenComparingDouble((nbt) -> {
          return nbt.getDouble(0);
-@@ -75,6 +75,11 @@
+@@ -74,6 +74,11 @@
          if (compound.contains("Name", 8)) {
              string = compound.getString("Name");
          }
@@ -29,7 +29,7 @@
  
          if (compound.hasUUID("Id")) {
              uUID = compound.getUUID("Id");
-@@ -88,7 +93,8 @@
+@@ -87,7 +92,8 @@
                  for(String string2 : compoundTag.getAllKeys()) {
                      ListTag listTag = compoundTag.getList(string2, 10);
  
@@ -39,7 +39,7 @@
                          CompoundTag compoundTag2 = listTag.getCompound(i);
                          String string3 = compoundTag2.getString("Value");
                          if (compoundTag2.contains("Signature", 8)) {
-@@ -495,7 +501,7 @@
+@@ -494,7 +500,7 @@
      }
  
      public static CompoundTag update(DataFixer fixer, DataFixTypes fixTypes, CompoundTag compound, int oldVersion, int targetVersion) {

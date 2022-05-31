@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/entity/Entity.java
 +++ b/net/minecraft/world/entity/Entity.java
-@@ -1,18 +1,21 @@
+@@ -1,17 +1,21 @@
  package net.minecraft.world.entity;
  
  import com.google.common.collect.ImmutableList;
@@ -8,7 +8,6 @@
  import com.google.common.collect.Iterables;
  import com.google.common.collect.Lists;
  import com.google.common.collect.Sets;
--import com.google.common.collect.ImmutableList.Builder;
 +import com.google.common.collect.UnmodifiableIterator;
  import com.mojang.logging.LogUtils;
  import it.unimi.dsi.fastutil.objects.Object2DoubleArrayMap;
@@ -23,7 +22,7 @@
  import java.util.Optional;
  import java.util.Random;
  import java.util.Set;
-@@ -51,7 +54,9 @@
+@@ -50,7 +54,9 @@
  import net.minecraft.network.syncher.SynchedEntityData;
  import net.minecraft.resources.ResourceKey;
  import net.minecraft.resources.ResourceLocation;
@@ -33,7 +32,7 @@
  import net.minecraft.server.level.ServerLevel;
  import net.minecraft.server.level.ServerPlayer;
  import net.minecraft.server.level.TicketType;
-@@ -67,6 +72,8 @@
+@@ -66,6 +72,8 @@
  import net.minecraft.world.InteractionResult;
  import net.minecraft.world.Nameable;
  import net.minecraft.world.damagesource.DamageSource;
@@ -42,7 +41,7 @@
  import net.minecraft.world.entity.item.ItemEntity;
  import net.minecraft.world.entity.player.Player;
  import net.minecraft.world.entity.vehicle.Boat;
-@@ -93,6 +100,7 @@
+@@ -92,6 +100,7 @@
  import net.minecraft.world.level.block.state.properties.BlockStateProperties;
  import net.minecraft.world.level.border.WorldBorder;
  import net.minecraft.world.level.dimension.DimensionType;
@@ -50,7 +49,7 @@
  import net.minecraft.world.level.entity.EntityAccess;
  import net.minecraft.world.level.entity.EntityInLevelCallback;
  import net.minecraft.world.level.gameevent.GameEvent;
-@@ -115,8 +123,83 @@
+@@ -114,8 +123,83 @@
  import net.minecraft.world.scores.PlayerTeam;
  import net.minecraft.world.scores.Team;
  import org.slf4j.Logger;
@@ -134,7 +133,7 @@
      private static final Logger LOGGER = LogUtils.getLogger();
      public static final String ID_TAG = "id";
      public static final String PASSENGERS_TAG = "Passengers";
-@@ -136,9 +219,9 @@
+@@ -135,9 +219,9 @@
      public static final String UUID_TAG = "UUID";
      private static double viewScale = 1.0D;
      private final EntityType<?> type;
@@ -146,7 +145,7 @@
      protected int boardingCooldown;
      @Nullable
      private Entity vehicle;
-@@ -149,19 +232,19 @@
+@@ -148,19 +232,19 @@
      private Vec3 position;
      private BlockPos blockPosition;
      private ChunkPos chunkPosition;
@@ -170,7 +169,7 @@
      @Nullable
      private Entity.RemovalReason removalReason;
      public static final float DEFAULT_BB_WIDTH = 0.6F;
-@@ -171,21 +254,21 @@
+@@ -170,21 +254,21 @@
      public float moveDist;
      public float flyDist;
      public float fallDistance;
@@ -198,7 +197,7 @@
      protected final SynchedEntityData entityData;
      protected static final EntityDataAccessor<Byte> DATA_SHARED_FLAGS_ID = SynchedEntityData.defineId(Entity.class, EntityDataSerializers.BYTE);
      protected static final int FLAG_ONFIRE = 0;
-@@ -200,9 +283,9 @@
+@@ -199,9 +283,9 @@
      private static final EntityDataAccessor<Boolean> DATA_CUSTOM_NAME_VISIBLE = SynchedEntityData.defineId(Entity.class, EntityDataSerializers.BOOLEAN);
      private static final EntityDataAccessor<Boolean> DATA_SILENT = SynchedEntityData.defineId(Entity.class, EntityDataSerializers.BOOLEAN);
      private static final EntityDataAccessor<Boolean> DATA_NO_GRAVITY = SynchedEntityData.defineId(Entity.class, EntityDataSerializers.BOOLEAN);
@@ -210,7 +209,7 @@
      private Vec3 packetCoordinates;
      public boolean noCulling;
      public boolean hasImpulse;
-@@ -211,11 +294,11 @@
+@@ -210,11 +294,11 @@
      protected int portalTime;
      protected BlockPos portalEntrancePos;
      private boolean invulnerable;
@@ -226,7 +225,7 @@
      private long pistonDeltasGameTime;
      private EntityDimensions dimensions;
      private float eyeHeight;
-@@ -226,9 +309,194 @@
+@@ -225,9 +309,194 @@
      private int lastCrystalSoundPlayTick;
      public boolean hasVisualFire;
      @Nullable
@@ -422,7 +421,7 @@
          this.type = type;
          this.level = world;
          this.dimensions = type.getDimensions();
-@@ -236,29 +504,39 @@
+@@ -235,29 +504,39 @@
          this.blockPosition = BlockPos.ZERO;
          this.chunkPosition = ChunkPos.ZERO;
          this.packetCoordinates = Vec3.ZERO;
@@ -476,7 +475,7 @@
      }
  
      public boolean isSpectator() {
-@@ -327,16 +605,10 @@
+@@ -326,16 +605,10 @@
          return this.entityData;
      }
  
@@ -494,7 +493,7 @@
      public int hashCode() {
          return this.id;
      }
-@@ -349,25 +621,58 @@
+@@ -348,25 +621,58 @@
  
      }
  
@@ -563,7 +562,7 @@
          this.setYRot(yaw % 360.0F);
          this.setXRot(pitch % 360.0F);
      }
-@@ -377,8 +682,8 @@
+@@ -376,8 +682,8 @@
      }
  
      public void setPos(double x, double y, double z) {
@@ -574,7 +573,7 @@
      }
  
      protected AABB makeBoundingBox() {
-@@ -390,13 +695,14 @@
+@@ -389,13 +695,14 @@
      }
  
      public void turn(double cursorDeltaX, double cursorDeltaY) {
@@ -593,7 +592,7 @@
          this.xRotO = Mth.clamp(this.xRotO, -90.0F, 90.0F);
          if (this.vehicle != null) {
              this.vehicle.onPassengerTurned(this);
-@@ -408,6 +714,15 @@
+@@ -407,6 +714,15 @@
          this.baseTick();
      }
  
@@ -609,7 +608,7 @@
      public void baseTick() {
          this.level.getProfiler().push("entityBaseTick");
          this.feetBlockState = null;
-@@ -422,7 +737,7 @@
+@@ -421,7 +737,7 @@
          this.walkDistO = this.walkDist;
          this.xRotO = this.getXRot();
          this.yRotO = this.getYRot();
@@ -618,7 +617,7 @@
          if (this.canSpawnSprintParticle()) {
              this.spawnSprintParticle();
          }
-@@ -448,15 +763,19 @@
+@@ -447,15 +763,19 @@
                  this.setRemainingFireTicks(this.remainingFireTicks - 1);
              }
  
@@ -640,7 +639,7 @@
          }
  
          this.checkOutOfWorld();
-@@ -473,7 +792,11 @@
+@@ -472,7 +792,11 @@
      }
  
      public void checkOutOfWorld() {
@@ -653,7 +652,7 @@
              this.outOfWorld();
          }
  
-@@ -500,22 +823,56 @@
+@@ -499,22 +823,56 @@
  
      public void lavaHurt() {
          if (!this.fireImmune()) {
@@ -716,7 +715,7 @@
          }
  
      }
-@@ -552,12 +909,49 @@
+@@ -551,12 +909,49 @@
          return this.onGround;
      }
  
@@ -766,7 +765,7 @@
                  movement = this.limitPistonMovement(movement);
                  if (movement.equals(Vec3.ZERO)) {
                      return;
-@@ -570,102 +964,176 @@
+@@ -569,102 +964,176 @@
                  this.stuckSpeedMultiplier = Vec3.ZERO;
                  this.setDeltaMovement(Vec3.ZERO);
              }
@@ -990,7 +989,7 @@
                      if (this.remainingFireTicks <= 0) {
                          this.setRemainingFireTicks(-this.getFireImmuneTicks());
                      }
-@@ -682,6 +1150,13 @@
+@@ -681,6 +1150,13 @@
                  this.level.getProfiler().pop();
              }
          }
@@ -1004,7 +1003,7 @@
      }
  
      protected boolean isHorizontalCollisionMinor(Vec3 adjustedMovement) {
-@@ -691,11 +1166,12 @@
+@@ -690,11 +1166,12 @@
      protected void tryCheckInsideBlocks() {
          try {
              this.checkInsideBlocks();
@@ -1022,7 +1021,7 @@
          }
      }
  
-@@ -715,34 +1191,34 @@
+@@ -714,34 +1191,34 @@
  
      public BlockPos getOnPos() {
          int i = Mth.floor(this.position.x);
@@ -1074,7 +1073,7 @@
      }
  
      protected BlockPos getBlockPosBelowThatAffectsMyMovement() {
-@@ -757,21 +1233,24 @@
+@@ -756,21 +1233,24 @@
          if (movement.lengthSqr() <= 1.0E-7D) {
              return movement;
          } else {
@@ -1108,7 +1107,7 @@
              } else {
                  return Vec3.ZERO;
              }
-@@ -780,93 +1259,147 @@
+@@ -779,93 +1259,147 @@
  
      private double applyPistonMovementRestriction(Direction.Axis axis, double offsetFactor) {
          int i = axis.ordinal();
@@ -1216,7 +1215,8 @@
      }
  
      public static Vec3 collideBoundingBox(@Nullable Entity entity, Vec3 movement, AABB entityBoundingBox, Level world, List<VoxelShape> collisions) {
-         Builder<VoxelShape> builder = ImmutableList.builderWithExpectedSize(collisions.size() + 1);
+-        ImmutableList.Builder<VoxelShape> builder = ImmutableList.builderWithExpectedSize(collisions.size() + 1);
++        Builder<VoxelShape> builder = ImmutableList.builderWithExpectedSize(collisions.size() + 1);
 +
          if (!collisions.isEmpty()) {
              builder.addAll(collisions);
@@ -1302,7 +1302,7 @@
      }
  
      protected SoundEvent getSwimSound() {
-@@ -882,26 +1415,28 @@
+@@ -881,26 +1415,28 @@
      }
  
      protected void checkInsideBlocks() {
@@ -1348,7 +1348,7 @@
                          }
                      }
                  }
-@@ -910,8 +1445,7 @@
+@@ -909,8 +1445,7 @@
  
      }
  
@@ -1358,7 +1358,7 @@
  
      public void gameEvent(GameEvent event, @Nullable Entity entity, BlockPos pos) {
          this.level.gameEvent(entity, event, pos);
-@@ -931,19 +1465,21 @@
+@@ -930,19 +1465,21 @@
  
      protected void playStepSound(BlockPos pos, BlockState state) {
          if (!state.getMaterial().isLiquid()) {
@@ -1386,7 +1386,7 @@
              this.lastCrystalSoundPlayTick = this.tickCount;
          }
  
-@@ -953,8 +1489,7 @@
+@@ -952,8 +1489,7 @@
          this.playSound(this.getSwimSound(), volume, 1.0F + (this.random.nextFloat() - this.random.nextFloat()) * 0.4F);
      }
  
@@ -1396,7 +1396,7 @@
  
      protected boolean isFlapping() {
          return false;
-@@ -962,25 +1497,25 @@
+@@ -961,25 +1497,25 @@
  
      public void playSound(SoundEvent sound, float volume, float pitch) {
          if (!this.isSilent()) {
@@ -1427,7 +1427,7 @@
      }
  
      protected Entity.MovementEmission getMovementEmission() {
-@@ -1002,7 +1537,7 @@
+@@ -1001,7 +1537,7 @@
  
              this.resetFallDistance();
          } else if (heightDifference < 0.0D) {
@@ -1436,7 +1436,7 @@
          }
  
      }
-@@ -1013,7 +1548,11 @@
+@@ -1012,7 +1548,11 @@
  
      public boolean causeFallDamage(float fallDistance, float damageMultiplier, DamageSource damageSource) {
          if (this.isVehicle()) {
@@ -1449,7 +1449,7 @@
                  entity.causeFallDamage(fallDistance, damageMultiplier, damageSource);
              }
          }
-@@ -1026,8 +1565,9 @@
+@@ -1025,8 +1565,9 @@
      }
  
      public boolean isInRain() {
@@ -1461,7 +1461,7 @@
      }
  
      public boolean isInBubbleColumn() {
-@@ -1062,9 +1602,10 @@
+@@ -1061,9 +1602,10 @@
      protected boolean updateInWaterStateAndDoFluidPushing() {
          this.fluidHeight.clear();
          this.updateInWaterStateAndDoWaterCurrentPushing();
@@ -1475,17 +1475,17 @@
      }
  
      void updateInWaterStateAndDoWaterCurrentPushing() {
-@@ -1087,20 +1628,27 @@
+@@ -1086,19 +1628,27 @@
      private void updateFluidOnEyes() {
          this.wasEyeInWater = this.isEyeInFluid(FluidTags.WATER);
          this.fluidOnEyes.clear();
 -        double d = this.getEyeY() - (double)0.11111111F;
 +        double d0 = this.getEyeY() - 0.1111111119389534D;
          Entity entity = this.getVehicle();
-+
-         if (entity instanceof Boat) {
--            Boat boat = (Boat)entity;
+-        if (entity instanceof Boat boat) {
 -            if (!boat.isUnderWater() && boat.getBoundingBox().maxY >= d && boat.getBoundingBox().minY <= d) {
++
++        if (entity instanceof Boat) {
 +            Boat entityboat = (Boat) entity;
 +
 +            if (!entityboat.isUnderWater() && entityboat.getBoundingBox().maxY >= d0 && entityboat.getBoundingBox().minY <= d0) {
@@ -1511,7 +1511,7 @@
          }
  
      }
-@@ -1108,26 +1656,31 @@
+@@ -1106,26 +1656,31 @@
      protected void doWaterSplashEffect() {
          Entity entity = this.isVehicle() && this.getControllingPassenger() != null ? this.getControllingPassenger() : this;
          float f = entity == this ? 0.2F : 0.9F;
@@ -1557,7 +1557,7 @@
          }
  
          this.gameEvent(GameEvent.SPLASH);
-@@ -1143,13 +1696,15 @@
+@@ -1141,13 +1696,15 @@
  
      protected void spawnSprintParticle() {
          int i = Mth.floor(this.getX());
@@ -1579,7 +1579,7 @@
          }
  
      }
-@@ -1163,19 +1718,22 @@
+@@ -1161,19 +1718,22 @@
      }
  
      public void moveRelative(float speed, Vec3 movementInput) {
@@ -1610,7 +1610,7 @@
          }
      }
  
-@@ -1189,15 +1747,18 @@
+@@ -1187,15 +1747,18 @@
          this.setXRot(Mth.clamp(pitch, -90.0F, 90.0F) % 360.0F);
          this.yRotO = this.getYRot();
          this.xRotO = this.getXRot();
@@ -1634,7 +1634,7 @@
      }
  
      public void moveTo(Vec3 pos) {
-@@ -1209,43 +1770,54 @@
+@@ -1207,43 +1770,54 @@
      }
  
      public void moveTo(BlockPos pos, float yaw, float pitch) {
@@ -1707,7 +1707,7 @@
      }
  
      public double distanceToSqr(Entity entity) {
-@@ -1253,40 +1825,43 @@
+@@ -1251,40 +1825,43 @@
      }
  
      public double distanceToSqr(Vec3 vector) {
@@ -1773,7 +1773,7 @@
                      }
                  }
  
-@@ -1325,13 +1900,14 @@
+@@ -1323,13 +1900,14 @@
      }
  
      protected final Vec3 calculateViewVector(float pitch, float yaw) {
@@ -1795,7 +1795,7 @@
      }
  
      public final Vec3 getUpVector(float tickDelta) {
-@@ -1347,10 +1923,11 @@
+@@ -1345,10 +1923,11 @@
      }
  
      public final Vec3 getEyePosition(float tickDelta) {
@@ -1811,7 +1811,7 @@
      }
  
      public Vec3 getLightProbePosition(float tickDelta) {
-@@ -1358,17 +1935,19 @@
+@@ -1356,17 +1935,19 @@
      }
  
      public final Vec3 getPosition(float delta) {
@@ -1839,7 +1839,7 @@
      }
  
      public boolean isPickable() {
-@@ -1376,49 +1955,73 @@
+@@ -1374,49 +1955,73 @@
      }
  
      public boolean isPushable() {
@@ -1927,7 +1927,7 @@
      public boolean save(CompoundTag nbt) {
          return this.isPassenger() ? false : this.saveAsPassenger(nbt);
      }
-@@ -1431,19 +2034,50 @@
+@@ -1429,19 +2034,50 @@
                  nbt.put("Pos", this.newDoubleList(this.getX(), this.getY(), this.getZ()));
              }
  
@@ -1985,7 +1985,7 @@
              }
  
              if (this.isCustomNameVisible()) {
-@@ -1463,6 +2097,7 @@
+@@ -1461,6 +2097,7 @@
              }
  
              int i = this.getTicksFrozen();
@@ -1993,7 +1993,7 @@
              if (i > 0) {
                  nbt.putInt("TicksFrozen", this.getTicksFrozen());
              }
-@@ -1471,53 +2106,91 @@
+@@ -1469,53 +2106,91 @@
                  nbt.putBoolean("HasVisualFire", this.hasVisualFire);
              }
  
@@ -2111,7 +2111,7 @@
              this.setOldPosAndRot();
              this.setYHeadRot(this.getYRot());
              this.setYBodyRot(this.getYRot());
-@@ -1536,16 +2209,16 @@
+@@ -1534,16 +2209,16 @@
              }
  
              if (Double.isFinite(this.getX()) && Double.isFinite(this.getY()) && Double.isFinite(this.getZ())) {
@@ -2133,7 +2133,7 @@
                          }
                      }
  
-@@ -1557,11 +2230,11 @@
+@@ -1555,11 +2230,11 @@
                      this.hasVisualFire = nbt.getBoolean("HasVisualFire");
                      if (nbt.contains("Tags", 9)) {
                          this.tags.clear();
@@ -2149,7 +2149,7 @@
                          }
                      }
  
-@@ -1576,11 +2249,97 @@
+@@ -1574,11 +2249,97 @@
              } else {
                  throw new IllegalStateException("Entity has invalid position");
              }
@@ -2252,7 +2252,7 @@
          }
      }
  
-@@ -1590,9 +2349,10 @@
+@@ -1588,9 +2349,10 @@
  
      @Nullable
      public final String getEncodeId() {
@@ -2266,7 +2266,7 @@
      }
  
      protected abstract void readAdditionalSaveData(CompoundTag nbt);
-@@ -1600,23 +2360,31 @@
+@@ -1598,23 +2360,31 @@
      protected abstract void addAdditionalSaveData(CompoundTag nbt);
  
      protected ListTag newDoubleList(double... values) {
@@ -2306,7 +2306,7 @@
      }
  
      @Nullable
-@@ -1626,7 +2394,7 @@
+@@ -1624,7 +2394,7 @@
  
      @Nullable
      public ItemEntity spawnAtLocation(ItemLike item, int yOffset) {
@@ -2315,7 +2315,7 @@
      }
  
      @Nullable
-@@ -1641,10 +2409,25 @@
+@@ -1639,10 +2409,25 @@
          } else if (this.level.isClientSide) {
              return null;
          } else {
@@ -2345,7 +2345,7 @@
          }
      }
  
-@@ -1657,11 +2440,32 @@
+@@ -1655,11 +2440,32 @@
              return false;
          } else {
              float f = this.dimensions.width * 0.8F;
@@ -2383,7 +2383,7 @@
          }
      }
  
-@@ -1669,11 +2473,11 @@
+@@ -1667,11 +2473,11 @@
          return InteractionResult.PASS;
      }
  
@@ -2397,7 +2397,7 @@
          return false;
      }
  
-@@ -1691,20 +2495,20 @@
+@@ -1689,20 +2495,20 @@
  
      private void positionRider(Entity passenger, Entity.MoveFunction positionUpdater) {
          if (this.hasPassenger(passenger)) {
@@ -2423,7 +2423,7 @@
      }
  
      public boolean startRiding(Entity entity) {
-@@ -1712,35 +2516,35 @@
+@@ -1710,35 +2516,35 @@
      }
  
      public boolean showVehicleHealth() {
@@ -2471,7 +2471,7 @@
              }
          }
      }
-@@ -1749,22 +2553,28 @@
+@@ -1747,22 +2553,28 @@
          return !this.isShiftKeyDown() && this.boardingCooldown <= 0;
      }
  
@@ -2504,7 +2504,7 @@
          }
  
      }
-@@ -1773,40 +2583,113 @@
+@@ -1771,40 +2583,113 @@
          this.removeVehicle();
      }
  
@@ -2630,11 +2630,14 @@
      }
  
      protected boolean canAddPassenger(Entity passenger) {
-@@ -1834,10 +2717,11 @@
-         if (!(this instanceof Player)) {
+@@ -1829,12 +2714,14 @@
+     }
+ 
+     public Vec3 getHandHoldingItemAngle(Item item) {
+-        if (!(this instanceof Player player)) {
++        if (!(this instanceof Player)) {
              return Vec3.ZERO;
          } else {
--            Player player = (Player)this;
 -            boolean bl = player.getOffhandItem().is(item) && !player.getMainHandItem().is(item);
 -            HumanoidArm humanoidArm = bl ? player.getMainArm().getOpposite() : player.getMainArm();
 -            return this.calculateViewVector(0.0F, this.getYRot() + (float)(humanoidArm == HumanoidArm.RIGHT ? 80 : -80)).scale(0.5D);
@@ -2646,7 +2649,7 @@
          }
      }
  
-@@ -1864,16 +2748,24 @@
+@@ -1861,16 +2748,24 @@
      protected void handleNetherPortal() {
          if (this.level instanceof ServerLevel) {
              int i = this.getPortalWaitTime();
@@ -2677,7 +2680,7 @@
                      this.level.getProfiler().pop();
                  }
  
-@@ -1889,6 +2781,7 @@
+@@ -1886,6 +2781,7 @@
              }
  
              this.processPortalCooldown();
@@ -2685,18 +2688,7 @@
          }
      }
  
-@@ -1901,34 +2794,33 @@
-     }
- 
-     public void handleEntityEvent(byte status) {
--        switch(status) {
--        case 53:
--            HoneyBlock.showSlideParticles(this);
--        default:
-+        switch (status) {
-+            case 53:
-+                HoneyBlock.showSlideParticles(this);
-+            default:
+@@ -1905,27 +2801,26 @@
          }
      }
  
@@ -2731,7 +2723,7 @@
      }
  
      public boolean isPassenger() {
-@@ -1968,7 +2860,7 @@
+@@ -1965,7 +2860,7 @@
      }
  
      public boolean isCrouching() {
@@ -2740,7 +2732,7 @@
      }
  
      public boolean isSprinting() {
-@@ -1984,7 +2876,7 @@
+@@ -1981,7 +2876,7 @@
      }
  
      public boolean isVisuallySwimming() {
@@ -2749,7 +2741,7 @@
      }
  
      public boolean isVisuallyCrawling() {
-@@ -1992,6 +2884,13 @@
+@@ -1989,6 +2884,13 @@
      }
  
      public void setSwimming(boolean swimming) {
@@ -2763,7 +2755,7 @@
          this.setSharedFlag(4, swimming);
      }
  
-@@ -2016,8 +2915,9 @@
+@@ -2013,8 +2915,9 @@
          if (player.isSpectator()) {
              return false;
          } else {
@@ -2775,7 +2767,7 @@
          }
      }
  
-@@ -2028,6 +2928,7 @@
+@@ -2025,6 +2928,7 @@
  
      @Nullable
      public Team getTeam() {
@@ -2783,7 +2775,7 @@
          return this.level.getScoreboard().getPlayersTeam(this.getScoreboardName());
      }
  
-@@ -2039,47 +2940,64 @@
+@@ -2036,47 +2940,64 @@
          return this.getTeam() != null ? this.getTeam().isAlliedTo(team) : false;
      }
  
@@ -2859,7 +2851,7 @@
      }
  
      public boolean isFullyFrozen() {
-@@ -2092,73 +3010,110 @@
+@@ -2089,73 +3010,110 @@
  
      public void thunderHit(ServerLevel world, LightningBolt lightning) {
          this.setRemainingFireTicks(this.remainingFireTicks + 1);
@@ -3006,7 +2998,7 @@
          }
  
      }
-@@ -2169,19 +3124,23 @@
+@@ -2166,19 +3124,23 @@
      }
  
      private static Component removeAction(Component textComponent) {
@@ -3036,7 +3028,7 @@
      }
  
      protected Component getTypeName() {
-@@ -2196,11 +3155,9 @@
+@@ -2193,11 +3155,9 @@
          return 0.0F;
      }
  
@@ -3050,7 +3042,7 @@
  
      public boolean isAttackable() {
          return true;
-@@ -2210,10 +3167,10 @@
+@@ -2207,10 +3167,10 @@
          return false;
      }
  
@@ -3064,7 +3056,7 @@
      }
  
      public boolean isInvulnerableTo(DamageSource damageSource) {
-@@ -2233,39 +3190,104 @@
+@@ -2230,39 +3190,104 @@
      }
  
      public void restoreFrom(Entity original) {
@@ -3183,7 +3175,7 @@
                  this.level.getProfiler().pop();
                  return entity;
              }
-@@ -2280,43 +3302,79 @@
+@@ -2277,43 +3302,79 @@
  
      @Nullable
      protected PortalInfo findDimensionEntryPoint(ServerLevel destination) {
@@ -3289,7 +3281,7 @@
          }
      }
  
-@@ -2324,12 +3382,27 @@
+@@ -2321,12 +3382,27 @@
          return PortalShape.getRelativePosition(portalRect, portalAxis, this.position(), this.getDimensions(this.getPose()));
      }
  
@@ -3320,7 +3312,7 @@
      }
  
      public float getBlockExplosionResistance(Explosion explosion, BlockGetter world, BlockPos pos, BlockState blockState, FluidState fluidState, float max) {
-@@ -2350,21 +3423,24 @@
+@@ -2347,21 +3423,24 @@
  
      public void fillCrashReportCategory(CrashReportCategory section) {
          section.setDetail("Entity Type", () -> {
@@ -3352,7 +3344,7 @@
          });
      }
  
-@@ -2395,48 +3471,49 @@
+@@ -2392,48 +3471,49 @@
      }
  
      public static double getViewScale() {
@@ -3414,7 +3406,7 @@
              this.teleportTo(destX, destY, destZ);
          }
      }
-@@ -2449,8 +3526,12 @@
+@@ -2446,8 +3526,12 @@
          if (this.level instanceof ServerLevel) {
              this.moveTo(destX, destY, destZ, this.getYRot(), this.getXRot());
              this.getSelfAndPassengers().forEach((entity) -> {
@@ -3429,7 +3421,7 @@
                  }
  
              });
-@@ -2462,34 +3543,37 @@
+@@ -2459,34 +3543,37 @@
      }
  
      public void onSyncedDataUpdated(EntityDataAccessor<?> data) {
@@ -3482,7 +3474,7 @@
      }
  
      public Direction getMotionDirection() {
-@@ -2513,23 +3597,43 @@
+@@ -2510,23 +3597,43 @@
          return this.getBoundingBox();
      }
  
@@ -3535,7 +3527,7 @@
          return this.getEyeHeight(pose, this.getDimensions(pose));
      }
  
-@@ -2538,7 +3642,7 @@
+@@ -2535,7 +3642,7 @@
      }
  
      public Vec3 getLeashOffset() {
@@ -3544,7 +3536,7 @@
      }
  
      public SlotAccess getSlot(int mappedIndex) {
-@@ -2546,8 +3650,7 @@
+@@ -2543,8 +3650,7 @@
      }
  
      @Override
@@ -3554,7 +3546,7 @@
  
      public Level getCommandSenderWorld() {
          return this.level;
-@@ -2566,43 +3669,43 @@
+@@ -2563,22 +3669,21 @@
          return false;
      }
  
@@ -3579,49 +3571,19 @@
  
      public float rotate(Rotation rotation) {
          float f = Mth.wrapDegrees(this.getYRot());
--        switch(rotation) {
--        case CLOCKWISE_180:
--            return f + 180.0F;
--        case COUNTERCLOCKWISE_90:
--            return f + 270.0F;
--        case CLOCKWISE_90:
--            return f + 90.0F;
--        default:
--            return f;
 +
-+        switch (rotation) {
-+            case CLOCKWISE_180:
-+                return f + 180.0F;
-+            case COUNTERCLOCKWISE_90:
-+                return f + 270.0F;
-+            case CLOCKWISE_90:
-+                return f + 90.0F;
-+            default:
-+                return f;
-         }
-     }
+         switch (rotation) {
+             case CLOCKWISE_180:
+                 return f + 180.0F;
+@@ -2593,6 +3698,7 @@
  
      public float mirror(Mirror mirror) {
          float f = Mth.wrapDegrees(this.getYRot());
--        switch(mirror) {
--        case FRONT_BACK:
--            return -f;
--        case LEFT_RIGHT:
--            return 180.0F - f;
--        default:
--            return f;
 +
-+        switch (mirror) {
-+            case FRONT_BACK:
-+                return -f;
-+            case LEFT_RIGHT:
-+                return 180.0F - f;
-+            default:
-+                return f;
-         }
-     }
- 
-@@ -2621,7 +3724,7 @@
+         switch (mirror) {
+             case FRONT_BACK:
+                 return -f;
+@@ -2618,7 +3724,7 @@
  
      @Nullable
      public Entity getFirstPassenger() {
@@ -3630,7 +3592,7 @@
      }
  
      public boolean hasPassenger(Entity passenger) {
-@@ -2629,36 +3732,57 @@
+@@ -2626,36 +3732,57 @@
      }
  
      public boolean hasPassenger(Predicate<Entity> predicate) {
@@ -3693,7 +3655,7 @@
          return this.getIndirectPassengersStream().filter((entity) -> {
              return entity instanceof Player;
          }).count() == 1L;
-@@ -2666,7 +3790,9 @@
+@@ -2663,7 +3790,9 @@
  
      public Entity getRootVehicle() {
          Entity entity;
@@ -3704,7 +3666,7 @@
          }
  
          return entity;
-@@ -2677,29 +3803,27 @@
+@@ -2674,29 +3803,27 @@
      }
  
      public boolean hasIndirectPassenger(Entity passenger) {
@@ -3745,7 +3707,7 @@
          return new Vec3(this.getX(), this.getBoundingBox().maxY, this.getZ());
      }
  
-@@ -2721,7 +3845,7 @@
+@@ -2718,7 +3845,7 @@
      }
  
      public CommandSourceStack createCommandSourceStack() {
@@ -3754,7 +3716,7 @@
      }
  
      protected int getPermissionLevel() {
-@@ -2748,13 +3872,14 @@
+@@ -2745,13 +3872,14 @@
      }
  
      public void lookAt(EntityAnchorArgument.Anchor anchorPoint, Vec3 target) {
@@ -3776,7 +3738,7 @@
          this.setYHeadRot(this.getYRot());
          this.xRotO = this.getXRot();
          this.yRotO = this.getYRot();
-@@ -2764,75 +3889,86 @@
+@@ -2761,75 +3889,86 @@
          if (this.touchingUnloadedChunk()) {
              return false;
          } else {
@@ -3844,11 +3806,11 @@
 -                                    ++o;
 +                                    vec3d = vec3d.add(vec3d1);
 +                                    ++k1;
-+                                }
+                                 }
 +                                // CraftBukkit start - store last lava contact location
 +                                if (tag == FluidTags.LAVA) {
 +                                    this.lastLavaContact = blockposition_mutableblockposition.immutable();
-                                 }
++                                }
 +                                // CraftBukkit end
                              }
                          }
@@ -3909,7 +3871,7 @@
          return !this.level.hasChunksAt(i, k, j, l);
      }
  
-@@ -2841,7 +3977,7 @@
+@@ -2838,7 +3977,7 @@
      }
  
      public double getFluidJumpThreshold() {
@@ -3918,7 +3880,7 @@
      }
  
      public final float getBbWidth() {
-@@ -2854,7 +3990,7 @@
+@@ -2851,7 +3990,7 @@
  
      public abstract Packet<?> getAddEntityPacket();
  
@@ -3927,7 +3889,7 @@
          return this.type.getDimensions();
      }
  
-@@ -2888,7 +4024,9 @@
+@@ -2885,7 +4024,9 @@
      }
  
      public void setDeltaMovement(Vec3 velocity) {
@@ -3937,7 +3899,7 @@
      }
  
      public void setDeltaMovement(double x, double y, double z) {
-@@ -2904,7 +4042,7 @@
+@@ -2901,7 +4042,7 @@
      }
  
      public double getX(double widthScale) {
@@ -3946,7 +3908,7 @@
      }
  
      public double getRandomX(double widthScale) {
-@@ -2920,7 +4058,7 @@
+@@ -2917,7 +4058,7 @@
      }
  
      public double getY(double heightScale) {
@@ -3955,7 +3917,7 @@
      }
  
      public double getRandomY() {
-@@ -2928,7 +4066,7 @@
+@@ -2925,7 +4066,7 @@
      }
  
      public double getEyeY() {
@@ -3964,7 +3926,7 @@
      }
  
      public final int getBlockZ() {
-@@ -2940,19 +4078,59 @@
+@@ -2937,19 +4078,59 @@
      }
  
      public double getZ(double widthScale) {
@@ -4025,7 +3987,7 @@
              if (i != this.blockPosition.getX() || j != this.blockPosition.getY() || k != this.blockPosition.getZ()) {
                  this.blockPosition = new BlockPos(i, j, k);
                  this.feetBlockState = null;
-@@ -2962,30 +4140,37 @@
+@@ -2959,30 +4140,37 @@
              }
  
              this.levelCallback.onMove();
@@ -4076,7 +4038,7 @@
          this.setId(i);
          this.setUUID(packet.getUUID());
      }
-@@ -3065,13 +4250,7 @@
+@@ -3062,13 +4250,7 @@
  
      @Override
      public boolean shouldBeSaved() {
@@ -4091,7 +4053,7 @@
      }
  
      @Override
-@@ -3087,23 +4266,37 @@
+@@ -3084,23 +4266,37 @@
          return this.level;
      }
  
@@ -4139,7 +4101,7 @@
          }
  
          public boolean emitsAnything() {
-@@ -3119,27 +4312,19 @@
+@@ -3116,27 +4312,19 @@
          }
      }
  

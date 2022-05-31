@@ -32,8 +32,7 @@
 +        // Paper end
      };
  
--    static ContainerLevelAccess create(Level world, BlockPos pos) {
-+    static ContainerLevelAccess create(final Level world, final BlockPos pos) {
+     static ContainerLevelAccess create(final Level world, final BlockPos pos) {
          return new ContainerLevelAccess() {
 +            // CraftBukkit start
 +            @Override

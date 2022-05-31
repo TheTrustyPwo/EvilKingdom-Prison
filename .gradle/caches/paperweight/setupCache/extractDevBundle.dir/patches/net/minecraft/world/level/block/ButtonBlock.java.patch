@@ -29,54 +29,44 @@
      public VoxelShape getShape(BlockState state, BlockGetter world, BlockPos pos, CollisionContext context) {
 -        Direction direction = state.getValue(FACING);
 -        boolean bl = state.getValue(POWERED);
--        switch((AttachFace)state.getValue(FACE)) {
--        case FLOOR:
--            if (direction.getAxis() == Direction.Axis.X) {
--                return bl ? PRESSED_FLOOR_AABB_X : FLOOR_AABB_X;
--            }
+-        switch ((AttachFace)state.getValue(FACE)) {
 +        Direction enumdirection = (Direction) state.getValue(ButtonBlock.FACING);
 +        boolean flag = (Boolean) state.getValue(ButtonBlock.POWERED);
- 
--            return bl ? PRESSED_FLOOR_AABB_Z : FLOOR_AABB_Z;
--        case WALL:
--            switch(direction) {
--            case EAST:
--                return bl ? PRESSED_EAST_AABB : EAST_AABB;
--            case WEST:
--                return bl ? PRESSED_WEST_AABB : WEST_AABB;
--            case SOUTH:
--                return bl ? PRESSED_SOUTH_AABB : SOUTH_AABB;
--            case NORTH:
++
 +        switch ((AttachFace) state.getValue(ButtonBlock.FACE)) {
-+            case FLOOR:
+             case FLOOR:
+-                if (direction.getAxis() == Direction.Axis.X) {
+-                    return bl ? PRESSED_FLOOR_AABB_X : FLOOR_AABB_X;
 +                if (enumdirection.getAxis() == Direction.Axis.X) {
 +                    return flag ? ButtonBlock.PRESSED_FLOOR_AABB_X : ButtonBlock.FLOOR_AABB_X;
-+                }
-+
+                 }
+ 
+-                return bl ? PRESSED_FLOOR_AABB_Z : FLOOR_AABB_Z;
 +                return flag ? ButtonBlock.PRESSED_FLOOR_AABB_Z : ButtonBlock.FLOOR_AABB_Z;
-+            case WALL:
+             case WALL:
+-                switch (direction) {
 +                switch (enumdirection) {
-+                    case EAST:
+                     case EAST:
+-                        return bl ? PRESSED_EAST_AABB : EAST_AABB;
 +                        return flag ? ButtonBlock.PRESSED_EAST_AABB : ButtonBlock.EAST_AABB;
-+                    case WEST:
+                     case WEST:
+-                        return bl ? PRESSED_WEST_AABB : WEST_AABB;
 +                        return flag ? ButtonBlock.PRESSED_WEST_AABB : ButtonBlock.WEST_AABB;
-+                    case SOUTH:
+                     case SOUTH:
+-                        return bl ? PRESSED_SOUTH_AABB : SOUTH_AABB;
 +                        return flag ? ButtonBlock.PRESSED_SOUTH_AABB : ButtonBlock.SOUTH_AABB;
-+                    case NORTH:
-+                    default:
+                     case NORTH:
+                     default:
+-                        return bl ? PRESSED_NORTH_AABB : NORTH_AABB;
 +                        return flag ? ButtonBlock.PRESSED_NORTH_AABB : ButtonBlock.NORTH_AABB;
-+                }
-+            case CEILING:
+                 }
+             case CEILING:
              default:
--                return bl ? PRESSED_NORTH_AABB : NORTH_AABB;
--            }
--        case CEILING:
--        default:
--            if (direction.getAxis() == Direction.Axis.X) {
--                return bl ? PRESSED_CEILING_AABB_X : CEILING_AABB_X;
--            } else {
--                return bl ? PRESSED_CEILING_AABB_Z : CEILING_AABB_Z;
--            }
+-                if (direction.getAxis() == Direction.Axis.X) {
+-                    return bl ? PRESSED_CEILING_AABB_X : CEILING_AABB_X;
+-                } else {
+-                    return bl ? PRESSED_CEILING_AABB_Z : CEILING_AABB_Z;
+-                }
 +                return enumdirection.getAxis() == Direction.Axis.X ? (flag ? ButtonBlock.PRESSED_CEILING_AABB_X : ButtonBlock.CEILING_AABB_X) : (flag ? ButtonBlock.PRESSED_CEILING_AABB_Z : ButtonBlock.CEILING_AABB_Z);
          }
      }

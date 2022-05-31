@@ -52,27 +52,22 @@
      @Override
      public VoxelShape getShape(BlockState state, BlockGetter world, BlockPos pos, CollisionContext context) {
 -        int i = state.getValue(AGE);
--        switch((Direction)state.getValue(FACING)) {
--        case SOUTH:
--            return SOUTH_AABB[i];
--        case NORTH:
--        default:
--            return NORTH_AABB[i];
--        case WEST:
--            return WEST_AABB[i];
--        case EAST:
--            return EAST_AABB[i];
+-        switch ((Direction)state.getValue(FACING)) {
 +        int i = (Integer) state.getValue(CocoaBlock.AGE);
 +
 +        switch ((Direction) state.getValue(CocoaBlock.FACING)) {
-+            case SOUTH:
+             case SOUTH:
+-                return SOUTH_AABB[i];
 +                return CocoaBlock.SOUTH_AABB[i];
-+            case NORTH:
-+            default:
+             case NORTH:
+             default:
+-                return NORTH_AABB[i];
 +                return CocoaBlock.NORTH_AABB[i];
-+            case WEST:
+             case WEST:
+-                return WEST_AABB[i];
 +                return CocoaBlock.WEST_AABB[i];
-+            case EAST:
+             case EAST:
+-                return EAST_AABB[i];
 +                return CocoaBlock.EAST_AABB[i];
          }
      }

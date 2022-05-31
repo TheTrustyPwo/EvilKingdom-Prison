@@ -1,29 +1,25 @@
 --- a/net/minecraft/world/item/crafting/RecipeManager.java
 +++ b/net/minecraft/world/item/crafting/RecipeManager.java
-@@ -1,8 +1,8 @@
+@@ -1,6 +1,7 @@
  package net.minecraft.world.item.crafting;
  
  import com.google.common.collect.ImmutableMap;
--import com.google.common.collect.Maps;
- import com.google.common.collect.ImmutableMap.Builder;
-+import com.google.common.collect.Maps;
++import com.google.common.collect.ImmutableMap.Builder;
+ import com.google.common.collect.Maps;
  import com.google.gson.Gson;
  import com.google.gson.GsonBuilder;
- import com.google.gson.JsonElement;
-@@ -13,10 +13,11 @@
+@@ -12,8 +13,10 @@
  import java.util.Collection;
  import java.util.Collections;
  import java.util.Comparator;
 +import java.util.Iterator;
  import java.util.List;
  import java.util.Map;
--import java.util.Optional;
- import java.util.Map.Entry;
-+import java.util.Optional;
++import java.util.Map.Entry;
+ import java.util.Optional;
  import java.util.stream.Collectors;
  import java.util.stream.Stream;
- import net.minecraft.core.NonNullList;
-@@ -31,93 +32,124 @@
+@@ -29,93 +32,124 @@
  import net.minecraft.world.level.Level;
  import org.slf4j.Logger;
  
@@ -46,17 +42,18 @@
 -    @Override
      protected void apply(Map<ResourceLocation, JsonElement> prepared, ResourceManager manager, ProfilerFiller profiler) {
          this.hasErrors = false;
--        Map<RecipeType<?>, Builder<ResourceLocation, Recipe<?>>> map = Maps.newHashMap();
+-        Map<RecipeType<?>, ImmutableMap.Builder<ResourceLocation, Recipe<?>>> map = Maps.newHashMap();
+-        ImmutableMap.Builder<ResourceLocation, Recipe<?>> builder = ImmutableMap.builder();
 +        // CraftBukkit start - SPIGOT-5667 make sure all types are populated and mutable
 +        Map<RecipeType<?>, Object2ObjectLinkedOpenHashMap<ResourceLocation, Recipe<?>>> map1 = Maps.newHashMap();
 +        for (RecipeType<?> recipeType : Registry.RECIPE_TYPE) {
 +            map1.put(recipeType, new Object2ObjectLinkedOpenHashMap<>());
 +        }
 +        // CraftBukkit end
-         Builder<ResourceLocation, Recipe<?>> builder = ImmutableMap.builder();
++        Builder<ResourceLocation, Recipe<?>> builder = ImmutableMap.builder();
 +        Iterator iterator = prepared.entrySet().iterator();
  
--        for(Entry<ResourceLocation, JsonElement> entry : prepared.entrySet()) {
+-        for(Map.Entry<ResourceLocation, JsonElement> entry : prepared.entrySet()) {
 -            ResourceLocation resourceLocation = entry.getKey();
 +        while (iterator.hasNext()) {
 +            Entry<ResourceLocation, JsonElement> entry = (Entry) iterator.next();
@@ -83,7 +80,7 @@
              }
          }
  
--        this.recipes = map.entrySet().stream().collect(ImmutableMap.toImmutableMap(Entry::getKey, (entryx) -> {
+-        this.recipes = map.entrySet().stream().collect(ImmutableMap.toImmutableMap(Map.Entry::getKey, (entryx) -> {
 -            return entryx.getValue().build();
 +        this.recipes = (Map) map1.entrySet().stream().collect(ImmutableMap.toImmutableMap(Entry::getKey, (entry1) -> {
 +            return entry1.getValue(); // CraftBukkit // Paper - decompile fix - *shrugs internally* // todo: is this needed anymore?
@@ -92,8 +89,8 @@
 -        LOGGER.info("Loaded {} recipes", (int)map.size());
 +        this.byName = Maps.newHashMap(builder.build()); // CraftBukkit
 +        RecipeManager.LOGGER.info("Loaded {} recipes", map1.size());
-+    }
-+
+     }
+ 
 +    // CraftBukkit start
 +    public void addRecipe(Recipe<?> irecipe) {
 +        org.spigotmc.AsyncCatcher.catchOp("Recipe Add"); // Spigot
@@ -105,9 +102,9 @@
 +            map.putAndMoveToFirst(irecipe.getId(), irecipe); // CraftBukkit - SPIGOT-4638: last recipe gets priority
 +            this.byName.put(irecipe.getId(), irecipe);
 +        }
-     }
++    }
 +    // CraftBukkit end
- 
++
      public boolean hadErrorsLoading() {
          return this.hasErrors;
      }
@@ -181,7 +178,7 @@
              return map.values().stream();
          }).collect(Collectors.toSet());
      }
-@@ -129,28 +161,51 @@
+@@ -127,28 +161,51 @@
      }
  
      public static Recipe<?> fromJson(ResourceLocation id, JsonObject json) {
@@ -199,11 +196,12 @@
      public void replaceRecipes(Iterable<Recipe<?>> recipes) {
          this.hasErrors = false;
 -        Map<RecipeType<?>, Map<ResourceLocation, Recipe<?>>> map = Maps.newHashMap();
-+        Map<RecipeType<?>, Object2ObjectLinkedOpenHashMap<ResourceLocation, Recipe<?>>> map = Maps.newHashMap(); // CraftBukkit
-         Builder<ResourceLocation, Recipe<?>> builder = ImmutableMap.builder();
+-        ImmutableMap.Builder<ResourceLocation, Recipe<?>> builder = ImmutableMap.builder();
 -        recipes.forEach((recipe) -> {
 -            Map<ResourceLocation, Recipe<?>> map2 = map.computeIfAbsent(recipe.getType(), (t) -> {
 -                return Maps.newHashMap();
++        Map<RecipeType<?>, Object2ObjectLinkedOpenHashMap<ResourceLocation, Recipe<?>>> map = Maps.newHashMap(); // CraftBukkit
++        Builder<ResourceLocation, Recipe<?>> builder = ImmutableMap.builder();
 +
 +        recipes.forEach((irecipe) -> {
 +            Map<ResourceLocation, Recipe<?>> map1 = (Map) map.computeIfAbsent(irecipe.getType(), (recipes_) -> { // Paper - remap fix

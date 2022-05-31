@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/level/lighting/LayerLightSectionStorage.java
 +++ b/net/minecraft/world/level/lighting/LayerLightSectionStorage.java
-@@ -28,7 +28,7 @@
+@@ -27,7 +27,7 @@
      protected final LongSet dataSectionSet = new LongOpenHashSet();
      protected final LongSet toMarkNoData = new LongOpenHashSet();
      protected final LongSet toMarkData = new LongOpenHashSet();
@@ -9,7 +9,7 @@
      protected final M updatingSectionData;
      protected final LongSet changedSections = new LongOpenHashSet();
      protected final LongSet sectionsAffectedByLightUpdates = new LongOpenHashSet();
-@@ -43,8 +43,8 @@
+@@ -42,8 +42,8 @@
          this.layer = lightType;
          this.chunkSource = chunkProvider;
          this.updatingSectionData = lightData;
@@ -20,7 +20,7 @@
      }
  
      protected boolean storingLightForSection(long sectionPos) {
-@@ -53,7 +53,15 @@
+@@ -52,7 +52,15 @@
  
      @Nullable
      protected DataLayer getDataLayer(long sectionPos, boolean cached) {
@@ -37,7 +37,7 @@
      }
  
      @Nullable
-@@ -343,9 +351,11 @@
+@@ -342,9 +350,11 @@
  
      protected void swapSectionMap() {
          if (!this.changedSections.isEmpty()) {

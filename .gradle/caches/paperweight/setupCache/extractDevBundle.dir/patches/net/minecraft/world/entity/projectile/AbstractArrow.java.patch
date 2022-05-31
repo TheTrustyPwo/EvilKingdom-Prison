@@ -577,27 +577,6 @@
                  player.take(this, 1);
                  this.discard();
              }
-@@ -495,13 +591,13 @@
-     }
- 
-     protected boolean tryPickup(Player player) {
--        switch(this.pickup) {
--        case ALLOWED:
--            return player.getInventory().add(this.getPickupItem());
--        case CREATIVE_ONLY:
--            return player.getAbilities().instabuild;
--        default:
--            return false;
-+        switch (this.pickup) {
-+            case ALLOWED:
-+                return player.getInventory().add(this.getPickupItem());
-+            case CREATIVE_ONLY:
-+                return player.getAbilities().instabuild;
-+            default:
-+                return false;
-         }
-     }
- 
 @@ -543,39 +639,43 @@
      }
  

@@ -340,27 +340,19 @@
              }
  
          } else {
--            switch(scanner.visitRootEntry(tagType)) {
--            case HALT:
--            default:
--                break;
--            case BREAK:
--                StringTag.skipString(input);
--                tagType.skip(input);
--                break;
--            case CONTINUE:
--                StringTag.skipString(input);
--                tagType.parse(input, scanner);
+-            switch (scanner.visitRootEntry(tagType)) {
 +            switch (scanner.visitRootEntry(nbttagtype)) {
-+                case HALT:
-+                default:
-+                    break;
-+                case BREAK:
-+                    StringTag.skipString(input);
+                 case HALT:
+                 default:
+                     break;
+                 case BREAK:
+                     StringTag.skipString(input);
+-                    tagType.skip(input);
 +                    nbttagtype.skip(input);
-+                    break;
-+                case CONTINUE:
-+                    StringTag.skipString(input);
+                     break;
+                 case CONTINUE:
+                     StringTag.skipString(input);
+-                    tagType.parse(input, scanner);
 +                    nbttagtype.parse(input, scanner);
              }
  

@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/level/biome/MobSpawnSettings.java
 +++ b/net/minecraft/world/level/biome/MobSpawnSettings.java
-@@ -60,11 +60,43 @@
+@@ -59,11 +59,43 @@
      }
  
      public static class Builder {

@@ -71,15 +71,7 @@
 -            double i = (double)this.getHeight();
 -            double j = (double)this.getWidth();
 -            Direction.Axis axis = this.direction.getAxis();
--            switch(axis) {
--            case X:
--                h = 1.0D;
--                break;
--            case Y:
--                i = 1.0D;
--                break;
--            case Z:
--                j = 1.0D;
+-            switch (axis) {
 +            // CraftBukkit start code moved in to calculateBoundingBox
 +            this.setBoundingBox(ItemFrame.calculateBoundingBox(this, this.pos, this.direction, this.getWidth(), this.getHeight()));
 +            // CraftBukkit end
@@ -96,27 +88,30 @@
 +
 +            if (entity != null) {
 +                entity.setPosRaw(d1, d2, d3);
-             }
++            }
 +            double d4 = (double) width;
 +            double d5 = (double) height;
 +            double d6 = (double) width;
 +            Direction.Axis enumdirection_enumaxis = direction.getAxis();
++
++            switch (enumdirection_enumaxis) {
+                 case X:
+-                    h = 1.0D;
++                    d4 = 1.0D;
+                     break;
+                 case Y:
+-                    i = 1.0D;
++                    d5 = 1.0D;
+                     break;
+                 case Z:
+-                    j = 1.0D;
++                    d6 = 1.0D;
+             }
  
 -            h /= 32.0D;
 -            i /= 32.0D;
 -            j /= 32.0D;
 -            this.setBoundingBox(new AABB(e - h, f - i, g - j, e + h, f + i, g + j));
-+            switch (enumdirection_enumaxis) {
-+                case X:
-+                    d4 = 1.0D;
-+                    break;
-+                case Y:
-+                    d5 = 1.0D;
-+                    break;
-+                case Z:
-+                    d6 = 1.0D;
-+            }
-+
 +            d4 /= 32.0D;
 +            d5 /= 32.0D;
 +            d6 /= 32.0D;

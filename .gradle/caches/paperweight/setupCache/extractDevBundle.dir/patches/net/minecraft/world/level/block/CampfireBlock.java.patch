@@ -21,7 +21,7 @@
      protected static final VoxelShape SHAPE = Block.box(0.0D, 0.0D, 0.0D, 16.0D, 7.0D, 16.0D);
      public static final BooleanProperty LIT = BlockStateProperties.LIT;
      public static final BooleanProperty SIGNAL_FIRE = BlockStateProperties.SIGNAL_FIRE;
-@@ -61,18 +66,20 @@
+@@ -61,17 +66,20 @@
          super(settings);
          this.spawnParticles = emitsParticles;
          this.fireDamage = fireDamage;
@@ -32,8 +32,7 @@
      @Override
      public InteractionResult use(BlockState state, Level world, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
 -        BlockEntity blockEntity = world.getBlockEntity(pos);
--        if (blockEntity instanceof CampfireBlockEntity) {
--            CampfireBlockEntity campfireBlockEntity = (CampfireBlockEntity)blockEntity;
+-        if (blockEntity instanceof CampfireBlockEntity campfireBlockEntity) {
 -            ItemStack itemStack = player.getItemInHand(hand);
 -            Optional<CampfireCookingRecipe> optional = campfireBlockEntity.getCookableRecipe(itemStack);
 +        BlockEntity tileentity = world.getBlockEntity(pos);
@@ -49,7 +48,7 @@
                      player.awardStat(Stats.INTERACT_WITH_CAMPFIRE);
                      return InteractionResult.SUCCESS;
                  }
-@@ -86,8 +93,11 @@
+@@ -85,8 +93,11 @@
  
      @Override
      public void entityInside(BlockState state, Level world, BlockPos pos, Entity entity) {
@@ -63,7 +62,7 @@
          }
  
          super.entityInside(state, world, pos, entity);
-@@ -96,9 +106,10 @@
+@@ -95,9 +106,10 @@
      @Override
      public void onRemove(BlockState state, Level world, BlockPos pos, BlockState newState, boolean moved) {
          if (!state.is(newState.getBlock())) {
@@ -77,7 +76,7 @@
              }
  
              super.onRemove(state, world, pos, newState, moved);
-@@ -108,19 +119,20 @@
+@@ -107,19 +119,20 @@
      @Nullable
      @Override
      public BlockState getStateForPlacement(BlockPlaceContext ctx) {
@@ -105,7 +104,7 @@
      }
  
      private boolean isSmokeSource(BlockState state) {
-@@ -129,7 +141,7 @@
+@@ -128,7 +141,7 @@
  
      @Override
      public VoxelShape getShape(BlockState state, BlockGetter world, BlockPos pos, CollisionContext context) {
@@ -114,7 +113,7 @@
      }
  
      @Override
-@@ -139,14 +151,14 @@
+@@ -138,14 +151,14 @@
  
      @Override
      public void animateTick(BlockState state, Level world, BlockPos pos, Random random) {
@@ -133,7 +132,7 @@
                  }
              }
  
-@@ -155,14 +167,15 @@
+@@ -154,14 +167,15 @@
  
      public static void dowse(@Nullable Entity entity, LevelAccessor world, BlockPos pos, BlockState state) {
          if (world.isClientSide()) {
@@ -154,7 +153,7 @@
          }
  
          world.gameEvent(entity, GameEvent.BLOCK_CHANGE, pos);
-@@ -170,17 +183,18 @@
+@@ -169,17 +183,18 @@
  
      @Override
      public boolean placeLiquid(LevelAccessor world, BlockPos pos, BlockState state, FluidState fluidState) {
@@ -179,7 +178,7 @@
              world.scheduleTick(pos, fluidState.getType(), fluidState.getType().getTickDelay(world));
              return true;
          } else {
-@@ -190,35 +204,45 @@
+@@ -189,35 +204,45 @@
  
      @Override
      public void onProjectileHit(Level world, BlockState state, BlockHitResult hit, Projectile projectile) {
@@ -239,7 +238,7 @@
              }
          }
  
-@@ -226,27 +250,27 @@
+@@ -225,27 +250,27 @@
      }
  
      public static boolean isLitCampfire(BlockState state) {
@@ -272,7 +271,7 @@
      }
  
      @Override
-@@ -257,11 +281,7 @@
+@@ -256,11 +281,7 @@
      @Nullable
      @Override
      public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level world, BlockState state, BlockEntityType<T> type) {
@@ -285,7 +284,7 @@
      }
  
      @Override
-@@ -270,8 +290,8 @@
+@@ -269,8 +290,8 @@
      }
  
      public static boolean canLight(BlockState state) {

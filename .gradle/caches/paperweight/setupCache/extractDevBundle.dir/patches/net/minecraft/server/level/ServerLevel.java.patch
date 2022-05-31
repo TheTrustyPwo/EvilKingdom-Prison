@@ -12,13 +12,13 @@
  import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
  import it.unimi.dsi.fastutil.longs.LongSet;
  import it.unimi.dsi.fastutil.longs.LongSets;
+-import it.unimi.dsi.fastutil.objects.Object2IntMap;
 +import it.unimi.dsi.fastutil.objects.Object2IntMap.Entry;
  import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
  import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 +import it.unimi.dsi.fastutil.objects.ObjectIterator;
  import it.unimi.dsi.fastutil.objects.ObjectLinkedOpenHashSet;
  import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
--import it.unimi.dsi.fastutil.objects.Object2IntMap.Entry;
 +import java.io.BufferedWriter;
  import java.io.IOException;
  import java.io.Writer;
@@ -1057,7 +1057,7 @@
 -            this.server.getPlayerList().broadcastAll(new ClientboundGameEventPacket(ClientboundGameEventPacket.THUNDER_LEVEL_CHANGE, this.thunderLevel));
 +            this.server.getPlayerList().broadcastAll(new PacketPlayOutGameStateChange(PacketPlayOutGameStateChange.RAIN_LEVEL_CHANGE, this.rainLevel));
 +            this.server.getPlayerList().broadcastAll(new PacketPlayOutGameStateChange(PacketPlayOutGameStateChange.THUNDER_LEVEL_CHANGE, this.thunderLevel));
-+        }
+         }
 +        // */
 +        for (int idx = 0; idx < this.players.size(); ++idx) {
 +            if (((ServerPlayer) this.players.get(idx)).level == this) {
@@ -1077,7 +1077,7 @@
 +            if (((ServerPlayer) this.players.get(idx)).level == this) {
 +                ((ServerPlayer) this.players.get(idx)).updateWeather(this.oRainLevel, this.rainLevel, this.oThunderLevel, this.thunderLevel);
 +            }
-         }
++        }
 +        // CraftBukkit end
  
      }
@@ -1132,9 +1132,9 @@
 +            iblockdata.tick(this, pos, this.random);
          }
 +        MinecraftServer.getServer().executeMidTickTasks(); // Paper - exec chunk tasks during world tick
- 
-     }
- 
++
++    }
++
 +    // Paper start - log detailed entity tick information
 +    // TODO replace with varhandle
 +    static final java.util.concurrent.atomic.AtomicReference<Entity> currentlyTickingEntity = new java.util.concurrent.atomic.AtomicReference<>();
@@ -1142,11 +1142,11 @@
 +    public static List<Entity> getCurrentlyTickingEntities() {
 +        Entity ticking = currentlyTickingEntity.get();
 +        List<Entity> ret = java.util.Arrays.asList(ticking == null ? new Entity[0] : new Entity[] { ticking });
-+
+ 
 +        return ret;
-+    }
+     }
 +    // Paper end - log detailed entity tick information
-+
+ 
      public void tickNonPassenger(Entity entity) {
 +        // Paper start - log detailed entity tick information
 +        io.papermc.paper.util.TickThread.ensureTickThread("Cannot tick an entity off-main");
@@ -1903,8 +1903,8 @@
      public int getFreeMapId() {
 -        return this.getServer().overworld().getDataStorage().computeIfAbsent(MapIndex::load, MapIndex::new, "idcounts").getFreeAuxValueForMap();
 +        return ((MapIndex) this.getServer().overworld().getDataStorage().computeIfAbsent(MapIndex::load, MapIndex::new, "idcounts")).getFreeAuxValueForMap();
-+    }
-+
+     }
+ 
 +    // Paper start - helper function for configurable spawn radius
 +    public void addTicketsForSpawn(int radiusInBlocks, BlockPos spawn) {
 +        // In order to respect vanilla behavior, which is ensuring everything but the spawn border can tick, we add tickets
@@ -1937,7 +1937,7 @@
 +            // left
 +            chunkproviderserver.addRegionTicket(TicketType.START, new ChunkPos(spawn.offset(-radiusInBlocks, 0, z)), 1, Unit.INSTANCE); // level 32
 +        }
-     }
++    }
 +    public void removeTicketsForSpawn(int radiusInBlocks, BlockPos spawn) {
 +        // In order to respect vanilla behavior, which is ensuring everything but the spawn border can tick, we added tickets
 +        // with level 31 for the non-border spawn chunks
@@ -1971,7 +1971,7 @@
 +        }
 +    }
 +    // Paper end
- 
++
      public void setDefaultSpawnPos(BlockPos pos, float angle) {
 -        ChunkPos chunkPos = new ChunkPos(new BlockPos(this.levelData.getXSpawn(), 0, this.levelData.getZSpawn()));
 +        // Paper - configurable spawn radius
@@ -2113,7 +2113,7 @@
 -            writer.write(String.format("spawning_chunks: %d\n", chunkMap.getDistanceManager().getNaturalSpawnChunkCount()));
 -            NaturalSpawner.SpawnState spawnState = this.getChunkSource().getLastSpawnState();
 -            if (spawnState != null) {
--                for(Entry<MobCategory> entry : spawnState.getMobCategoryCounts().object2IntEntrySet()) {
+-                for(Object2IntMap.Entry<MobCategory> entry : spawnState.getMobCategoryCounts().object2IntEntrySet()) {
 -                    writer.write(String.format("spawn_count.%s: %d\n", entry.getKey().getName(), entry.getIntValue()));
 +            bufferedwriter.write(String.format("spawning_chunks: %d\n", playerchunkmap.getDistanceManager().getNaturalSpawnChunkCount()));
 +            NaturalSpawner.SpawnState spawnercreature_d = this.getChunkSource().getLastSpawnState();
@@ -2433,7 +2433,7 @@
 +                object2intopenhashmap.addTo(s, 1);
              }
  
--            return object2IntOpenHashMap.object2IntEntrySet().stream().sorted(Comparator.comparing(Entry::getIntValue).reversed()).limit(5L).map((entry) -> {
+-            return object2IntOpenHashMap.object2IntEntrySet().stream().sorted(Comparator.comparing(Object2IntMap.Entry::getIntValue).reversed()).limit(5L).map((entry) -> {
 -                return (String)entry.getKey() + ":" + entry.getIntValue();
 +            return (String) object2intopenhashmap.object2IntEntrySet().stream().sorted(Comparator.comparing(Entry<String>::getIntValue).reversed()).limit(5L).map((entry) -> { // CraftBukkit - decompile error
 +                String s1 = (String) entry.getKey();
@@ -2501,7 +2501,7 @@
      }
  
      public boolean areEntitiesLoaded(long chunkPos) {
-@@ -1484,102 +2390,191 @@
+@@ -1484,94 +2390,191 @@
      }
  
      private boolean isPositionTickingWithEntitiesLoaded(long chunkPos) {
@@ -2571,19 +2571,19 @@
 -        @Override
          public void onTrackingStart(Entity entity) {
 -            ServerLevel.this.getChunkSource().addEntity(entity);
+-            if (entity instanceof ServerPlayer serverPlayer) {
+-                ServerLevel.this.players.add(serverPlayer);
 +            org.spigotmc.AsyncCatcher.catchOp("entity register"); // Spigot
 +            // ServerLevel.this.getChunkSource().addEntity(entity); // Paper - moved down below valid=true
-             if (entity instanceof ServerPlayer) {
--                ServerPlayer serverPlayer = (ServerPlayer)entity;
--                ServerLevel.this.players.add(serverPlayer);
++            if (entity instanceof ServerPlayer) {
 +                ServerPlayer entityplayer = (ServerPlayer) entity;
 +
 +                ServerLevel.this.players.add(entityplayer);
                  ServerLevel.this.updateSleepingPlayerList();
              }
  
-             if (entity instanceof Mob) {
--                Mob mob = (Mob)entity;
+-            if (entity instanceof Mob mob) {
++            if (entity instanceof Mob) {
 +                Mob entityinsentient = (Mob) entity;
 +
                  if (ServerLevel.this.isUpdatingNavigations) {
@@ -2597,14 +2597,14 @@
 +                ServerLevel.this.navigatingMobs.add(entityinsentient);
              }
  
-             if (entity instanceof EnderDragon) {
--                EnderDragon enderDragon = (EnderDragon)entity;
+-            if (entity instanceof EnderDragon enderDragon) {
+-                for(EnderDragonPart enderDragonPart : enderDragon.getSubEntities()) {
+-                    ServerLevel.this.dragonParts.put(enderDragonPart.getId(), enderDragonPart);
++            if (entity instanceof EnderDragon) {
 +                EnderDragon entityenderdragon = (EnderDragon) entity;
 +                EnderDragonPart[] aentitycomplexpart = entityenderdragon.getSubEntities();
 +                int i = aentitycomplexpart.length;
- 
--                for(EnderDragonPart enderDragonPart : enderDragon.getSubEntities()) {
--                    ServerLevel.this.dragonParts.put(enderDragonPart.getId(), enderDragonPart);
++
 +                for (int j = 0; j < i; ++j) {
 +                    EnderDragonPart entitycomplexpart = aentitycomplexpart[j];
 +
@@ -2666,17 +2666,17 @@
 +            }
 +            // Spigot End
              ServerLevel.this.getChunkSource().removeEntity(entity);
-             if (entity instanceof ServerPlayer) {
--                ServerPlayer serverPlayer = (ServerPlayer)entity;
+-            if (entity instanceof ServerPlayer serverPlayer) {
 -                ServerLevel.this.players.remove(serverPlayer);
++            if (entity instanceof ServerPlayer) {
 +                ServerPlayer entityplayer = (ServerPlayer) entity;
 +
 +                ServerLevel.this.players.remove(entityplayer);
                  ServerLevel.this.updateSleepingPlayerList();
              }
  
-             if (entity instanceof Mob) {
--                Mob mob = (Mob)entity;
+-            if (entity instanceof Mob mob) {
++            if (entity instanceof Mob) {
 +                Mob entityinsentient = (Mob) entity;
 +
                  if (ServerLevel.this.isUpdatingNavigations) {
@@ -2690,14 +2690,14 @@
 +                ServerLevel.this.navigatingMobs.remove(entityinsentient);
              }
  
-             if (entity instanceof EnderDragon) {
--                EnderDragon enderDragon = (EnderDragon)entity;
+-            if (entity instanceof EnderDragon enderDragon) {
+-                for(EnderDragonPart enderDragonPart : enderDragon.getSubEntities()) {
+-                    ServerLevel.this.dragonParts.remove(enderDragonPart.getId());
++            if (entity instanceof EnderDragon) {
 +                EnderDragon entityenderdragon = (EnderDragon) entity;
 +                EnderDragonPart[] aentitycomplexpart = entityenderdragon.getSubEntities();
 +                int i = aentitycomplexpart.length;
- 
--                for(EnderDragonPart enderDragonPart : enderDragon.getSubEntities()) {
--                    ServerLevel.this.dragonParts.remove(enderDragonPart.getId());
++
 +                for (int j = 0; j < i; ++j) {
 +                    EnderDragonPart entitycomplexpart = aentitycomplexpart[j];
 +

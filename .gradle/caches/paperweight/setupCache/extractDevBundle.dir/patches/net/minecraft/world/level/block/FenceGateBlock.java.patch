@@ -8,7 +8,7 @@
      public static final BooleanProperty OPEN = BlockStateProperties.OPEN;
      public static final BooleanProperty POWERED = BlockStateProperties.POWERED;
      public static final BooleanProperty IN_WALL = BlockStateProperties.IN_WALL;
-@@ -39,70 +40,61 @@
+@@ -39,56 +40,46 @@
  
      public FenceGateBlock(BlockBehaviour.Properties settings) {
          super(settings);
@@ -65,26 +65,19 @@
  
      @Override
      public boolean isPathfindable(BlockState state, BlockGetter world, BlockPos pos, PathComputationType type) {
--        switch(type) {
--        case LAND:
--            return state.getValue(OPEN);
--        case WATER:
--            return false;
--        case AIR:
--            return state.getValue(OPEN);
--        default:
--            return false;
-+        switch (type) {
-+            case LAND:
+         switch (type) {
+             case LAND:
+-                return state.getValue(OPEN);
 +                return (Boolean) state.getValue(FenceGateBlock.OPEN);
-+            case WATER:
-+                return false;
-+            case AIR:
+             case WATER:
+                 return false;
+             case AIR:
+-                return state.getValue(OPEN);
 +                return (Boolean) state.getValue(FenceGateBlock.OPEN);
-+            default:
-+                return false;
+             default:
+                 return false;
          }
-     }
+@@ -96,13 +87,14 @@
  
      @Override
      public BlockState getStateForPlacement(BlockPlaceContext ctx) {

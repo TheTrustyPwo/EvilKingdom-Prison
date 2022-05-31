@@ -1,12 +1,11 @@
 --- a/net/minecraft/world/item/ArmorItem.java
 +++ b/net/minecraft/world/item/ArmorItem.java
-@@ -1,13 +1,14 @@
+@@ -1,12 +1,14 @@
  package net.minecraft.world.item;
  
  import com.google.common.collect.ImmutableMultimap;
--import com.google.common.collect.Multimap;
- import com.google.common.collect.ImmutableMultimap.Builder;
-+import com.google.common.collect.Multimap;
++import com.google.common.collect.ImmutableMultimap.Builder;
+ import com.google.common.collect.Multimap;
  import java.util.List;
  import java.util.UUID;
  import javax.annotation.Nullable;
@@ -16,7 +15,7 @@
  import net.minecraft.core.dispenser.DefaultDispenseItemBehavior;
  import net.minecraft.core.dispenser.DispenseItemBehavior;
  import net.minecraft.sounds.SoundEvent;
-@@ -25,8 +26,13 @@
+@@ -24,8 +26,13 @@
  import net.minecraft.world.level.Level;
  import net.minecraft.world.level.block.DispenserBlock;
  import net.minecraft.world.phys.AABB;
@@ -30,7 +29,7 @@
      private static final UUID[] ARMOR_MODIFIER_UUID_PER_SLOT = new UUID[]{UUID.fromString("845DB27C-C624-495F-8C9F-6020A9A58B6B"), UUID.fromString("D8499B04-0E66-4726-AB29-64469D734E0D"), UUID.fromString("9F3D476D-C118-4544-8365-64846904B48E"), UUID.fromString("2AD3F246-FEE1-4E67-B886-69FD380BB150")};
      public static final DispenseItemBehavior DISPENSE_ITEM_BEHAVIOR = new DefaultDispenseItemBehavior() {
          @Override
-@@ -42,18 +48,46 @@
+@@ -41,18 +48,46 @@
      private final Multimap<Attribute, AttributeModifier> defaultModifiers;
  
      public static boolean dispenseArmor(BlockSource pointer, ItemStack armor) {
@@ -86,16 +85,17 @@
              }
  
              return true;
-@@ -67,13 +101,14 @@
+@@ -66,13 +101,14 @@
          this.defense = material.getDefenseForSlot(slot);
          this.toughness = material.getToughness();
          this.knockbackResistance = material.getKnockbackResistance();
 -        DispenserBlock.registerBehavior(this, DISPENSE_ITEM_BEHAVIOR);
-+        DispenserBlock.registerBehavior(this, ArmorItem.DISPENSE_ITEM_BEHAVIOR);
-         Builder<Attribute, AttributeModifier> builder = ImmutableMultimap.builder();
+-        ImmutableMultimap.Builder<Attribute, AttributeModifier> builder = ImmutableMultimap.builder();
 -        UUID uUID = ARMOR_MODIFIER_UUID_PER_SLOT[slot.getIndex()];
 -        builder.put(Attributes.ARMOR, new AttributeModifier(uUID, "Armor modifier", (double)this.defense, AttributeModifier.Operation.ADDITION));
 -        builder.put(Attributes.ARMOR_TOUGHNESS, new AttributeModifier(uUID, "Armor toughness", (double)this.toughness, AttributeModifier.Operation.ADDITION));
++        DispenserBlock.registerBehavior(this, ArmorItem.DISPENSE_ITEM_BEHAVIOR);
++        Builder<Attribute, AttributeModifier> builder = ImmutableMultimap.builder();
 +        UUID uuid = ArmorItem.ARMOR_MODIFIER_UUID_PER_SLOT[slot.getIndex()];
 +
 +        builder.put(Attributes.ARMOR, new AttributeModifier(uuid, "Armor modifier", (double) this.defense, AttributeModifier.Operation.ADDITION));
@@ -106,7 +106,7 @@
          }
  
          this.defaultModifiers = builder.build();
-@@ -99,19 +134,20 @@
+@@ -98,19 +134,20 @@
  
      @Override
      public InteractionResultHolder<ItemStack> use(Level world, Player user, InteractionHand hand) {

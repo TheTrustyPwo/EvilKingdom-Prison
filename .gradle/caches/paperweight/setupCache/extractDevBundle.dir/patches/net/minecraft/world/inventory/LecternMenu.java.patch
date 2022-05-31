@@ -35,7 +35,7 @@
      private static final int DATA_COUNT = 1;
      private static final int SLOT_COUNT = 1;
      public static final int BUTTON_PREV_PAGE = 1;
-@@ -15,56 +38,84 @@
+@@ -15,51 +38,79 @@
      private final Container lectern;
      private final ContainerData lecternData;
  
@@ -85,21 +85,10 @@
 +            this.setData(0, j);
              return true;
          } else {
--            switch(id) {
--            case 1:
--                int k = this.lecternData.get(0);
--                this.setData(0, k - 1);
--                return true;
--            case 2:
--                int j = this.lecternData.get(0);
--                this.setData(0, j + 1);
--                return true;
--            case 3:
--                if (!player.mayBuild()) {
--                    return false;
--                }
-+            switch (id) {
-+                case 1:
+             switch (id) {
+                 case 1:
+-                    int k = this.lecternData.get(0);
+-                    this.setData(0, k - 1);
 +                    j = this.lecternData.get(0);
 +                    // Paper start
 +                    bukkitView = (CraftInventoryLectern) getBukkitView().getTopInventory();
@@ -109,8 +98,10 @@
 +                    }
 +                    this.setData(0, playerLecternPageChangeEvent.getNewPage());
 +                    // Paper end
-+                    return true;
-+                case 2:
+                     return true;
+                 case 2:
+-                    int j = this.lecternData.get(0);
+-                    this.setData(0, j + 1);
 +                    j = this.lecternData.get(0);
 +                    // Paper start
 +                    bukkitView = (CraftInventoryLectern) getBukkitView().getTopInventory();
@@ -120,17 +111,13 @@
 +                    }
 +                    this.setData(0, playerLecternPageChangeEvent.getNewPage());
 +                    // Paper end
-+                    return true;
-+                case 3:
-+                    if (!player.mayBuild()) {
-+                        return false;
-+                    }
+                     return true;
+                 case 3:
+                     if (!player.mayBuild()) {
+                         return false;
+                     }
  
--                ItemStack itemStack = this.lectern.removeItemNoUpdate(0);
--                this.lectern.setChanged();
--                if (!player.getInventory().add(itemStack)) {
--                    player.drop(itemStack, false);
--                }
+-                    ItemStack itemStack = this.lectern.removeItemNoUpdate(0);
 +                    // CraftBukkit start - Event for taking the book
 +                    PlayerTakeLecternBookEvent event = new PlayerTakeLecternBookEvent(this.player, ((CraftInventoryLectern) this.getBukkitView().getTopInventory()).getHolder());
 +                    Bukkit.getServer().getPluginManager().callEvent(event);
@@ -139,21 +126,15 @@
 +                    }
 +                    // CraftBukkit end
 +                    ItemStack itemstack = this.lectern.removeItemNoUpdate(0);
- 
--                return true;
--            default:
--                return false;
-+                    this.lectern.setChanged();
++
+                     this.lectern.setChanged();
+-                    if (!player.getInventory().add(itemStack)) {
+-                        player.drop(itemStack, false);
 +                    if (!player.getInventory().add(itemstack)) {
 +                        player.drop(itemstack, false);
-+                    }
-+
-+                    return true;
-+                default:
-+                    return false;
-             }
-         }
-     }
+                     }
+ 
+                     return true;
 @@ -76,7 +127,9 @@
      }
  

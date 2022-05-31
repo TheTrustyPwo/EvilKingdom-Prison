@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/entity/ai/goal/GoalSelector.java
 +++ b/net/minecraft/world/entity/ai/goal/GoalSelector.java
-@@ -30,9 +30,12 @@
+@@ -29,9 +29,12 @@
      private final Map<Goal.Flag, WrappedGoal> lockedFlags = new EnumMap<>(Goal.Flag.class);
      public final Set<WrappedGoal> availableGoals = Sets.newLinkedHashSet();
      private final Supplier<ProfilerFiller> profiler;
@@ -14,7 +14,7 @@
  
      public GoalSelector(Supplier<ProfilerFiller> profiler) {
          this.profiler = profiler;
-@@ -47,27 +50,47 @@
+@@ -46,27 +49,47 @@
          this.availableGoals.clear();
      }
  
@@ -75,7 +75,7 @@
              if (!goalsByControl.getOrDefault(flag, NO_GOAL).canBeReplacedBy(goal)) {
                  return false;
              }
-@@ -81,7 +104,7 @@
+@@ -80,7 +103,7 @@
          profilerFiller.push("goalCleanup");
  
          for(WrappedGoal wrappedGoal : this.availableGoals) {
@@ -84,7 +84,7 @@
                  wrappedGoal.stop();
              }
          }
-@@ -99,8 +122,14 @@
+@@ -98,8 +121,14 @@
          profilerFiller.push("goalUpdate");
  
          for(WrappedGoal wrappedGoal2 : this.availableGoals) {
@@ -101,7 +101,7 @@
                      WrappedGoal wrappedGoal3 = this.lockedFlags.getOrDefault(flag, NO_GOAL);
                      wrappedGoal3.stop();
                      this.lockedFlags.put(flag, wrappedGoal2);
-@@ -140,11 +169,11 @@
+@@ -139,11 +168,11 @@
      }
  
      public void disableControlFlag(Goal.Flag control) {

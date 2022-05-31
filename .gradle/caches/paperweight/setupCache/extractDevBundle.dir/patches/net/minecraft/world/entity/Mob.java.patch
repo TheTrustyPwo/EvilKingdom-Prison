@@ -586,25 +586,6 @@
              return true;
          } else {
              return false;
-@@ -554,12 +699,12 @@
-     }
- 
-     public void setGuaranteedDrop(EquipmentSlot slot) {
--        switch(slot.getType()) {
--        case HAND:
--            this.handDropChances[slot.getIndex()] = 2.0F;
--            break;
--        case ARMOR:
--            this.armorDropChances[slot.getIndex()] = 2.0F;
-+        switch (slot.getType()) {
-+            case HAND:
-+                this.handDropChances[slot.getIndex()] = 2.0F;
-+                break;
-+            case ARMOR:
-+                this.armorDropChances[slot.getIndex()] = 2.0F;
-         }
- 
-     }
 @@ -571,13 +716,10 @@
              if (!(oldStack.getItem() instanceof SwordItem)) {
                  return true;
@@ -754,20 +735,20 @@
  
      public int getMaxHeadXRot() {
          return 40;
-@@ -745,39 +894,44 @@
+@@ -745,38 +894,44 @@
      }
  
      public void lookAt(Entity targetEntity, float maxYawChange, float maxPitchChange) {
 -        double d = targetEntity.getX() - this.getX();
 -        double e = targetEntity.getZ() - this.getZ();
 -        double f;
+-        if (targetEntity instanceof LivingEntity livingEntity) {
+-            f = livingEntity.getEyeY() - this.getEyeY();
 +        double d0 = targetEntity.getX() - this.getX();
 +        double d1 = targetEntity.getZ() - this.getZ();
 +        double d2;
 +
-         if (targetEntity instanceof LivingEntity) {
--            LivingEntity livingEntity = (LivingEntity)targetEntity;
--            f = livingEntity.getEyeY() - this.getEyeY();
++        if (targetEntity instanceof LivingEntity) {
 +            LivingEntity entityliving = (LivingEntity) targetEntity;
 +
 +            d2 = entityliving.getEyeY() - this.getEyeY();
@@ -818,7 +799,7 @@
      }
  
      public boolean checkSpawnRules(LevelAccessor world, MobSpawnType spawnReason) {
-@@ -801,7 +955,8 @@
+@@ -800,7 +955,8 @@
          if (this.getTarget() == null) {
              return 3;
          } else {
@@ -828,46 +809,19 @@
              i -= (3 - this.level.getDifficulty().getId()) * 4;
              if (i < 0) {
                  i = 0;
-@@ -823,25 +978,25 @@
- 
-     @Override
+@@ -824,9 +980,9 @@
      public ItemStack getItemBySlot(EquipmentSlot slot) {
--        switch(slot.getType()) {
--        case HAND:
--            return this.handItems.get(slot.getIndex());
--        case ARMOR:
--            return this.armorItems.get(slot.getIndex());
--        default:
--            return ItemStack.EMPTY;
-+        switch (slot.getType()) {
-+            case HAND:
+         switch (slot.getType()) {
+             case HAND:
+-                return this.handItems.get(slot.getIndex());
 +                return (ItemStack) this.handItems.get(slot.getIndex());
-+            case ARMOR:
+             case ARMOR:
+-                return this.armorItems.get(slot.getIndex());
 +                return (ItemStack) this.armorItems.get(slot.getIndex());
-+            default:
-+                return ItemStack.EMPTY;
+             default:
+                 return ItemStack.EMPTY;
          }
-     }
- 
-     @Override
-     public void setItemSlot(EquipmentSlot slot, ItemStack stack) {
-         this.verifyEquippedItem(stack);
--        switch(slot.getType()) {
--        case HAND:
--            this.handItems.set(slot.getIndex(), stack);
--            break;
--        case ARMOR:
--            this.armorItems.set(slot.getIndex(), stack);
-+        switch (slot.getType()) {
-+            case HAND:
-+                this.handItems.set(slot.getIndex(), stack);
-+                break;
-+            case ARMOR:
-+                this.armorItems.set(slot.getIndex(), stack);
-         }
- 
-     }
-@@ -849,18 +1004,28 @@
+@@ -848,18 +1004,28 @@
      @Override
      protected void dropCustomDeathLoot(DamageSource source, int lootingMultiplier, boolean allowDrops) {
          super.dropCustomDeathLoot(source, lootingMultiplier, allowDrops);
@@ -905,33 +859,15 @@
              }
          }
  
-@@ -868,15 +1033,16 @@
+@@ -867,6 +1033,7 @@
  
      protected float getEquipmentDropChance(EquipmentSlot slot) {
          float f;
--        switch(slot.getType()) {
--        case HAND:
--            f = this.handDropChances[slot.getIndex()];
--            break;
--        case ARMOR:
--            f = this.armorDropChances[slot.getIndex()];
--            break;
--        default:
--            f = 0.0F;
 +
-+        switch (slot.getType()) {
-+            case HAND:
-+                f = this.handDropChances[slot.getIndex()];
-+                break;
-+            case ARMOR:
-+                f = this.armorDropChances[slot.getIndex()];
-+                break;
-+            default:
-+                f = 0.0F;
-         }
- 
-         return f;
-@@ -886,6 +1052,7 @@
+         switch (slot.getType()) {
+             case HAND:
+                 f = this.handDropChances[slot.getIndex()];
+@@ -885,6 +1052,7 @@
          if (this.random.nextFloat() < 0.15F * difficulty.getSpecialMultiplier()) {
              int i = this.random.nextInt(2);
              float f = this.level.getDifficulty() == Difficulty.HARD ? 0.1F : 0.25F;
@@ -939,7 +875,7 @@
              if (this.random.nextFloat() < 0.095F) {
                  ++i;
              }
-@@ -898,20 +1065,26 @@
+@@ -897,20 +1065,26 @@
                  ++i;
              }
  
@@ -975,114 +911,7 @@
                          }
                      }
                  }
-@@ -922,67 +1095,72 @@
- 
-     @Nullable
-     public static Item getEquipmentForSlot(EquipmentSlot equipmentSlot, int equipmentLevel) {
--        switch(equipmentSlot) {
--        case HEAD:
--            if (equipmentLevel == 0) {
--                return Items.LEATHER_HELMET;
--            } else if (equipmentLevel == 1) {
--                return Items.GOLDEN_HELMET;
--            } else if (equipmentLevel == 2) {
--                return Items.CHAINMAIL_HELMET;
--            } else if (equipmentLevel == 3) {
--                return Items.IRON_HELMET;
--            } else if (equipmentLevel == 4) {
--                return Items.DIAMOND_HELMET;
--            }
--        case CHEST:
--            if (equipmentLevel == 0) {
--                return Items.LEATHER_CHESTPLATE;
--            } else if (equipmentLevel == 1) {
--                return Items.GOLDEN_CHESTPLATE;
--            } else if (equipmentLevel == 2) {
--                return Items.CHAINMAIL_CHESTPLATE;
--            } else if (equipmentLevel == 3) {
--                return Items.IRON_CHESTPLATE;
--            } else if (equipmentLevel == 4) {
--                return Items.DIAMOND_CHESTPLATE;
--            }
--        case LEGS:
--            if (equipmentLevel == 0) {
--                return Items.LEATHER_LEGGINGS;
--            } else if (equipmentLevel == 1) {
--                return Items.GOLDEN_LEGGINGS;
--            } else if (equipmentLevel == 2) {
--                return Items.CHAINMAIL_LEGGINGS;
--            } else if (equipmentLevel == 3) {
--                return Items.IRON_LEGGINGS;
--            } else if (equipmentLevel == 4) {
--                return Items.DIAMOND_LEGGINGS;
--            }
--        case FEET:
--            if (equipmentLevel == 0) {
--                return Items.LEATHER_BOOTS;
--            } else if (equipmentLevel == 1) {
--                return Items.GOLDEN_BOOTS;
--            } else if (equipmentLevel == 2) {
--                return Items.CHAINMAIL_BOOTS;
--            } else if (equipmentLevel == 3) {
--                return Items.IRON_BOOTS;
--            } else if (equipmentLevel == 4) {
--                return Items.DIAMOND_BOOTS;
--            }
--        default:
--            return null;
-+        switch (equipmentSlot) {
-+            case HEAD:
-+                if (equipmentLevel == 0) {
-+                    return Items.LEATHER_HELMET;
-+                } else if (equipmentLevel == 1) {
-+                    return Items.GOLDEN_HELMET;
-+                } else if (equipmentLevel == 2) {
-+                    return Items.CHAINMAIL_HELMET;
-+                } else if (equipmentLevel == 3) {
-+                    return Items.IRON_HELMET;
-+                } else if (equipmentLevel == 4) {
-+                    return Items.DIAMOND_HELMET;
-+                }
-+            case CHEST:
-+                if (equipmentLevel == 0) {
-+                    return Items.LEATHER_CHESTPLATE;
-+                } else if (equipmentLevel == 1) {
-+                    return Items.GOLDEN_CHESTPLATE;
-+                } else if (equipmentLevel == 2) {
-+                    return Items.CHAINMAIL_CHESTPLATE;
-+                } else if (equipmentLevel == 3) {
-+                    return Items.IRON_CHESTPLATE;
-+                } else if (equipmentLevel == 4) {
-+                    return Items.DIAMOND_CHESTPLATE;
-+                }
-+            case LEGS:
-+                if (equipmentLevel == 0) {
-+                    return Items.LEATHER_LEGGINGS;
-+                } else if (equipmentLevel == 1) {
-+                    return Items.GOLDEN_LEGGINGS;
-+                } else if (equipmentLevel == 2) {
-+                    return Items.CHAINMAIL_LEGGINGS;
-+                } else if (equipmentLevel == 3) {
-+                    return Items.IRON_LEGGINGS;
-+                } else if (equipmentLevel == 4) {
-+                    return Items.DIAMOND_LEGGINGS;
-+                }
-+            case FEET:
-+                if (equipmentLevel == 0) {
-+                    return Items.LEATHER_BOOTS;
-+                } else if (equipmentLevel == 1) {
-+                    return Items.GOLDEN_BOOTS;
-+                } else if (equipmentLevel == 2) {
-+                    return Items.CHAINMAIL_BOOTS;
-+                } else if (equipmentLevel == 3) {
-+                    return Items.IRON_BOOTS;
-+                } else if (equipmentLevel == 4) {
-+                    return Items.DIAMOND_BOOTS;
-+                }
-+            default:
-+                return null;
-         }
-     }
+@@ -977,11 +1151,16 @@
  
      protected void populateDefaultEquipmentEnchantments(DifficultyInstance difficulty) {
          float f = difficulty.getSpecialMultiplier();
@@ -1102,7 +931,7 @@
              }
          }
  
-@@ -990,15 +1168,16 @@
+@@ -989,15 +1168,16 @@
  
      protected void enchantSpawnedWeapon(float power) {
          if (!this.getMainHandItem().isEmpty() && this.random.nextFloat() < 0.25F * power) {
@@ -1123,26 +952,7 @@
          }
  
      }
-@@ -1024,12 +1203,12 @@
-     }
- 
-     public void setDropChance(EquipmentSlot slot, float chance) {
--        switch(slot.getType()) {
--        case HAND:
--            this.handDropChances[slot.getIndex()] = chance;
--            break;
--        case ARMOR:
--            this.armorDropChances[slot.getIndex()] = chance;
-+        switch (slot.getType()) {
-+            case HAND:
-+                this.handDropChances[slot.getIndex()] = chance;
-+                break;
-+            case ARMOR:
-+                this.armorDropChances[slot.getIndex()] = chance;
-         }
- 
-     }
-@@ -1044,8 +1223,9 @@
+@@ -1043,8 +1223,9 @@
  
      @Override
      public boolean canTakeItem(ItemStack stack) {
@@ -1154,7 +964,7 @@
      }
  
      public boolean isPersistenceRequired() {
-@@ -1057,39 +1237,58 @@
+@@ -1056,39 +1237,58 @@
          if (!this.isAlive()) {
              return InteractionResult.PASS;
          } else if (this.getLeashHolder() == player) {
@@ -1231,7 +1041,7 @@
                      });
                      return optional.isPresent() ? InteractionResult.SUCCESS : InteractionResult.PASS;
                  } else {
-@@ -1101,8 +1300,7 @@
+@@ -1100,8 +1300,7 @@
          }
      }
  
@@ -1241,7 +1051,7 @@
  
      protected InteractionResult mobInteract(Player player, InteractionHand hand) {
          return InteractionResult.PASS;
-@@ -1113,16 +1311,12 @@
+@@ -1112,16 +1311,12 @@
      }
  
      public boolean isWithinRestriction(BlockPos pos) {
@@ -1260,7 +1070,7 @@
      }
  
      public BlockPos getRestrictCenter() {
-@@ -1141,47 +1335,65 @@
+@@ -1140,47 +1335,65 @@
          return this.restrictRadius != -1.0F;
      }
  
@@ -1346,7 +1156,7 @@
          }
      }
  
-@@ -1192,7 +1404,11 @@
+@@ -1191,7 +1404,11 @@
  
          if (this.leashHolder != null) {
              if (!this.isAlive() || !this.leashHolder.isAlive()) {
@@ -1359,7 +1169,7 @@
              }
  
          }
-@@ -1203,11 +1419,13 @@
+@@ -1202,11 +1419,13 @@
              this.leashHolder = null;
              this.leashInfoTag = null;
              if (!this.level.isClientSide && dropItem) {
@@ -1375,7 +1185,7 @@
              }
          }
  
-@@ -1234,7 +1452,7 @@
+@@ -1233,7 +1452,7 @@
          this.leashHolder = entity;
          this.leashInfoTag = null;
          if (!this.level.isClientSide && sendPacket && this.level instanceof ServerLevel) {
@@ -1384,7 +1194,7 @@
          }
  
          if (this.isPassenger()) {
-@@ -1250,31 +1468,40 @@
+@@ -1249,31 +1468,40 @@
  
      @Override
      public boolean startRiding(Entity entity, boolean force) {
@@ -1434,7 +1244,7 @@
                  this.leashInfoTag = null;
              }
          }
-@@ -1292,34 +1519,36 @@
+@@ -1291,34 +1519,36 @@
      }
  
      public void setNoAi(boolean aiDisabled) {
@@ -1482,7 +1292,7 @@
  
      @Override
      public HumanoidArm getMainArm() {
-@@ -1327,48 +1556,60 @@
+@@ -1326,48 +1556,60 @@
      }
  
      public double getMeleeAttackRangeSqr(LivingEntity target) {
@@ -1558,7 +1368,7 @@
              }
          }
  
-@@ -1377,9 +1618,10 @@
+@@ -1376,9 +1618,10 @@
      public boolean isSunBurnTick() {
          if (this.level.isDay() && !this.level.isClientSide) {
              float f = this.getBrightness();
@@ -1572,7 +1382,7 @@
                  return true;
              }
          }
-@@ -1405,16 +1647,21 @@
+@@ -1404,16 +1647,21 @@
      @Override
      protected void removeAfterChangingDimensions() {
          super.removeAfterChangingDimensions();

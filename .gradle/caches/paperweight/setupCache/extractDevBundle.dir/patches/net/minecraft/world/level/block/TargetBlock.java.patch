@@ -9,9 +9,9 @@
 +    private static void awardTargetHitCriteria(Projectile projectile, BlockHitResult hit, int i) {
 +        // Paper end
          Entity entity = projectile.getOwner();
-         if (entity instanceof ServerPlayer) {
-             ServerPlayer serverPlayer = (ServerPlayer)entity;
-@@ -47,6 +51,20 @@
+         if (entity instanceof ServerPlayer serverPlayer) {
+             serverPlayer.awardStat(Stats.TARGET_HIT);
+@@ -46,6 +50,20 @@
      private static int updateRedstoneOutput(LevelAccessor world, BlockState state, BlockHitResult hitResult, Entity entity) {
          int i = getRedstoneStrength(hitResult, hitResult.getLocation());
          int j = entity instanceof AbstractArrow ? 20 : 8;
@@ -32,7 +32,7 @@
          if (!world.getBlockTicks().hasScheduledTick(hitResult.getBlockPos(), state.getBlock())) {
              setOutputPower(world, state, i, hitResult.getBlockPos(), j);
          }
-@@ -95,6 +113,13 @@
+@@ -94,6 +112,13 @@
          return true;
      }
  

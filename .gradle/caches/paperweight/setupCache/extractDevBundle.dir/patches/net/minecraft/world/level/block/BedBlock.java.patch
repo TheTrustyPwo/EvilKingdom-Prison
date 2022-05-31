@@ -217,25 +217,21 @@
      @Override
      public VoxelShape getShape(BlockState state, BlockGetter world, BlockPos pos, CollisionContext context) {
 -        Direction direction = getConnectedDirection(state).getOpposite();
--        switch(direction) {
--        case NORTH:
--            return NORTH_SHAPE;
--        case SOUTH:
--            return SOUTH_SHAPE;
--        case WEST:
--            return WEST_SHAPE;
--        default:
--            return EAST_SHAPE;
+-        switch (direction) {
 +        Direction enumdirection = BedBlock.getConnectedDirection(state).getOpposite();
 +
 +        switch (enumdirection) {
-+            case NORTH:
+             case NORTH:
+-                return NORTH_SHAPE;
 +                return BedBlock.NORTH_SHAPE;
-+            case SOUTH:
+             case SOUTH:
+-                return SOUTH_SHAPE;
 +                return BedBlock.SOUTH_SHAPE;
-+            case WEST:
+             case WEST:
+-                return WEST_SHAPE;
 +                return BedBlock.WEST_SHAPE;
-+            default:
+             default:
+-                return EAST_SHAPE;
 +                return BedBlock.EAST_SHAPE;
          }
      }

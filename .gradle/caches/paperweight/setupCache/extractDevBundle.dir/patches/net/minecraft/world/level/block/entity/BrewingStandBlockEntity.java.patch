@@ -43,13 +43,13 @@
 -    protected final ContainerData dataAccess = new ContainerData() {
 -        @Override
 -        public int get(int index) {
--            switch(index) {
--            case 0:
--                return BrewingStandBlockEntity.this.brewTime;
--            case 1:
--                return BrewingStandBlockEntity.this.fuel;
--            default:
--                return 0;
+-            switch (index) {
+-                case 0:
+-                    return BrewingStandBlockEntity.this.brewTime;
+-                case 1:
+-                    return BrewingStandBlockEntity.this.fuel;
+-                default:
+-                    return 0;
 -            }
 -        }
 +    protected final ContainerData dataAccess;
@@ -60,12 +60,12 @@
  
 -        @Override
 -        public void set(int index, int value) {
--            switch(index) {
--            case 0:
--                BrewingStandBlockEntity.this.brewTime = value;
--                break;
--            case 1:
--                BrewingStandBlockEntity.this.fuel = value;
+-            switch (index) {
+-                case 0:
+-                    BrewingStandBlockEntity.this.brewTime = value;
+-                    break;
+-                case 1:
+-                    BrewingStandBlockEntity.this.fuel = value;
 -            }
 +    public void onOpen(CraftHumanEntity who) {
 +        this.transaction.add(who);

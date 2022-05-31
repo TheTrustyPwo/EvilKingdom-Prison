@@ -16,7 +16,7 @@
      private static final EntityDataAccessor<Integer> DATA_TYPE_ID = SynchedEntityData.defineId(Fox.class, EntityDataSerializers.INT);
      private static final EntityDataAccessor<Byte> DATA_FLAGS_ID = SynchedEntityData.defineId(Fox.class, EntityDataSerializers.BYTE);
      private static final int FLAG_SITTING = 1;
-@@ -101,15 +103,16 @@
+@@ -101,14 +103,16 @@
      private static final int FLAG_DEFENDING = 128;
      public static final EntityDataAccessor<Optional<UUID>> DATA_TRUSTED_ID_0 = SynchedEntityData.defineId(Fox.class, EntityDataSerializers.OPTIONAL_UUID);
      public static final EntityDataAccessor<Optional<UUID>> DATA_TRUSTED_ID_1 = SynchedEntityData.defineId(Fox.class, EntityDataSerializers.OPTIONAL_UUID);
@@ -26,10 +26,10 @@
 +        return !entityitem.hasPickUpDelay() && entityitem.isAlive();
      };
      private static final Predicate<Entity> TRUSTED_TARGET_SELECTOR = (entity) -> {
-         if (!(entity instanceof LivingEntity)) {
+-        if (!(entity instanceof LivingEntity livingEntity)) {
++        if (!(entity instanceof LivingEntity)) {
              return false;
          } else {
--            LivingEntity livingEntity = (LivingEntity)entity;
 -            return livingEntity.getLastHurtMob() != null && livingEntity.getLastHurtMobTimestamp() < livingEntity.tickCount + 600;
 +            LivingEntity entityliving = (LivingEntity) entity;
 +
@@ -37,7 +37,7 @@
          }
      };
      static final Predicate<Entity> STALKABLE_PREY = (entity) -> {
-@@ -140,50 +143,50 @@
+@@ -139,50 +143,50 @@
      @Override
      protected void defineSynchedData() {
          super.defineSynchedData();
@@ -105,7 +105,7 @@
          }));
      }
  
-@@ -196,23 +199,26 @@
+@@ -195,23 +199,26 @@
      public void aiStep() {
          if (!this.level.isClientSide && this.isAlive() && this.isEffectiveAi()) {
              ++this.ticksSinceEaten;
@@ -141,7 +141,7 @@
                  this.setIsCrouching(false);
                  this.setIsInterested(false);
              }
-@@ -244,22 +250,23 @@
+@@ -243,22 +250,23 @@
      protected void populateDefaultEquipmentSlots(DifficultyInstance difficulty) {
          if (this.random.nextFloat() < 0.2F) {
              float f = this.random.nextFloat();
@@ -173,7 +173,7 @@
          }
  
      }
-@@ -267,11 +274,13 @@
+@@ -266,11 +274,13 @@
      @Override
      public void handleEntityEvent(byte status) {
          if (status == 45) {
@@ -192,7 +192,7 @@
                  }
              }
          } else {
-@@ -281,14 +290,15 @@
+@@ -280,14 +290,15 @@
      }
  
      public static AttributeSupplier.Builder createAttributes() {
@@ -213,7 +213,7 @@
      }
  
      public static boolean checkFoxSpawnRules(EntityType<Fox> type, LevelAccessor world, MobSpawnType spawnReason, BlockPos pos, Random random) {
-@@ -299,19 +309,20 @@
+@@ -298,19 +309,20 @@
      @Override
      public SpawnGroupData finalizeSpawn(ServerLevelAccessor world, DifficultyInstance difficulty, MobSpawnType spawnReason, @Nullable SpawnGroupData entityData, @Nullable CompoundTag entityNbt) {
          Holder<Biome> holder = world.getBiome(this.blockPosition());
@@ -242,7 +242,7 @@
              this.setAge(-24000);
          }
  
-@@ -320,7 +331,7 @@
+@@ -319,7 +331,7 @@
          }
  
          this.populateDefaultEquipmentSlots(difficulty);
@@ -251,7 +251,7 @@
      }
  
      private void setTargetGoals() {
-@@ -351,25 +362,26 @@
+@@ -350,25 +362,26 @@
      }
  
      public Fox.Type getFoxType() {
@@ -285,7 +285,7 @@
          }
  
      }
-@@ -378,15 +390,18 @@
+@@ -377,15 +390,18 @@
      public void addAdditionalSaveData(CompoundTag nbt) {
          super.addAdditionalSaveData(nbt);
          List<UUID> list = this.getTrustedUUIDs();
@@ -309,7 +309,7 @@
          nbt.putBoolean("Sleeping", this.isSleeping());
          nbt.putString("Type", this.getFoxType().getName());
          nbt.putBoolean("Sitting", this.isSitting());
-@@ -396,10 +411,10 @@
+@@ -395,10 +411,10 @@
      @Override
      public void readAdditionalSaveData(CompoundTag nbt) {
          super.readAdditionalSaveData(nbt);
@@ -323,7 +323,7 @@
          }
  
          this.setSleeping(nbt.getBoolean("Sleeping"));
-@@ -447,63 +462,66 @@
+@@ -446,63 +462,66 @@
  
      private void setFlag(int mask, boolean value) {
          if (value) {
@@ -413,7 +413,7 @@
              item.discard();
              this.ticksSinceEaten = 0;
          }
-@@ -514,19 +532,21 @@
+@@ -513,19 +532,21 @@
      public void tick() {
          super.tick();
          if (this.isEffectiveAi()) {
@@ -441,7 +441,7 @@
              }
          }
  
-@@ -556,7 +576,7 @@
+@@ -555,7 +576,7 @@
  
      @Override
      protected void onOffspringSpawnedFromEgg(Player player, Mob child) {
@@ -450,7 +450,7 @@
      }
  
      public boolean isPouncing() {
-@@ -593,7 +613,7 @@
+@@ -592,7 +613,7 @@
      }
  
      public float getHeadRollAngle(float tickDelta) {
@@ -459,7 +459,7 @@
      }
  
      public float getCrouchAmount(float tickDelta) {
-@@ -633,9 +653,10 @@
+@@ -632,9 +653,10 @@
  
      @Override
      public void playAmbientSound() {
@@ -473,7 +473,7 @@
          } else {
              super.playAmbientSound();
          }
-@@ -650,6 +671,7 @@
+@@ -649,6 +671,7 @@
          } else {
              if (!this.level.isDay() && this.random.nextFloat() < 0.1F) {
                  List<Player> list = this.level.getEntitiesOfClass(Player.class, this.getBoundingBox().inflate(16.0D, 16.0D, 16.0D), EntitySelector.NO_SPECTATORS);
@@ -481,7 +481,7 @@
                  if (list.isEmpty()) {
                      return SoundEvents.FOX_SCREECH;
                  }
-@@ -676,28 +698,39 @@
+@@ -675,28 +698,39 @@
      }
  
      @Override
@@ -535,7 +535,7 @@
                      return false;
                  }
              }
-@@ -708,58 +741,64 @@
+@@ -707,58 +741,64 @@
  
      @Override
      public Vec3 getLeashOffset() {
@@ -636,7 +636,7 @@
          int countdown;
  
          public FaceplantGoal() {
-@@ -792,414 +831,511 @@
+@@ -791,414 +831,511 @@
          }
      }
  
@@ -1392,7 +1392,7 @@
          public FoxSearchForItemsGoal() {
              this.setFlags(EnumSet.of(Goal.Flag.MOVE));
          }
-@@ -1215,6 +1351,7 @@
+@@ -1214,6 +1351,7 @@
                      return false;
                  } else {
                      List<ItemEntity> list = Fox.this.level.getEntitiesOfClass(ItemEntity.class, Fox.this.getBoundingBox().inflate(8.0D, 8.0D, 8.0D), Fox.ALLOWED_ITEMS);
@@ -1400,7 +1400,7 @@
                      return !list.isEmpty() && Fox.this.getItemBySlot(EquipmentSlot.MAINHAND).isEmpty();
                  }
              } else {
-@@ -1225,9 +1362,10 @@
+@@ -1224,9 +1362,10 @@
          @Override
          public void tick() {
              List<ItemEntity> list = Fox.this.level.getEntitiesOfClass(ItemEntity.class, Fox.this.getBoundingBox().inflate(8.0D, 8.0D, 8.0D), Fox.ALLOWED_ITEMS);
@@ -1414,7 +1414,7 @@
              }
  
          }
-@@ -1235,46 +1373,40 @@
+@@ -1234,46 +1373,40 @@
          @Override
          public void start() {
              List<ItemEntity> list = Fox.this.level.getEntitiesOfClass(ItemEntity.class, Fox.this.getBoundingBox().inflate(8.0D, 8.0D, 8.0D), Fox.ALLOWED_ITEMS);
@@ -1471,7 +1471,7 @@
              this.setFlags(EnumSet.of(Goal.Flag.MOVE, Goal.Flag.LOOK));
          }
  
-@@ -1309,167 +1441,90 @@
+@@ -1308,167 +1441,90 @@
                  this.resetLook();
              }
  
@@ -1684,7 +1684,7 @@
          }
  
          public String getName() {
-@@ -1481,19 +1536,55 @@
+@@ -1480,19 +1536,55 @@
          }
  
          public static Fox.Type byName(String name) {

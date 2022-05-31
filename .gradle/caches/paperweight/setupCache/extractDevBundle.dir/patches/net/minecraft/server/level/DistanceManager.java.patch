@@ -1,6 +1,6 @@
 --- a/net/minecraft/server/level/DistanceManager.java
 +++ b/net/minecraft/server/level/DistanceManager.java
-@@ -12,11 +12,11 @@
+@@ -12,6 +12,7 @@
  import it.unimi.dsi.fastutil.longs.Long2IntMaps;
  import it.unimi.dsi.fastutil.longs.Long2IntOpenHashMap;
  import it.unimi.dsi.fastutil.longs.Long2ObjectMap;
@@ -8,12 +8,7 @@
  import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap;
  import it.unimi.dsi.fastutil.longs.LongIterator;
  import it.unimi.dsi.fastutil.longs.LongOpenHashSet;
- import it.unimi.dsi.fastutil.longs.LongSet;
--import it.unimi.dsi.fastutil.longs.Long2ObjectMap.Entry;
- import it.unimi.dsi.fastutil.objects.ObjectIterator;
- import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
- import it.unimi.dsi.fastutil.objects.ObjectSet;
-@@ -25,6 +25,7 @@
+@@ -24,6 +25,7 @@
  import java.io.IOException;
  import java.nio.charset.StandardCharsets;
  import java.util.Iterator;
@@ -21,7 +16,7 @@
  import java.util.Set;
  import java.util.concurrent.CompletableFuture;
  import java.util.concurrent.Executor;
-@@ -37,20 +38,31 @@
+@@ -36,20 +38,31 @@
  import net.minecraft.world.level.chunk.LevelChunk;
  import org.slf4j.Logger;
  
@@ -60,7 +55,7 @@
      final ChunkTaskPriorityQueueSorter ticketThrottler;
      final ProcessorHandle<ChunkTaskPriorityQueueSorter.Message<Runnable>> ticketThrottlerInput;
      final ProcessorHandle<ChunkTaskPriorityQueueSorter.Release> ticketThrottlerReleaser;
-@@ -58,47 +70,107 @@
+@@ -57,47 +70,107 @@
      final Executor mainThreadExecutor;
      private long ticketTickCounter;
      private int simulationDistance = 10;
@@ -126,7 +121,7 @@
 +
      protected void purgeStaleTickets() {
          ++this.ticketTickCounter;
--        ObjectIterator<Entry<SortedArraySet<Ticket<?>>>> objectIterator = this.tickets.long2ObjectEntrySet().fastIterator();
+-        ObjectIterator<Long2ObjectMap.Entry<SortedArraySet<Ticket<?>>>> objectIterator = this.tickets.long2ObjectEntrySet().fastIterator();
 +        ObjectIterator objectiterator = this.tickets.long2ObjectEntrySet().fastIterator();
 +        // Paper start - use optimised removeIf
 +        long[] currChunk = new long[1];
@@ -141,7 +136,7 @@
 +        // Paper end - use optimised removeIf
  
 -        while(objectIterator.hasNext()) {
--            Entry<SortedArraySet<Ticket<?>>> entry = objectIterator.next();
+-            Long2ObjectMap.Entry<SortedArraySet<Ticket<?>>> entry = objectIterator.next();
 -            Iterator<Ticket<?>> iterator = entry.getValue().iterator();
 -            boolean bl = false;
 +        while (objectiterator.hasNext()) {
@@ -188,7 +183,7 @@
      }
  
      protected abstract boolean isChunkToRemove(long pos);
-@@ -107,75 +179,155 @@
+@@ -106,75 +179,155 @@
      protected abstract ChunkHolder getChunk(long pos);
  
      @Nullable
@@ -391,7 +386,7 @@
      }
  
      public <T> void addTicket(TicketType<T> type, ChunkPos pos, int level, T argument) {
-@@ -184,63 +336,190 @@
+@@ -183,63 +336,190 @@
  
      public <T> void removeTicket(TicketType<T> type, ChunkPos pos, int level, T argument) {
          Ticket<T> ticket = new Ticket<>(type, level, argument);
@@ -612,7 +607,7 @@
          }
  
      }
-@@ -250,38 +529,51 @@
+@@ -249,38 +529,51 @@
      }
  
      public boolean inEntityTickingRange(long chunkPos) {
@@ -677,7 +672,7 @@
      }
  
      public String getDebugStatus() {
-@@ -290,62 +582,67 @@
+@@ -289,62 +582,67 @@
  
      private void dumpTickets(String path) {
          try {
@@ -685,7 +680,7 @@
 +            FileOutputStream fileoutputstream = new FileOutputStream(new File(path));
  
              try {
--                for(Entry<SortedArraySet<Ticket<?>>> entry : this.tickets.long2ObjectEntrySet()) {
+-                for(Long2ObjectMap.Entry<SortedArraySet<Ticket<?>>> entry : this.tickets.long2ObjectEntrySet()) {
 -                    ChunkPos chunkPos = new ChunkPos(entry.getLongKey());
 +                ObjectIterator objectiterator = this.tickets.long2ObjectEntrySet().iterator();
  
@@ -735,12 +730,12 @@
  
      public void removeTicketsOnClosing() {
 -        ImmutableSet<TicketType<?>> immutableSet = ImmutableSet.of(TicketType.UNKNOWN, TicketType.POST_TELEPORT, TicketType.LIGHT);
--        ObjectIterator<Entry<SortedArraySet<Ticket<?>>>> objectIterator = this.tickets.long2ObjectEntrySet().fastIterator();
+-        ObjectIterator<Long2ObjectMap.Entry<SortedArraySet<Ticket<?>>>> objectIterator = this.tickets.long2ObjectEntrySet().fastIterator();
 +        ImmutableSet<TicketType<?>> immutableset = ImmutableSet.of(TicketType.UNKNOWN, TicketType.POST_TELEPORT, TicketType.LIGHT, TicketType.FUTURE_AWAIT, TicketType.ASYNC_LOAD, TicketType.REQUIRED_LOAD, TicketType.CHUNK_RELIGHT, ca.spottedleaf.starlight.common.light.StarLightInterface.CHUNK_WORK_TICKET); // Paper - add additional tickets to preserve
 +        ObjectIterator objectiterator = this.tickets.long2ObjectEntrySet().fastIterator();
  
 -        while(objectIterator.hasNext()) {
--            Entry<SortedArraySet<Ticket<?>>> entry = objectIterator.next();
+-            Long2ObjectMap.Entry<SortedArraySet<Ticket<?>>> entry = objectIterator.next();
 -            Iterator<Ticket<?>> iterator = entry.getValue().iterator();
 -            boolean bl = false;
 +        while (objectiterator.hasNext()) {
@@ -777,7 +772,7 @@
              }
          }
  
-@@ -355,27 +652,47 @@
+@@ -354,27 +652,47 @@
          return !this.tickets.isEmpty();
      }
  
@@ -835,7 +830,7 @@
                  }
              }
  
-@@ -384,12 +701,13 @@
+@@ -383,12 +701,13 @@
  
          @Override
          protected void setLevel(long id, int level) {
@@ -855,7 +850,7 @@
                  }
  
              }
-@@ -400,14 +718,15 @@
+@@ -399,14 +718,15 @@
          }
      }
  
@@ -876,7 +871,7 @@
          }
  
          @Override
-@@ -417,18 +736,18 @@
+@@ -416,18 +736,18 @@
  
          @Override
          protected void setLevel(long id, int level) {
@@ -901,7 +896,7 @@
  
          @Override
          protected int getLevelFromSource(long id) {
-@@ -436,8 +755,9 @@
+@@ -435,8 +755,9 @@
          }
  
          private boolean havePlayer(long chunkPos) {
@@ -913,7 +908,7 @@
          }
  
          public void runAllUpdates() {
-@@ -446,40 +766,44 @@
+@@ -445,40 +766,44 @@
  
          private void dumpChunks(String path) {
              try {
@@ -921,7 +916,7 @@
 +                FileOutputStream fileoutputstream = new FileOutputStream(new File(path));
  
                  try {
--                    for(it.unimi.dsi.fastutil.longs.Long2ByteMap.Entry entry : this.chunks.long2ByteEntrySet()) {
+-                    for(Long2ByteMap.Entry entry : this.chunks.long2ByteEntrySet()) {
 -                        ChunkPos chunkPos = new ChunkPos(entry.getLongKey());
 -                        String string = Byte.toString(entry.getByteValue());
 -                        fileOutputStream.write((chunkPos.x + "\t" + chunkPos.z + "\t" + string + "\n").getBytes(StandardCharsets.UTF_8));
@@ -974,11 +969,11 @@
              this.queueLevels.defaultReturnValue(i + 2);
          }
  
-@@ -489,10 +813,14 @@
+@@ -488,10 +813,14 @@
          }
  
          public void updateViewDistance(int watchDistance) {
--            for(it.unimi.dsi.fastutil.longs.Long2ByteMap.Entry entry : this.chunks.long2ByteEntrySet()) {
+-            for(Long2ByteMap.Entry entry : this.chunks.long2ByteEntrySet()) {
 -                byte b = entry.getByteValue();
 -                long l = entry.getLongKey();
 -                this.onLevelChange(l, b, this.haveTicketFor(b), b <= watchDistance - 2);
@@ -993,7 +988,7 @@
              }
  
              this.viewDistance = watchDistance;
-@@ -501,6 +829,7 @@
+@@ -500,6 +829,7 @@
          private void onLevelChange(long pos, int distance, boolean oldWithinViewDistance, boolean withinViewDistance) {
              if (oldWithinViewDistance != withinViewDistance) {
                  Ticket<?> ticket = new Ticket<>(TicketType.PLAYER, DistanceManager.PLAYER_TICKET_LEVEL, new ChunkPos(pos));
@@ -1001,7 +996,7 @@
                  if (withinViewDistance) {
                      DistanceManager.this.ticketThrottlerInput.tell(ChunkTaskPriorityQueueSorter.message(() -> {
                          DistanceManager.this.mainThreadExecutor.execute(() -> {
-@@ -531,24 +860,25 @@
+@@ -530,24 +860,25 @@
          public void runAllUpdates() {
              super.runAllUpdates();
              if (!this.toUpdate.isEmpty()) {
@@ -1040,7 +1035,7 @@
                      }
                  }
  
-@@ -561,4 +891,5 @@
+@@ -560,4 +891,5 @@
              return distance <= this.viewDistance - 2;
          }
      }

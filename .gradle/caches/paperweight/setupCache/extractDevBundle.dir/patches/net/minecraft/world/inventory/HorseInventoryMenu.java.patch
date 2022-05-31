@@ -14,8 +14,6 @@
      private final Container horseContainer;
      private final AbstractHorse horse;
  
--    public HorseInventoryMenu(int syncId, Inventory playerInventory, Container inventory, AbstractHorse entity) {
--        super((MenuType<?>)null, syncId);
 +    // CraftBukkit start
 +    org.bukkit.craftbukkit.v1_18_R2.inventory.CraftInventoryView bukkitEntity;
 +    Inventory player;
@@ -29,7 +27,8 @@
 +        return this.bukkitEntity = new CraftInventoryView(player.player.getBukkitEntity(), this.horseContainer.getOwner().getInventory(), this);
 +    }
 +
-+    public HorseInventoryMenu(int syncId, Inventory playerInventory, Container inventory, final AbstractHorse entity) {
+     public HorseInventoryMenu(int syncId, Inventory playerInventory, Container inventory, final AbstractHorse entity) {
+-        super((MenuType<?>)null, syncId);
 +        super((MenuType) null, syncId);
 +        this.player = playerInventory;
 +        // CraftBukkit end

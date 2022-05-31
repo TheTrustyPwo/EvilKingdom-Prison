@@ -351,17 +351,7 @@
 -                        if (isBiomeWatery(bls, p, q)) {
 -                            materialColor = MaterialColor.COLOR_ORANGE;
 -                            if (r > 7 && q % 2 == 0) {
--                                switch((p + (int)(Mth.sin((float)q + 0.0F) * 7.0F)) / 8 % 5) {
--                                case 0:
--                                case 4:
--                                    brightness = MaterialColor.Brightness.LOW;
--                                    break;
--                                case 1:
--                                case 3:
--                                    brightness = MaterialColor.Brightness.NORMAL;
--                                    break;
--                                case 2:
--                                    brightness = MaterialColor.Brightness.HIGH;
+-                                switch ((p + (int)(Mth.sin((float)q + 0.0F) * 7.0F)) / 8 % 5) {
 +                        MaterialColor.Brightness materialmapcolor_a = MaterialColor.Brightness.LOWEST;
 +                        MaterialColor materialmapcolor = MaterialColor.NONE;
 +
@@ -369,15 +359,18 @@
 +                            materialmapcolor = MaterialColor.COLOR_ORANGE;
 +                            if (l1 > 7 && k1 % 2 == 0) {
 +                                switch ((j1 + (int) (Mth.sin((float) k1 + 0.0F) * 7.0F)) / 8 % 5) {
-+                                    case 0:
-+                                    case 4:
+                                     case 0:
+                                     case 4:
+-                                        brightness = MaterialColor.Brightness.LOW;
 +                                        materialmapcolor_a = MaterialColor.Brightness.LOW;
-+                                        break;
-+                                    case 1:
-+                                    case 3:
+                                         break;
+                                     case 1:
+                                     case 3:
+-                                        brightness = MaterialColor.Brightness.NORMAL;
 +                                        materialmapcolor_a = MaterialColor.Brightness.NORMAL;
-+                                        break;
-+                                    case 2:
+                                         break;
+                                     case 2:
+-                                        brightness = MaterialColor.Brightness.HIGH;
 +                                        materialmapcolor_a = MaterialColor.Brightness.HIGH;
                                  }
 -                            } else if (r > 7) {

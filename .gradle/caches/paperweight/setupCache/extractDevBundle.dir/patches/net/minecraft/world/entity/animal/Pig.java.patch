@@ -43,15 +43,15 @@
          this.goalSelector.addGoal(5, new FollowParentGoal(this, 1.1D));
          this.goalSelector.addGoal(6, new WaterAvoidingRandomStrollGoal(this, 1.0D));
          this.goalSelector.addGoal(7, new LookAtPlayerGoal(this, Player.class, 6.0F));
-@@ -83,17 +90,19 @@
+@@ -83,16 +90,19 @@
      @Override
      public boolean canBeControlledByRider() {
          Entity entity = this.getControllingPassenger();
+-        if (!(entity instanceof Player player)) {
 +
-         if (!(entity instanceof Player)) {
++        if (!(entity instanceof Player)) {
              return false;
          } else {
--            Player player = (Player)entity;
 -            return player.getMainHandItem().is(Items.CARROT_ON_A_STICK) || player.getOffhandItem().is(Items.CARROT_ON_A_STICK);
 +            Player entityhuman = (Player) entity;
 +
@@ -66,7 +66,7 @@
              this.steering.onSynced();
          }
  
-@@ -103,8 +112,8 @@
+@@ -102,8 +112,8 @@
      @Override
      protected void defineSynchedData() {
          super.defineSynchedData();
@@ -77,7 +77,7 @@
      }
  
      @Override
-@@ -141,20 +150,23 @@
+@@ -140,20 +150,23 @@
  
      @Override
      public InteractionResult mobInteract(Player player, InteractionHand hand) {
@@ -108,7 +108,7 @@
              }
          }
      }
-@@ -168,7 +180,7 @@
+@@ -167,7 +180,7 @@
      protected void dropEquipment() {
          super.dropEquipment();
          if (this.isSaddled()) {
@@ -117,7 +117,7 @@
          }
  
      }
-@@ -182,32 +194,41 @@
+@@ -181,32 +194,41 @@
      public void equipSaddle(@Nullable SoundSource sound) {
          this.steering.setSaddle(true);
          if (sound != null) {
@@ -175,7 +175,7 @@
                          }
                      }
                  }
-@@ -220,18 +241,25 @@
+@@ -219,18 +241,25 @@
      @Override
      public void thunderHit(ServerLevel world, LightningBolt lightning) {
          if (world.getDifficulty() != Difficulty.PEACEFUL) {
@@ -210,7 +210,7 @@
              this.discard();
          } else {
              super.thunderHit(world, lightning);
-@@ -246,7 +274,7 @@
+@@ -245,7 +274,7 @@
  
      @Override
      public float getSteeringSpeed() {
@@ -219,7 +219,7 @@
      }
  
      @Override
-@@ -260,17 +288,17 @@
+@@ -259,17 +288,17 @@
      }
  
      @Override

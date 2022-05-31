@@ -8,7 +8,7 @@
  import java.util.Optional;
  import java.util.UUID;
  import java.util.function.Predicate;
-@@ -28,154 +29,182 @@
+@@ -28,152 +29,182 @@
  import net.minecraft.world.phys.Vec3;
  
  public class BehaviorUtils {
@@ -132,12 +132,12 @@
  
      public static boolean isWithinAttackRange(Mob mob, LivingEntity target, int rangedWeaponReachReduction) {
          Item item = mob.getMainHandItem().getItem();
-+
-         if (item instanceof ProjectileWeaponItem) {
--            ProjectileWeaponItem projectileWeaponItem = (ProjectileWeaponItem)item;
+-        if (item instanceof ProjectileWeaponItem projectileWeaponItem) {
 -            if (mob.canFireProjectileWeapon((ProjectileWeaponItem)item)) {
 -                int i = projectileWeaponItem.getDefaultProjectileRange() - rangedWeaponReachReduction;
 -                return mob.closerThan(target, (double)i);
++
++        if (item instanceof ProjectileWeaponItem) {
 +            ProjectileWeaponItem itemprojectileweapon = (ProjectileWeaponItem) item;
 +
 +            if (mob.canFireProjectileWeapon((ProjectileWeaponItem) item)) {
@@ -205,8 +205,7 @@
 -            return ((ServerLevel)entity.level).getEntity(uuid);
 -        }).map((target) -> {
 -            LivingEntity var10000;
--            if (target instanceof LivingEntity) {
--                LivingEntity livingEntity = (LivingEntity)target;
+-            if (target instanceof LivingEntity livingEntity) {
 -                var10000 = livingEntity;
 +            return ((ServerLevel) entity.level).getEntity(uuid);
 +        }).map((entity1) -> { // Paper - remap fix

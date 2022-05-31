@@ -145,7 +145,7 @@
          }
  
      }
-@@ -181,21 +200,22 @@
+@@ -181,7 +200,7 @@
  
      @Override
      public EntityDimensions getDimensions(Pose pose) {
@@ -154,20 +154,7 @@
      }
  
      private static float getScale(int puffState) {
--        switch(puffState) {
--        case 0:
--            return 0.5F;
--        case 1:
--            return 0.7F;
--        default:
--            return 1.0F;
-+        switch (puffState) {
-+            case 0:
-+                return 0.5F;
-+            case 1:
-+                return 0.7F;
-+            default:
-+                return 1.0F;
+@@ -195,7 +214,8 @@
          }
      }
  

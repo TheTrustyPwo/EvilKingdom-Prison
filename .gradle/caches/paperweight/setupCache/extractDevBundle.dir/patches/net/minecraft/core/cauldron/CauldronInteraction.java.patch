@@ -1,6 +1,6 @@
 --- a/net/minecraft/core/cauldron/CauldronInteraction.java
 +++ b/net/minecraft/core/cauldron/CauldronInteraction.java
-@@ -29,79 +29,104 @@
+@@ -29,86 +29,114 @@
  import net.minecraft.world.level.block.state.BlockState;
  import net.minecraft.world.level.gameevent.GameEvent;
  
@@ -48,17 +48,17 @@
 +                // CraftBukkit start
 +                if (!LayeredCauldronBlock.lowerFillLevel(iblockdata, world, blockposition, entityhuman, CauldronLevelChangeEvent.ChangeReason.SHULKER_WASH)) {
 +                    return InteractionResult.SUCCESS;
-+                }
+                 }
 +                // CraftBukkit end
 +                ItemStack itemstack1 = new ItemStack(Blocks.SHULKER_BOX);
-+
-+                if (itemstack.hasTag()) {
-+                    itemstack1.setTag(itemstack.getTag().copy());
-                 }
  
 -                player.setItemInHand(hand, itemStack);
 -                player.awardStat(Stats.CLEAN_SHULKER_BOX);
 -                LayeredCauldronBlock.lowerFillLevel(state, world, pos);
++                if (itemstack.hasTag()) {
++                    itemstack1.setTag(itemstack.getTag().copy());
++                }
++
 +                entityhuman.setItemInHand(enumhand, itemstack1);
 +                entityhuman.awardStat(Stats.CLEAN_SHULKER_BOX);
 +                // LayeredCauldronBlock.lowerFillLevel(iblockdata, world, blockposition); // CraftBukkit
@@ -116,23 +116,27 @@
      };
 -    CauldronInteraction DYED_ITEM = (state, world, pos, player, hand, stack) -> {
 -        Item item = stack.getItem();
+-        if (!(item instanceof DyeableLeatherItem dyeableLeatherItem)) {
+-            return InteractionResult.PASS;
+-        } else if (!dyeableLeatherItem.hasCustomColor(stack)) {
 +    CauldronInteraction DYED_ITEM = (iblockdata, world, blockposition, entityhuman, enumhand, itemstack) -> {
 +        Item item = itemstack.getItem();
 +
-         if (!(item instanceof DyeableLeatherItem)) {
++        if (!(item instanceof DyeableLeatherItem)) {
              return InteractionResult.PASS;
          } else {
--            DyeableLeatherItem dyeableLeatherItem = (DyeableLeatherItem)item;
--            if (!dyeableLeatherItem.hasCustomColor(stack)) {
+-            if (!world.isClientSide) {
+-                dyeableLeatherItem.clearColor(stack);
+-                player.awardStat(Stats.CLEAN_ARMOR);
+-                LayeredCauldronBlock.lowerFillLevel(state, world, pos);
+-            }
 +            DyeableLeatherItem idyeable = (DyeableLeatherItem) item;
-+
+ 
+-            return InteractionResult.sidedSuccess(world.isClientSide);
 +            if (!idyeable.hasCustomColor(itemstack)) {
-                 return InteractionResult.PASS;
-             } else {
-                 if (!world.isClientSide) {
--                    dyeableLeatherItem.clearColor(stack);
--                    player.awardStat(Stats.CLEAN_ARMOR);
--                    LayeredCauldronBlock.lowerFillLevel(state, world, pos);
++                return InteractionResult.PASS;
++            } else {
++                if (!world.isClientSide) {
 +                    // CraftBukkit start
 +                    if (!LayeredCauldronBlock.lowerFillLevel(iblockdata, world, blockposition, entityhuman, CauldronLevelChangeEvent.ChangeReason.ARMOR_WASH)) {
 +                        return InteractionResult.SUCCESS;
@@ -141,10 +145,11 @@
 +                    idyeable.clearColor(itemstack);
 +                    entityhuman.awardStat(Stats.CLEAN_ARMOR);
 +                    // LayeredCauldronBlock.lowerFillLevel(iblockdata, world, blockposition); // CraftBukkit
-                 }
- 
-                 return InteractionResult.sidedSuccess(world.isClientSide);
-@@ -110,8 +135,8 @@
++                }
++
++                return InteractionResult.sidedSuccess(world.isClientSide);
++            }
+         }
      };
  
      static Object2ObjectOpenHashMap<Item, CauldronInteraction> newInteractionMap() {
@@ -155,7 +160,7 @@
                  return InteractionResult.PASS;
              });
          });
-@@ -120,52 +145,69 @@
+@@ -117,52 +145,69 @@
      InteractionResult interact(BlockState state, Level world, BlockPos pos, Player player, InteractionHand hand, ItemStack stack);
  
      static void bootStrap() {
@@ -255,7 +260,7 @@
                  }
  
                  return InteractionResult.sidedSuccess(world.isClientSide);
-@@ -173,61 +215,61 @@
+@@ -170,61 +215,61 @@
                  return InteractionResult.PASS;
              }
          });
@@ -364,7 +369,7 @@
      }
  
      static InteractionResult fillBucket(BlockState state, Level world, BlockPos pos, Player player, InteractionHand hand, ItemStack stack, ItemStack output, Predicate<BlockState> predicate, SoundEvent soundEvent) {
-@@ -235,13 +277,19 @@
+@@ -232,13 +277,19 @@
              return InteractionResult.PASS;
          } else {
              if (!world.isClientSide) {
@@ -387,7 +392,7 @@
              }
  
              return InteractionResult.sidedSuccess(world.isClientSide);
-@@ -250,13 +298,19 @@
+@@ -247,13 +298,19 @@
  
      static InteractionResult emptyBucket(Level world, BlockPos pos, Player player, InteractionHand hand, ItemStack stack, BlockState state, SoundEvent soundEvent) {
          if (!world.isClientSide) {

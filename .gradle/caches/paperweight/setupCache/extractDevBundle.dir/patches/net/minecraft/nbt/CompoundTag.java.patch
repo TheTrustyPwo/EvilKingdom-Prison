@@ -1,6 +1,6 @@
 --- a/net/minecraft/nbt/CompoundTag.java
 +++ b/net/minecraft/nbt/CompoundTag.java
-@@ -35,7 +35,7 @@
+@@ -34,7 +34,7 @@
              if (i > 512) {
                  throw new RuntimeException("Tried to read NBT tag with too high complexity, depth > 512");
              } else {
@@ -9,7 +9,7 @@
  
                  byte b;
                  while((b = CompoundTag.readNamedTagType(dataInput, nbtAccounter)) != 0) {
-@@ -122,14 +122,14 @@
+@@ -121,14 +121,14 @@
              return "TAG_Compound";
          }
      };
@@ -26,7 +26,7 @@
      }
  
      @Override
-@@ -182,14 +182,34 @@
+@@ -181,14 +181,34 @@
      }
  
      public void putUUID(String key, UUID value) {
@@ -61,7 +61,7 @@
          Tag tag = this.get(key);
          return tag != null && tag.getType() == IntArrayTag.TYPE && ((IntArrayTag)tag).getAsIntArray().length == 4;
      }
-@@ -431,8 +451,16 @@
+@@ -430,8 +450,16 @@
  
      @Override
      public CompoundTag copy() {

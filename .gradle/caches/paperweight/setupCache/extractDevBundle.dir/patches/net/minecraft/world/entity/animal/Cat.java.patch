@@ -242,13 +242,12 @@
          }
      }
  
-@@ -386,12 +385,14 @@
+@@ -386,11 +385,14 @@
              this.setCatType(this.random.nextInt(10));
          }
  
 -        Level level = world.getLevel();
--        if (level instanceof ServerLevel) {
--            ServerLevel serverLevel = (ServerLevel)level;
+-        if (level instanceof ServerLevel serverLevel) {
 -            Registry<ConfiguredStructureFeature<?, ?>> registry = serverLevel.registryAccess().registryOrThrow(Registry.CONFIGURED_STRUCTURE_FEATURE_REGISTRY);
 -            if (ChunkGenerator.allConfigurations(registry, StructureFeature.SWAMP_HUT).anyMatch((configuredStructureFeature) -> {
 -                return serverLevel.structureFeatureManager().getStructureWithPieceAt(this.blockPosition(), configuredStructureFeature).isValid();
@@ -263,7 +262,7 @@
              })) {
                  this.setCatType(10);
                  this.setPersistenceRequired();
-@@ -403,69 +404,76 @@
+@@ -402,69 +404,76 @@
  
      @Override
      public InteractionResult mobInteract(Player player, InteractionHand hand) {
@@ -366,7 +365,7 @@
      }
  
      @Override
-@@ -496,26 +504,41 @@
+@@ -495,26 +504,41 @@
          return this.getPose() == Pose.CROUCHING || super.isSteppingCarefully();
      }
  
@@ -416,7 +415,7 @@
          private final Cat cat;
          @Nullable
          private Player ownerPlayer;
-@@ -534,24 +557,26 @@
+@@ -533,24 +557,26 @@
              } else if (this.cat.isOrderedToSit()) {
                  return false;
              } else {
@@ -454,7 +453,7 @@
                          });
                          return !this.spaceIsOccupied();
                      }
-@@ -562,13 +587,22 @@
+@@ -561,13 +587,22 @@
          }
  
          private boolean spaceIsOccupied() {
@@ -483,7 +482,7 @@
          }
  
          @Override
-@@ -580,7 +614,7 @@
+@@ -579,7 +614,7 @@
          public void start() {
              if (this.goalPos != null) {
                  this.cat.setInSittingPose(false);
@@ -492,7 +491,7 @@
              }
  
          }
-@@ -589,7 +623,8 @@
+@@ -588,7 +623,8 @@
          public void stop() {
              this.cat.setLying(false);
              float f = this.cat.level.getTimeOfDay(1.0F);
@@ -502,7 +501,7 @@
                  this.giveMorningGift();
              }
  
-@@ -600,15 +635,28 @@
+@@ -599,15 +635,28 @@
  
          private void giveMorningGift() {
              Random random = this.cat.getRandom();
@@ -539,7 +538,7 @@
              }
  
          }
-@@ -617,8 +665,8 @@
+@@ -616,8 +665,8 @@
          public void tick() {
              if (this.ownerPlayer != null && this.goalPos != null) {
                  this.cat.setInSittingPose(false);
@@ -550,7 +549,7 @@
                      ++this.onBedTicks;
                      if (this.onBedTicks > this.adjustedTickDelay(16)) {
                          this.cat.setLying(true);
-@@ -635,35 +683,26 @@
+@@ -634,35 +683,26 @@
          }
      }
  

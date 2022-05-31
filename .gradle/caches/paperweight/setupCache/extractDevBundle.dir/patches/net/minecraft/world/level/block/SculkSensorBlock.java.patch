@@ -321,13 +321,12 @@
      }
  
      @Override
-@@ -258,10 +292,12 @@
+@@ -258,9 +292,12 @@
  
      @Override
      public int getAnalogOutputSignal(BlockState state, Level world, BlockPos pos) {
 -        BlockEntity blockEntity = world.getBlockEntity(pos);
--        if (blockEntity instanceof SculkSensorBlockEntity) {
--            SculkSensorBlockEntity sculkSensorBlockEntity = (SculkSensorBlockEntity)blockEntity;
+-        if (blockEntity instanceof SculkSensorBlockEntity sculkSensorBlockEntity) {
 -            return getPhase(state) == SculkSensorPhase.ACTIVE ? sculkSensorBlockEntity.getLastVibrationFrequency() : 0;
 +        BlockEntity tileentity = world.getBlockEntity(pos);
 +

@@ -1054,7 +1054,7 @@
      }
  
      protected void resetQuickCraft() {
-@@ -695,24 +904,21 @@
+@@ -695,18 +904,15 @@
      }
  
      public static boolean canItemQuickReplace(@Nullable Slot slot, ItemStack stack, boolean allowOverflow) {
@@ -1070,27 +1070,13 @@
      }
  
      public static void getQuickCraftSlotCount(Set<Slot> slots, int mode, ItemStack stack, int stackSize) {
--        switch(mode) {
--        case 0:
--            stack.setCount(Mth.floor((float)stack.getCount() / (float)slots.size()));
--            break;
--        case 1:
--            stack.setCount(1);
--            break;
--        case 2:
--            stack.setCount(stack.getItem().getMaxStackSize());
-+        switch (mode) {
-+            case 0:
+         switch (mode) {
+             case 0:
+-                stack.setCount(Mth.floor((float)stack.getCount() / (float)slots.size()));
 +                stack.setCount(Mth.floor((float) stack.getCount() / (float) slots.size()));
-+                break;
-+            case 1:
-+                stack.setCount(1);
-+                break;
-+            case 2:
-+                stack.setCount(stack.getItem().getMaxStackSize());
-         }
- 
-         stack.grow(stackSize);
+                 break;
+             case 1:
+                 stack.setCount(1);
 @@ -723,7 +929,7 @@
      }
  

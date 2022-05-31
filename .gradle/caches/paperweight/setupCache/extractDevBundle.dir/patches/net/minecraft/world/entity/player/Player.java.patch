@@ -664,33 +664,24 @@
  
          if (this.hasEffect(MobEffects.DIG_SLOWDOWN)) {
 -            float g;
--            switch(this.getEffect(MobEffects.DIG_SLOWDOWN).getAmplifier()) {
--            case 0:
--                g = 0.3F;
--                break;
--            case 1:
--                g = 0.09F;
--                break;
--            case 2:
--                g = 0.0027F;
--                break;
--            case 3:
--            default:
--                g = 8.1E-4F;
 +            float f1;
 +
-+            switch (this.getEffect(MobEffects.DIG_SLOWDOWN).getAmplifier()) {
-+                case 0:
+             switch (this.getEffect(MobEffects.DIG_SLOWDOWN).getAmplifier()) {
+                 case 0:
+-                    g = 0.3F;
 +                    f1 = 0.3F;
-+                    break;
-+                case 1:
+                     break;
+                 case 1:
+-                    g = 0.09F;
 +                    f1 = 0.09F;
-+                    break;
-+                case 2:
+                     break;
+                 case 2:
+-                    g = 0.0027F;
 +                    f1 = 0.0027F;
-+                    break;
-+                case 3:
-+                default:
+                     break;
+                 case 3:
+                 default:
+-                    g = 8.1E-4F;
 +                    f1 = 8.1E-4F;
              }
  
@@ -1981,31 +1972,6 @@
 +        return component.withStyle((chatmodifier) -> {
 +            return chatmodifier.withClickEvent(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, "/tell " + s + " ")).withHoverEvent(this.createHoverEvent()).withInsertion(s);
          });
-     }
- 
-@@ -1822,15 +2093,15 @@
- 
-     @Override
-     public float getStandingEyeHeight(Pose pose, EntityDimensions dimensions) {
--        switch(pose) {
--        case SWIMMING:
--        case FALL_FLYING:
--        case SPIN_ATTACK:
--            return 0.4F;
--        case CROUCHING:
--            return 1.27F;
--        default:
--            return 1.62F;
-+        switch (pose) {
-+            case SWIMMING:
-+            case FALL_FLYING:
-+            case SPIN_ATTACK:
-+                return 0.4F;
-+            case CROUCHING:
-+                return 1.27F;
-+            default:
-+                return 1.62F;
-         }
      }
  
 @@ -1840,21 +2111,22 @@

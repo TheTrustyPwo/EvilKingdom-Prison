@@ -78,27 +78,22 @@
  
      @Override
      public VoxelShape getShape(BlockState state, BlockGetter world, BlockPos pos, CollisionContext context) {
--        switch((Direction)state.getValue(FACING)) {
--        case NORTH:
--            return SHAPE_NORTH;
--        case SOUTH:
--            return SHAPE_SOUTH;
--        case EAST:
--            return SHAPE_EAST;
--        case WEST:
--            return SHAPE_WEST;
--        default:
--            return SHAPE_COMMON;
+-        switch ((Direction)state.getValue(FACING)) {
 +        switch ((Direction) state.getValue(LecternBlock.FACING)) {
-+            case NORTH:
+             case NORTH:
+-                return SHAPE_NORTH;
 +                return LecternBlock.SHAPE_NORTH;
-+            case SOUTH:
+             case SOUTH:
+-                return SHAPE_SOUTH;
 +                return LecternBlock.SHAPE_SOUTH;
-+            case EAST:
+             case EAST:
+-                return SHAPE_EAST;
 +                return LecternBlock.SHAPE_EAST;
-+            case WEST:
+             case WEST:
+-                return SHAPE_WEST;
 +                return LecternBlock.SHAPE_WEST;
-+            default:
+             default:
+-                return SHAPE_COMMON;
 +                return LecternBlock.SHAPE_COMMON;
          }
      }
@@ -134,13 +129,12 @@
              }
  
              return true;
-@@ -140,31 +143,33 @@
+@@ -140,30 +143,33 @@
      }
  
      private static void placeBook(@Nullable Player player, Level world, BlockPos pos, BlockState state, ItemStack stack) {
 -        BlockEntity blockEntity = world.getBlockEntity(pos);
--        if (blockEntity instanceof LecternBlockEntity) {
--            LecternBlockEntity lecternBlockEntity = (LecternBlockEntity)blockEntity;
+-        if (blockEntity instanceof LecternBlockEntity lecternBlockEntity) {
 -            lecternBlockEntity.setBook(stack.split(1));
 -            resetBookState(world, pos, state, true);
 -            world.playSound((Player)null, pos, SoundEvents.BOOK_PUT, SoundSource.BLOCKS, 1.0F, 1.0F);
@@ -179,7 +173,7 @@
      }
  
      private static void updateBelow(Level world, BlockPos pos, BlockState state) {
-@@ -173,17 +178,17 @@
+@@ -172,17 +178,17 @@
  
      @Override
      public void tick(BlockState state, ServerLevel world, BlockPos pos, Random random) {
@@ -200,13 +194,12 @@
                  world.updateNeighborsAt(pos.below(), this);
              }
  
-@@ -192,17 +197,20 @@
+@@ -191,16 +197,20 @@
      }
  
      private void popBook(BlockState state, Level world, BlockPos pos) {
 -        BlockEntity blockEntity = world.getBlockEntity(pos);
--        if (blockEntity instanceof LecternBlockEntity) {
--            LecternBlockEntity lecternBlockEntity = (LecternBlockEntity)blockEntity;
+-        if (blockEntity instanceof LecternBlockEntity lecternBlockEntity) {
 -            Direction direction = state.getValue(FACING);
 -            ItemStack itemStack = lecternBlockEntity.getBook().copy();
 -            float f = 0.25F * (float)direction.getStepX();
@@ -232,7 +225,7 @@
          }
  
      }
-@@ -212,14 +220,26 @@
+@@ -210,14 +220,26 @@
          return true;
      }
  
@@ -261,7 +254,7 @@
      }
  
      @Override
-@@ -229,10 +249,11 @@
+@@ -227,10 +249,11 @@
  
      @Override
      public int getAnalogOutputSignal(BlockState state, Level world, BlockPos pos) {
@@ -277,7 +270,7 @@
              }
          }
  
-@@ -241,28 +262,30 @@
+@@ -239,28 +262,30 @@
  
      @Override
      public InteractionResult use(BlockState state, Level world, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {

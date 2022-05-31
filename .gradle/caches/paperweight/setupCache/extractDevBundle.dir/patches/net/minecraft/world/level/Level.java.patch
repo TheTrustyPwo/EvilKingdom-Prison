@@ -1092,7 +1092,7 @@
          return list;
      }
  
-@@ -574,23 +1080,23 @@
+@@ -574,21 +1080,23 @@
      public <T extends Entity> List<T> getEntities(EntityTypeTest<Entity, T> filter, AABB box, Predicate<? super T> predicate) {
          this.getProfiler().incrementCounter("getEntities");
          List<T> list = Lists.newArrayList();
@@ -1100,10 +1100,8 @@
 -            if (predicate.test(entity)) {
 -                list.add(entity);
 -            }
--
--            if (entity instanceof EnderDragon) {
--                EnderDragon enderDragon = (EnderDragon)entity;
  
+-            if (entity instanceof EnderDragon enderDragon) {
 -                for(EnderDragonPart enderDragonPart : enderDragon.getSubEntities()) {
 -                    T entity2 = filter.tryCast(enderDragonPart);
 -                    if (entity2 != null && predicate.test(entity2)) {
@@ -1131,7 +1129,7 @@
          return list;
      }
  
-@@ -610,8 +1116,9 @@
+@@ -608,8 +1116,9 @@
      }
  
      public int getDirectSignalTo(BlockPos pos) {
@@ -1143,7 +1141,7 @@
          if (i >= 15) {
              return i;
          } else {
-@@ -645,46 +1152,38 @@
+@@ -643,46 +1152,38 @@
      }
  
      public int getSignal(BlockPos pos, Direction direction) {
@@ -1205,7 +1203,7 @@
  
      public long getGameTime() {
          return this.levelData.getGameTime();
-@@ -698,8 +1197,7 @@
+@@ -696,8 +1197,7 @@
          return true;
      }
  
@@ -1215,7 +1213,7 @@
  
      public void blockEvent(BlockPos pos, Block block, int type, int data) {
          this.getBlockState(pos).triggerEvent(this, pos, type, data);
-@@ -719,9 +1217,10 @@
+@@ -717,9 +1217,10 @@
      }
  
      public void setThunderLevel(float thunderGradient) {
@@ -1229,7 +1227,7 @@
      }
  
      public float getRainLevel(float delta) {
-@@ -729,21 +1228,18 @@
+@@ -727,21 +1228,18 @@
      }
  
      public void setRainLevel(float rainGradient) {
@@ -1257,7 +1255,7 @@
      }
  
      public boolean isRainingAt(BlockPos pos) {
-@@ -754,14 +1250,16 @@
+@@ -752,14 +1250,16 @@
          } else if (this.getHeightmapPos(Heightmap.Types.MOTION_BLOCKING, pos).getY() > pos.getY()) {
              return false;
          } else {
@@ -1278,7 +1276,7 @@
      }
  
      @Nullable
-@@ -771,47 +1269,56 @@
+@@ -769,47 +1269,56 @@
  
      public abstract int getFreeMapId();
  
@@ -1359,7 +1357,7 @@
                      }
                  }
              }
-@@ -821,14 +1328,15 @@
+@@ -819,14 +1328,15 @@
  
      @Override
      public DifficultyInstance getCurrentDifficultyAt(BlockPos pos) {
@@ -1378,7 +1376,7 @@
      }
  
      @Override
-@@ -836,8 +1344,7 @@
+@@ -834,8 +1344,7 @@
          return this.skyDarken;
      }
  
@@ -1388,7 +1386,7 @@
  
      @Override
      public WorldBorder getWorldBorder() {
-@@ -878,10 +1385,19 @@
+@@ -876,10 +1385,19 @@
  
      public abstract RecipeManager getRecipeManager();
  
@@ -1411,7 +1409,7 @@
      }
  
      public boolean noSave() {
-@@ -889,7 +1405,7 @@
+@@ -887,7 +1405,7 @@
      }
  
      public ProfilerFiller getProfiler() {
@@ -1420,7 +1418,7 @@
      }
  
      public Supplier<ProfilerFiller> getProfilerSupplier() {
-@@ -908,19 +1424,28 @@
+@@ -906,19 +1424,28 @@
      public abstract LevelEntityGetter<Entity> getEntities();
  
      protected void postGameEventInRadius(@Nullable Entity entity, GameEvent gameEvent, BlockPos pos, int range) {
@@ -1461,7 +1459,7 @@
                      }
                  }
              }
-@@ -930,6 +1455,59 @@
+@@ -928,6 +1455,59 @@
  
      @Override
      public long nextSubTickCount() {

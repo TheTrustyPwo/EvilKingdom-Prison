@@ -1,12 +1,15 @@
 --- a/net/minecraft/world/entity/ExperienceOrb.java
 +++ b/net/minecraft/world/entity/ExperienceOrb.java
-@@ -1,5 +1,6 @@
+@@ -1,7 +1,8 @@
  package net.minecraft.world.entity;
  
 +import java.util.Iterator;
  import java.util.List;
- import java.util.Map.Entry;
+-import java.util.Map;
++import java.util.Map.Entry;
  import net.minecraft.core.BlockPos;
+ import net.minecraft.nbt.CompoundTag;
+ import net.minecraft.network.protocol.Packet;
 @@ -18,29 +19,87 @@
  import net.minecraft.world.level.entity.EntityTypeTest;
  import net.minecraft.world.phys.AABB;
@@ -319,10 +322,12 @@
                  }
  
                  --this.count;
-@@ -225,12 +321,23 @@
+@@ -224,13 +320,24 @@
+     }
  
      private int repairPlayerItems(Player player, int amount) {
-         Entry<EquipmentSlot, ItemStack> entry = EnchantmentHelper.getRandomItemWith(Enchantments.MENDING, player, ItemStack::isDamaged);
+-        Map.Entry<EquipmentSlot, ItemStack> entry = EnchantmentHelper.getRandomItemWith(Enchantments.MENDING, player, ItemStack::isDamaged);
++        Entry<EquipmentSlot, ItemStack> entry = EnchantmentHelper.getRandomItemWith(Enchantments.MENDING, player, ItemStack::isDamaged);
 +
          if (entry != null) {
 -            ItemStack itemStack = entry.getValue();

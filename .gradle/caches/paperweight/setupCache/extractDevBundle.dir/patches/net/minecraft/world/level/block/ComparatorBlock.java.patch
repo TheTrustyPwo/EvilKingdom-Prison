@@ -138,15 +138,14 @@
              }
  
          }
-@@ -133,21 +139,34 @@
+@@ -133,20 +139,34 @@
  
      private void refreshOutputState(Level world, BlockPos pos, BlockState state) {
          int i = this.calculateOutputSignal(world, pos, state);
 -        BlockEntity blockEntity = world.getBlockEntity(pos);
 +        BlockEntity tileentity = world.getBlockEntity(pos);
          int j = 0;
--        if (blockEntity instanceof ComparatorBlockEntity) {
--            ComparatorBlockEntity comparatorBlockEntity = (ComparatorBlockEntity)blockEntity;
+-        if (blockEntity instanceof ComparatorBlockEntity comparatorBlockEntity) {
 -            j = comparatorBlockEntity.getOutputSignal();
 -            comparatorBlockEntity.setOutputSignal(i);
 +
@@ -185,7 +184,7 @@
              }
  
              this.updateNeighborsInFront(world, pos, state);
-@@ -163,8 +182,9 @@
+@@ -162,8 +182,9 @@
      @Override
      public boolean triggerEvent(BlockState state, Level world, BlockPos pos, int type, int data) {
          super.triggerEvent(state, world, pos, type, data);
@@ -197,7 +196,7 @@
      }
  
      @Override
-@@ -174,6 +194,6 @@
+@@ -173,6 +194,6 @@
  
      @Override
      protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {

@@ -8,7 +8,7 @@
  import net.minecraft.world.item.BannerItem;
  import net.minecraft.world.item.BannerPatternItem;
  import net.minecraft.world.item.BlockItem;
-@@ -17,43 +16,83 @@
+@@ -17,36 +16,44 @@
  import net.minecraft.world.level.block.Blocks;
  import net.minecraft.world.level.block.entity.BannerPattern;
  import net.minecraft.world.level.block.entity.BlockEntityType;
@@ -71,10 +71,9 @@
  
      public LoomMenu(int syncId, Inventory playerInventory) {
          this(syncId, playerInventory, ContainerLevelAccess.NULL);
-     }
+@@ -54,6 +61,38 @@
  
--    public LoomMenu(int syncId, Inventory playerInventory, ContainerLevelAccess context) {
-+    public LoomMenu(int syncId, Inventory playerInventory, final ContainerLevelAccess context) {
+     public LoomMenu(int syncId, Inventory playerInventory, final ContainerLevelAccess context) {
          super(MenuType.LOOM, syncId);
 +        this.selectedBannerPatternIndex = DataSlot.standalone();
 +        this.slotUpdateListener = () -> {

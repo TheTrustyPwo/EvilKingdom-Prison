@@ -238,7 +238,7 @@
          } else {
              throw ItemCommands.ERROR_TARGET_INAPPLICABLE_SLOT.create(slot);
          }
-@@ -177,54 +191,68 @@
+@@ -177,53 +191,68 @@
      }
  
      private static int playerGive(Collection<ServerPlayer> players, List<ItemStack> stacks, LootCommand.Callback messageSender) throws CommandSyntaxException {
@@ -290,15 +290,15 @@
 -        List<ItemStack> list = Lists.newArrayListWithCapacity(stacks.size());
 +        List<ItemStack> list1 = Lists.newArrayListWithCapacity(stacks.size());
 +        Iterator iterator = targets.iterator();
-+
-+        while (iterator.hasNext()) {
-+            Entity entity = (Entity) iterator.next();
  
 -        for(Entity entity : targets) {
-             if (entity instanceof ServerPlayer) {
--                ServerPlayer serverPlayer = (ServerPlayer)entity;
+-            if (entity instanceof ServerPlayer serverPlayer) {
 -                setSlots(entity, stacks, slot, stackCount, list);
 -                serverPlayer.containerMenu.broadcastChanges();
++        while (iterator.hasNext()) {
++            Entity entity = (Entity) iterator.next();
++
++            if (entity instanceof ServerPlayer) {
 +                ServerPlayer entityplayer = (ServerPlayer) entity;
 +
 +                LootCommand.setSlots(entity, stacks, slot, stackCount, list1);
@@ -332,7 +332,7 @@
          });
          messageSender.accept(stacks);
          return stacks.size();
-@@ -232,103 +260,115 @@
+@@ -231,103 +260,115 @@
  
      private static void callback(CommandSourceStack source, List<ItemStack> stacks) {
          if (stacks.size() == 1) {

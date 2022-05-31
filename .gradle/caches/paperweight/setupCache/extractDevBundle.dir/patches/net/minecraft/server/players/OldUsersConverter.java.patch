@@ -92,11 +92,10 @@
  
      }
  
--    public static boolean convertUserBanlist(MinecraftServer server) {
+     public static boolean convertUserBanlist(final MinecraftServer server) {
 -        final UserBanList userBanList = new UserBanList(PlayerList.USERBANLIST_FILE);
 -        if (OLD_USERBANLIST.exists() && OLD_USERBANLIST.isFile()) {
 -            if (userBanList.getFile().exists()) {
-+    public static boolean convertUserBanlist(final MinecraftServer server) {
 +        final UserBanList gameprofilebanlist = new UserBanList(PlayerList.USERBANLIST_FILE);
 +
 +        if (OldUsersConverter.OLD_USERBANLIST.exists() && OldUsersConverter.OLD_USERBANLIST.isFile()) {
@@ -233,15 +232,13 @@
                  return false;
              }
          } else {
-@@ -155,41 +183,43 @@
-         }
+@@ -156,40 +184,42 @@
      }
  
--    public static boolean convertOpsList(MinecraftServer server) {
+     public static boolean convertOpsList(final MinecraftServer server) {
 -        final ServerOpList serverOpList = new ServerOpList(PlayerList.OPLIST_FILE);
 -        if (OLD_OPLIST.exists() && OLD_OPLIST.isFile()) {
 -            if (serverOpList.getFile().exists()) {
-+    public static boolean convertOpsList(final MinecraftServer server) {
 +        final ServerOpList oplist = new ServerOpList(PlayerList.OPLIST_FILE);
 +
 +        if (OldUsersConverter.OLD_OPLIST.exists() && OldUsersConverter.OLD_OPLIST.isFile()) {
@@ -299,15 +296,13 @@
                  return false;
              }
          } else {
-@@ -197,41 +227,43 @@
-         }
+@@ -198,40 +228,42 @@
      }
  
--    public static boolean convertWhiteList(MinecraftServer server) {
+     public static boolean convertWhiteList(final MinecraftServer server) {
 -        final UserWhiteList userWhiteList = new UserWhiteList(PlayerList.WHITELIST_FILE);
 -        if (OLD_WHITELIST.exists() && OLD_WHITELIST.isFile()) {
 -            if (userWhiteList.getFile().exists()) {
-+    public static boolean convertWhiteList(final MinecraftServer server) {
 +        final UserWhiteList whitelist = new UserWhiteList(PlayerList.WHITELIST_FILE);
 +
 +        if (OldUsersConverter.OLD_WHITELIST.exists() && OldUsersConverter.OLD_WHITELIST.isFile()) {
@@ -365,12 +360,8 @@
                  return false;
              }
          } else {
-@@ -240,108 +272,150 @@
-     }
- 
-     @Nullable
--    public static UUID convertMobOwnerIfNecessary(MinecraftServer server, String name) {
-+    public static UUID convertMobOwnerIfNecessary(final MinecraftServer server, String name) {
+@@ -243,105 +275,147 @@
+     public static UUID convertMobOwnerIfNecessary(final MinecraftServer server, String name) {
          if (!StringUtil.isNullOrEmpty(name) && name.length() <= 16) {
              Optional<UUID> optional = server.getProfileCache().get(name).map(GameProfile::getId);
 +
@@ -414,11 +405,10 @@
          }
      }
  
--    public static boolean convertPlayers(DedicatedServer minecraftServer) {
+     public static boolean convertPlayers(final DedicatedServer minecraftServer) {
 -        final File file = getWorldPlayersDirectory(minecraftServer);
 -        final File file2 = new File(file.getParentFile(), "playerdata");
 -        final File file3 = new File(file.getParentFile(), "unknownplayers");
-+    public static boolean convertPlayers(final DedicatedServer minecraftServer) {
 +        final File file = OldUsersConverter.getWorldPlayersDirectory(minecraftServer);
 +        final File file1 = new File(file.getParentFile(), "playerdata");
 +        final File file2 = new File(file.getParentFile(), "unknownplayers");

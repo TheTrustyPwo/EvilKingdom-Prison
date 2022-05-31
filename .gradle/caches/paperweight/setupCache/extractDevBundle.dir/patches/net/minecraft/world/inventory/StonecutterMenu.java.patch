@@ -24,7 +24,7 @@
      public static final int INPUT_SLOT = 0;
      public static final int RESULT_SLOT = 1;
      private static final int INV_SLOT_START = 2;
-@@ -23,31 +30,59 @@
+@@ -23,24 +30,31 @@
      private static final int USE_ROW_SLOT_START = 29;
      private static final int USE_ROW_SLOT_END = 38;
      private final ContainerLevelAccess access;
@@ -69,10 +69,9 @@
  
      public StonecutterMenu(int syncId, Inventory playerInventory) {
          this(syncId, playerInventory, ContainerLevelAccess.NULL);
-     }
+@@ -48,6 +62,27 @@
  
--    public StonecutterMenu(int syncId, Inventory playerInventory, ContainerLevelAccess context) {
-+    public StonecutterMenu(int syncId, Inventory playerInventory, final ContainerLevelAccess context) {
+     public StonecutterMenu(int syncId, Inventory playerInventory, final ContainerLevelAccess context) {
          super(MenuType.STONECUTTER, syncId);
 +        this.selectedRecipeIndex = DataSlot.shared(new int[1], 0); // Paper - allow replication
 +        this.recipes = Lists.newArrayList();

@@ -157,15 +157,6 @@
          this.itemStacks.set(slot, stack);
          if (!stack.isEmpty() && stack.getCount() > this.getMaxStackSize()) {
              stack.setCount(this.getMaxStackSize());
-@@ -105,7 +166,7 @@
-     }
- 
-     @Override
--    public SlotAccess getSlot(int mappedIndex) {
-+    public SlotAccess getSlot(final int mappedIndex) {
-         return mappedIndex >= 0 && mappedIndex < this.getContainerSize() ? new SlotAccess() {
-             @Override
-             public ItemStack get() {
 @@ -121,22 +182,17 @@
      }
  

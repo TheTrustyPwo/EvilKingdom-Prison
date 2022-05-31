@@ -368,7 +368,7 @@
      }
  
      protected static boolean wantsToPickup(Piglin piglin, ItemStack stack) {
-@@ -343,24 +381,23 @@
+@@ -343,100 +381,112 @@
              return false;
          } else if (stack.is(ItemTags.PIGLIN_REPELLENTS)) {
              return false;
@@ -405,11 +405,12 @@
      protected static boolean isLovedItem(ItemStack stack) {
          return stack.is(ItemTags.PIGLIN_LOVED);
      }
-@@ -369,75 +406,87 @@
-         if (!(ridden instanceof Mob)) {
+ 
+     private static boolean wantsToStopRiding(Piglin piglin, Entity ridden) {
+-        if (!(ridden instanceof Mob mob)) {
++        if (!(ridden instanceof Mob)) {
              return false;
          } else {
--            Mob mob = (Mob)ridden;
 -            return !mob.isBaby() || !mob.isAlive() || wasHurtRecently(piglin) || wasHurtRecently(mob) || mob instanceof Piglin && mob.getVehicle() == null;
 +            Mob entityinsentient = (Mob) ridden;
 +
@@ -525,7 +526,7 @@
              return InteractionResult.CONSUME;
          } else {
              return InteractionResult.PASS;
-@@ -445,40 +494,41 @@
+@@ -444,40 +494,41 @@
      }
  
      protected static boolean canAdmire(Piglin piglin, ItemStack nearbyItems) {
@@ -584,7 +585,7 @@
              }
          }
      }
-@@ -488,11 +538,11 @@
+@@ -487,11 +538,11 @@
              if (Sensor.isEntityAttackableIgnoringLineOfSight(piglin, target)) {
                  if (!BehaviorUtils.isOtherTargetMuchFurtherAwayThanCurrentAttackTarget(piglin, target, 4.0D)) {
                      if (target.getType() == EntityType.PLAYER && piglin.level.getGameRules().getBoolean(GameRules.RULE_UNIVERSAL_ANGER)) {
@@ -600,7 +601,7 @@
                      }
  
                  }
-@@ -502,56 +552,51 @@
+@@ -501,56 +552,51 @@
  
      public static Optional<SoundEvent> getSoundForCurrentActivity(Piglin piglin) {
          return piglin.getBrain().getActiveNonCoreActivity().map((activity) -> {
@@ -680,7 +681,7 @@
      }
  
      private static void stopWalking(Piglin piglin) {
-@@ -560,27 +605,27 @@
+@@ -559,27 +605,27 @@
      }
  
      private static RunSometimes<Piglin> babySometimesRideBabyHoglin() {
@@ -716,7 +717,7 @@
      }
  
      protected static void setAngerTarget(AbstractPiglin piglin, LivingEntity target) {
-@@ -588,7 +633,7 @@
+@@ -587,7 +633,7 @@
              piglin.getBrain().eraseMemory(MemoryModuleType.CANT_REACH_WALK_TARGET_SINCE);
              piglin.getBrain().setMemoryWithExpiry(MemoryModuleType.ANGRY_AT, target.getUUID(), 600L);
              if (target.getType() == EntityType.HOGLIN && piglin.canHunt()) {
@@ -725,7 +726,7 @@
              }
  
              if (target.getType() == EntityType.PLAYER && piglin.level.getGameRules().getBoolean(GameRules.RULE_UNIVERSAL_ANGER)) {
-@@ -599,20 +644,22 @@
+@@ -598,20 +644,22 @@
      }
  
      private static void setAngerTargetToNearestTargetablePlayerIfFound(AbstractPiglin piglin, LivingEntity player) {
@@ -755,7 +756,7 @@
          }
      }
  
-@@ -629,44 +676,42 @@
+@@ -628,44 +676,42 @@
      }
  
      private static void broadcastRetreat(Piglin piglin, LivingEntity target) {
@@ -820,7 +821,7 @@
          return j > i;
      }
  
-@@ -674,12 +719,12 @@
+@@ -673,12 +719,12 @@
          piglin.getBrain().eraseMemory(MemoryModuleType.ANGRY_AT);
          piglin.getBrain().eraseMemory(MemoryModuleType.ATTACK_TARGET);
          piglin.getBrain().eraseMemory(MemoryModuleType.WALK_TARGET);
@@ -836,7 +837,7 @@
      }
  
      private static boolean seesPlayerHoldingWantedItem(Piglin piglin) {
-@@ -691,8 +736,9 @@
+@@ -690,8 +736,9 @@
      }
  
      private static Vec3 getRandomNearbyPos(Piglin piglin) {
@@ -848,7 +849,7 @@
      }
  
      private static boolean hasEatenRecently(Piglin piglin) {
-@@ -715,8 +761,14 @@
+@@ -714,8 +761,14 @@
          return entity.getBrain().hasMemoryValue(MemoryModuleType.ADMIRING_ITEM);
      }
  
@@ -864,7 +865,7 @@
      }
  
      private static boolean isFood(ItemStack stack) {
-@@ -732,7 +784,7 @@
+@@ -731,7 +784,7 @@
      }
  
      private static boolean doesntSeeAnyPlayerHoldingLovedItem(LivingEntity piglin) {
@@ -873,7 +874,7 @@
      }
  
      public static boolean isPlayerHoldingLovedItem(LivingEntity target) {
-@@ -752,7 +804,7 @@
+@@ -751,7 +804,7 @@
      }
  
      private static boolean isNotHoldingLovedItemInOffHand(Piglin piglin) {

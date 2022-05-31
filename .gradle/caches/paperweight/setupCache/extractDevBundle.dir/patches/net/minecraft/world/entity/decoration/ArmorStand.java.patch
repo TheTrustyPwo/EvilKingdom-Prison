@@ -138,35 +138,23 @@
  
      @Override
 -    public ItemStack getItemBySlot(EquipmentSlot slot) {
--        switch(slot.getType()) {
--        case HAND:
--            return this.handItems.get(slot.getIndex());
--        case ARMOR:
--            return this.armorItems.get(slot.getIndex());
--        default:
--            return ItemStack.EMPTY;
 +    public ItemStack getItemBySlot(net.minecraft.world.entity.EquipmentSlot slot) {
-+        switch (slot.getType()) {
-+            case HAND:
+         switch (slot.getType()) {
+             case HAND:
+-                return this.handItems.get(slot.getIndex());
 +                return (ItemStack) this.handItems.get(slot.getIndex());
-+            case ARMOR:
+             case ARMOR:
+-                return this.armorItems.get(slot.getIndex());
 +                return (ItemStack) this.armorItems.get(slot.getIndex());
-+            default:
-+                return ItemStack.EMPTY;
+             default:
+                 return ItemStack.EMPTY;
          }
      }
  
      @Override
 -    public void setItemSlot(EquipmentSlot slot, ItemStack stack) {
 -        this.verifyEquippedItem(stack);
--        switch(slot.getType()) {
--        case HAND:
--            this.equipEventAndSound(stack);
--            this.handItems.set(slot.getIndex(), stack);
--            break;
--        case ARMOR:
--            this.equipEventAndSound(stack);
--            this.armorItems.set(slot.getIndex(), stack);
+-        switch (slot.getType()) {
 +    public void setItemSlot(net.minecraft.world.entity.EquipmentSlot slot, ItemStack stack) {
 +        // CraftBukkit start
 +        this.setItemSlot(slot, stack, false);
@@ -177,11 +165,15 @@
 +        // CraftBukkit end
 +        this.verifyEquippedItem(itemstack);
 +        switch (enumitemslot.getType()) {
-+            case HAND:
+             case HAND:
+-                this.equipEventAndSound(stack);
+-                this.handItems.set(slot.getIndex(), stack);
 +                this.equipEventAndSound(itemstack, silent); // CraftBukkit
 +                this.handItems.set(enumitemslot.getIndex(), itemstack);
-+                break;
-+            case ARMOR:
+                 break;
+             case ARMOR:
+-                this.equipEventAndSound(stack);
+-                this.armorItems.set(slot.getIndex(), stack);
 +                this.equipEventAndSound(itemstack, silent); // CraftBukkit
 +                this.armorItems.set(enumitemslot.getIndex(), itemstack);
          }

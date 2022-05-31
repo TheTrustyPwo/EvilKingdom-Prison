@@ -362,7 +362,7 @@
                      return false;
                  }
              }
-@@ -275,66 +312,68 @@
+@@ -275,48 +312,50 @@
  
      @Override
      public boolean canBeReplaced(BlockState state, BlockPlaceContext context) {
@@ -420,43 +420,30 @@
  
      @Override
      public BlockState rotate(BlockState state, Rotation rotation) {
--        switch(rotation) {
--        case CLOCKWISE_180:
--            return state.setValue(NORTH, state.getValue(SOUTH)).setValue(EAST, state.getValue(WEST)).setValue(SOUTH, state.getValue(NORTH)).setValue(WEST, state.getValue(EAST));
--        case COUNTERCLOCKWISE_90:
--            return state.setValue(NORTH, state.getValue(EAST)).setValue(EAST, state.getValue(SOUTH)).setValue(SOUTH, state.getValue(WEST)).setValue(WEST, state.getValue(NORTH));
--        case CLOCKWISE_90:
--            return state.setValue(NORTH, state.getValue(WEST)).setValue(EAST, state.getValue(NORTH)).setValue(SOUTH, state.getValue(EAST)).setValue(WEST, state.getValue(SOUTH));
--        default:
--            return state;
-+        switch (rotation) {
-+            case CLOCKWISE_180:
+         switch (rotation) {
+             case CLOCKWISE_180:
+-                return state.setValue(NORTH, state.getValue(SOUTH)).setValue(EAST, state.getValue(WEST)).setValue(SOUTH, state.getValue(NORTH)).setValue(WEST, state.getValue(EAST));
 +                return (BlockState) ((BlockState) ((BlockState) ((BlockState) state.setValue(VineBlock.NORTH, (Boolean) state.getValue(VineBlock.SOUTH))).setValue(VineBlock.EAST, (Boolean) state.getValue(VineBlock.WEST))).setValue(VineBlock.SOUTH, (Boolean) state.getValue(VineBlock.NORTH))).setValue(VineBlock.WEST, (Boolean) state.getValue(VineBlock.EAST));
-+            case COUNTERCLOCKWISE_90:
+             case COUNTERCLOCKWISE_90:
+-                return state.setValue(NORTH, state.getValue(EAST)).setValue(EAST, state.getValue(SOUTH)).setValue(SOUTH, state.getValue(WEST)).setValue(WEST, state.getValue(NORTH));
 +                return (BlockState) ((BlockState) ((BlockState) ((BlockState) state.setValue(VineBlock.NORTH, (Boolean) state.getValue(VineBlock.EAST))).setValue(VineBlock.EAST, (Boolean) state.getValue(VineBlock.SOUTH))).setValue(VineBlock.SOUTH, (Boolean) state.getValue(VineBlock.WEST))).setValue(VineBlock.WEST, (Boolean) state.getValue(VineBlock.NORTH));
-+            case CLOCKWISE_90:
+             case CLOCKWISE_90:
+-                return state.setValue(NORTH, state.getValue(WEST)).setValue(EAST, state.getValue(NORTH)).setValue(SOUTH, state.getValue(EAST)).setValue(WEST, state.getValue(SOUTH));
 +                return (BlockState) ((BlockState) ((BlockState) ((BlockState) state.setValue(VineBlock.NORTH, (Boolean) state.getValue(VineBlock.WEST))).setValue(VineBlock.EAST, (Boolean) state.getValue(VineBlock.NORTH))).setValue(VineBlock.SOUTH, (Boolean) state.getValue(VineBlock.EAST))).setValue(VineBlock.WEST, (Boolean) state.getValue(VineBlock.SOUTH));
-+            default:
-+                return state;
+             default:
+                 return state;
          }
-     }
- 
-     @Override
+@@ -326,15 +365,15 @@
      public BlockState mirror(BlockState state, Mirror mirror) {
--        switch(mirror) {
--        case LEFT_RIGHT:
--            return state.setValue(NORTH, state.getValue(SOUTH)).setValue(SOUTH, state.getValue(NORTH));
--        case FRONT_BACK:
--            return state.setValue(EAST, state.getValue(WEST)).setValue(WEST, state.getValue(EAST));
--        default:
--            return super.mirror(state, mirror);
-+        switch (mirror) {
-+            case LEFT_RIGHT:
+         switch (mirror) {
+             case LEFT_RIGHT:
+-                return state.setValue(NORTH, state.getValue(SOUTH)).setValue(SOUTH, state.getValue(NORTH));
 +                return (BlockState) ((BlockState) state.setValue(VineBlock.NORTH, (Boolean) state.getValue(VineBlock.SOUTH))).setValue(VineBlock.SOUTH, (Boolean) state.getValue(VineBlock.NORTH));
-+            case FRONT_BACK:
+             case FRONT_BACK:
+-                return state.setValue(EAST, state.getValue(WEST)).setValue(WEST, state.getValue(EAST));
 +                return (BlockState) ((BlockState) state.setValue(VineBlock.EAST, (Boolean) state.getValue(VineBlock.WEST))).setValue(VineBlock.WEST, (Boolean) state.getValue(VineBlock.EAST));
-+            default:
-+                return super.mirror(state, mirror);
+             default:
+                 return super.mirror(state, mirror);
          }
      }
  
