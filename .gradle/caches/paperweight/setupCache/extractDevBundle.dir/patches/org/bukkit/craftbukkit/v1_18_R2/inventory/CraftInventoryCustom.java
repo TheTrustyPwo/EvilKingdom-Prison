@@ -103,7 +103,7 @@ public class CraftInventoryCustom extends CraftInventory {
             Validate.notNull(title, "Title cannot be null");
             this.items = NonNullList.withSize(size, ItemStack.EMPTY);
             this.title = title;
-            this.adventure$title = io.papermc.paper.adventure.PaperAdventure.LEGACY_SECTION_UXRC.deserialize(title);
+            this.adventure$title = net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer.legacySection().deserialize(title);
             this.viewers = new ArrayList<HumanEntity>();
             this.owner = owner;
             this.type = InventoryType.CHEST;
@@ -113,7 +113,7 @@ public class CraftInventoryCustom extends CraftInventory {
         public MinecraftInventory(final InventoryHolder owner, final int size, final net.kyori.adventure.text.Component title) {
             Validate.notNull(title, "Title cannot be null");
             this.items = NonNullList.withSize(size, ItemStack.EMPTY);
-            this.title = io.papermc.paper.adventure.PaperAdventure.LEGACY_SECTION_UXRC.serialize(title);
+            this.title = net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer.legacySection().serialize(title);
             this.adventure$title = title;
             this.viewers = new ArrayList<HumanEntity>();
             this.owner = owner;

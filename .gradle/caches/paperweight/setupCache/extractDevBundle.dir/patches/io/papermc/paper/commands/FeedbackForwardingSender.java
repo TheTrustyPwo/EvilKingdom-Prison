@@ -1,12 +1,12 @@
 package io.papermc.paper.commands;
 
 import io.papermc.paper.adventure.PaperAdventure;
-import io.papermc.paper.text.PaperComponents;
 import java.util.UUID;
 import java.util.function.Consumer;
 import net.kyori.adventure.audience.MessageType;
 import net.kyori.adventure.identity.Identity;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import net.minecraft.commands.CommandSource;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.network.chat.TextComponent;
@@ -33,7 +33,7 @@ public final class FeedbackForwardingSender extends ServerCommandSender {
 
     @Override
     public void sendMessage(final String message) {
-        this.sendMessage(PaperComponents.legacySectionSerializer().deserialize(message));
+        this.sendMessage(LegacyComponentSerializer.legacySection().deserialize(message));
     }
 
     @Override

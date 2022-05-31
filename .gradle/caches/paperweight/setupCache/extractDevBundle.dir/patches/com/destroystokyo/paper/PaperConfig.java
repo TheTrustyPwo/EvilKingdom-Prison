@@ -688,4 +688,9 @@ public class PaperConfig {
     private static void useDimensionTypeForCustomSpawners() {
         useDimensionTypeForCustomSpawners = getBoolean("settings.use-dimension-type-for-custom-spawners", false);
     }
+
+    public static boolean useProxyProtocol;
+    private static void useProxyProtocol() {
+        useProxyProtocol = getBoolean("settings.proxy-protocol", false);
+    }
 }

@@ -126,7 +126,6 @@ public class MineData {
      */
     public void save(final boolean asynchronous) {
         final JsonObject jsonObject = new JsonObject();
-        jsonObject.addProperty("_id", this.uuid.toString());
         jsonObject.addProperty("tax", this.tax);
         jsonObject.addProperty("owner", this.owner.toString());
         jsonObject.addProperty("theme", this.theme);
@@ -152,7 +151,7 @@ public class MineData {
         final DataImplementor dataImplementor = DataImplementor.get(this.plugin);
         final Datasite datasite = dataImplementor.getSites().stream().filter(innerDatasite -> innerDatasite.getPlugin() == this.plugin).findFirst().get();
         final Datapoint datapoint = datasite.getPoints().stream().filter(innerDatapoint -> innerDatapoint.getName().equals("prison_mines")).findFirst().get();
-        datapoint.save(jsonObject, asynchronous);
+        datapoint.save(jsonObject, this.uuid.toString(), asynchronous);
     }
 
     /**

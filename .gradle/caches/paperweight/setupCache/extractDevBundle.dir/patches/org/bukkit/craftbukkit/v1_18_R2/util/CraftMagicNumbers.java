@@ -77,27 +77,27 @@ public final class CraftMagicNumbers implements UnsafeValues {
 
     @Override
     public net.kyori.adventure.text.serializer.gson.GsonComponentSerializer colorDownsamplingGsonComponentSerializer() {
-        return io.papermc.paper.adventure.PaperAdventure.COLOR_DOWNSAMPLING_GSON;
+        return net.kyori.adventure.text.serializer.gson.GsonComponentSerializer.colorDownsamplingGson();
     }
 
     @Override
     public net.kyori.adventure.text.serializer.gson.GsonComponentSerializer gsonComponentSerializer() {
-        return io.papermc.paper.adventure.PaperAdventure.GSON;
+        return net.kyori.adventure.text.serializer.gson.GsonComponentSerializer.gson();
     }
 
     @Override
     public net.kyori.adventure.text.serializer.plain.PlainComponentSerializer plainComponentSerializer() {
-        return io.papermc.paper.adventure.PaperAdventure.PLAIN_COMPONENT;
-    }
-
-    @Override
-    public net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer plainTextSerializer() {
         return io.papermc.paper.adventure.PaperAdventure.PLAIN;
     }
 
     @Override
+    public net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer plainTextSerializer() {
+        return net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer.plainText();
+    }
+
+    @Override
     public net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer legacyComponentSerializer() {
-        return io.papermc.paper.adventure.PaperAdventure.LEGACY_SECTION_UXRC;
+        return net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer.legacySection();
     }
     // Paper end
 
@@ -540,6 +540,11 @@ public final class CraftMagicNumbers implements UnsafeValues {
     @Override
     public <T extends org.bukkit.Keyed> Registry<T> registryFor(Class<T> classOfT) {
         return io.papermc.paper.registry.PaperRegistry.getRegistry(classOfT);
+    }
+
+    @Override
+    public String getMainLevelName() {
+        return ((net.minecraft.server.dedicated.DedicatedServer) net.minecraft.server.MinecraftServer.getServer()).getProperties().levelName;
     }
 
     @Override

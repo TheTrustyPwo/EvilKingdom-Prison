@@ -2,6 +2,7 @@ package io.papermc.paper.adventure;
 
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.serializer.ComponentSerializer;
+import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
 
 final class WrapperAwareSerializer implements ComponentSerializer<Component, Component, net.minecraft.network.chat.Component> {
     @Override
@@ -9,11 +10,11 @@ final class WrapperAwareSerializer implements ComponentSerializer<Component, Com
         if (input instanceof AdventureComponent) {
             return ((AdventureComponent) input).adventure;
         }
-        return PaperAdventure.GSON.serializer().fromJson(net.minecraft.network.chat.Component.Serializer.toJsonTree(input), Component.class);
+        return GsonComponentSerializer.gson().serializer().fromJson(net.minecraft.network.chat.Component.Serializer.toJsonTree(input), Component.class);
     }
 
     @Override
     public net.minecraft.network.chat.Component serialize(final Component component) {
-        return net.minecraft.network.chat.Component.Serializer.fromJson(PaperAdventure.GSON.serializer().toJsonTree(component));
+        return net.minecraft.network.chat.Component.Serializer.fromJson(GsonComponentSerializer.gson().serializer().toJsonTree(component));
     }
 }

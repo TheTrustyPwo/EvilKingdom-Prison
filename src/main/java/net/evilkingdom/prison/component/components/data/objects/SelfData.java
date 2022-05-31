@@ -5,6 +5,7 @@ package net.evilkingdom.prison.component.components.data.objects;
  */
 
 import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.mongodb.BasicDBList;
 import com.mongodb.BasicDBObject;
@@ -22,6 +23,7 @@ import org.bukkit.Material;
 
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
+import java.util.stream.Collectors;
 
 public class SelfData {
 
@@ -73,19 +75,10 @@ public class SelfData {
             }
             final JsonObject jsonObject = optionalJsonObject.get();
             if (jsonObject.has("mineLocations")) {
-                jsonObject.get("mineLocations").getAsJsonArray().forEach(jsonElement -> {
-                    final JsonObject mineLocationJsonObject = jsonElement.getAsJsonObject();
-                    this.mineLocations.add(new MineLocation(mineLocationJsonObject.get("x").getAsInt(), mineLocationJsonObject.get("z").getAsInt(), mineLocationJsonObject.get("used").getAsBoolean()));
-                });
+                jsonObject.get("mineLocations").getAsJsonArray().forEach(jsonElement -> this.mineLocations.add(new MineLocation(jsonElement.getAsJsonObject().get("x").getAsInt(), jsonElement.getAsJsonObject().get("z").getAsInt(), jsonElement.getAsJsonObject().get("used").getAsBoolean())));
            }
            if (jsonObject.has("ranks")) {
-               jsonObject.get("ranks").getAsJsonObject().entrySet().forEach(entry -> {
-                   final JsonObject rankJsonObject = entry.getValue().getAsJsonObject();
-                   final HashMap<Material, Double> blockPercentages = new HashMap<Material, Double>();
-                   final JsonObject blockPalletJsonObject = rankJsonObject.get("blockPallet").getAsJsonObject();
-                   blockPalletJsonObject.entrySet().forEach(blockPalletEntry -> blockPercentages.put(Material.getMaterial(blockPalletEntry.getKey()), blockPalletEntry.getValue().getAsDouble()));
-                   this.ranks.add(new Rank(Long.parseLong(entry.getKey()), rankJsonObject.get("price").getAsLong(), blockPercentages));
-               });
+               jsonObject.get("ranks").getAsJsonObject().entrySet().forEach(entry -> this.ranks.add(new Rank(Long.parseLong(entry.getKey()), entry.getValue().getAsJsonObject().get("price").getAsLong(), new HashMap<Material, Double>(entry.getValue().getAsJsonObject().get("blockPallet").getAsJsonObject().entrySet().stream().collect(Collectors.toMap(key -> Material.getMaterial(entry.getKey()), value -> entry.getValue().getAsDouble()))))));
            }
            return true;
         });
@@ -98,7 +91,6 @@ public class SelfData {
      */
     public void save(final boolean asynchronous) {
         final JsonObject jsonObject = new JsonObject();
-        jsonObject.addProperty("_id", "self");
         final JsonArray mineLocationsJsonArray = new JsonArray();
         this.mineLocations.forEach(mineLocation -> {
             final JsonObject mineLocationJsonObject = new JsonObject();
@@ -121,7 +113,7 @@ public class SelfData {
         final DataImplementor dataImplementor = DataImplementor.get(this.plugin);
         final Datasite datasite = dataImplementor.getSites().stream().filter(innerDatasite -> innerDatasite.getPlugin() == this.plugin).findFirst().get();
         final Datapoint datapoint = datasite.getPoints().stream().filter(innerDatapoint -> innerDatapoint.getName().equals("prison_self")).findFirst().get();
-        datapoint.save(jsonObject, asynchronous);
+        datapoint.save(jsonObject, "self", asynchronous);
     }
 
     /**

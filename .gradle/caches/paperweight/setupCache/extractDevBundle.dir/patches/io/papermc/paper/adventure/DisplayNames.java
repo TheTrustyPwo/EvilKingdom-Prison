@@ -1,5 +1,6 @@
 package io.papermc.paper.adventure;
 
+import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import net.minecraft.server.level.ServerPlayer;
 import org.bukkit.ChatColor;
 import org.bukkit.craftbukkit.v1_18_R2.entity.CraftPlayer;
@@ -16,8 +17,8 @@ public final class DisplayNames {
         final String legacy = player.displayName;
         if (legacy != null) {
             // thank you for being worse than wet socks, Bukkit
-            return PaperAdventure.LEGACY_SECTION_UXRC.serialize(player.adventure$displayName) + ChatColor.getLastColors(player.displayName);
+            return LegacyComponentSerializer.legacySection().serialize(player.adventure$displayName) + ChatColor.getLastColors(player.displayName);
         }
-        return PaperAdventure.LEGACY_SECTION_UXRC.serialize(player.adventure$displayName);
+        return LegacyComponentSerializer.legacySection().serialize(player.adventure$displayName);
     }
 }

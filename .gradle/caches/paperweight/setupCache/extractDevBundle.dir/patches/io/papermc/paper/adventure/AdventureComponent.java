@@ -7,6 +7,8 @@ import java.lang.reflect.Type;
 import java.util.List;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
+import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
+import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.Style;
 import net.minecraft.util.FormattedCharSequence;
@@ -50,7 +52,7 @@ public final class AdventureComponent implements net.minecraft.network.chat.Comp
 
     @Override
     public String getString() {
-        return PaperAdventure.PLAIN.serialize(this.adventure);
+        return PlainTextComponentSerializer.plainText().serialize(this.adventure);
     }
 
     @Override
@@ -76,7 +78,7 @@ public final class AdventureComponent implements net.minecraft.network.chat.Comp
     public static class Serializer implements JsonSerializer<AdventureComponent> {
         @Override
         public JsonElement serialize(final AdventureComponent src, final Type type, final JsonSerializationContext context) {
-            return PaperAdventure.GSON.serializer().toJsonTree(src.adventure, Component.class);
+            return GsonComponentSerializer.gson().serializer().toJsonTree(src.adventure, Component.class);
         }
     }
 }

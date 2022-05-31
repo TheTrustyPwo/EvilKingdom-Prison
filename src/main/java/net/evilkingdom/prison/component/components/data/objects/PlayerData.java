@@ -108,7 +108,6 @@ public class PlayerData {
      */
     public void save(final boolean asynchronous) {
         final JsonObject jsonObject = new JsonObject();
-        jsonObject.addProperty("_id", this.uuid.toString());
         this.mine.ifPresent(mine -> jsonObject.addProperty("mine", mine.toString()));
         jsonObject.addProperty("tokens", this.tokens);
         jsonObject.addProperty("gems", this.gems);
@@ -118,7 +117,7 @@ public class PlayerData {
         final DataImplementor dataImplementor = DataImplementor.get(this.plugin);
         final Datasite datasite = dataImplementor.getSites().stream().filter(innerDatasite -> innerDatasite.getPlugin() == this.plugin).findFirst().get();
         final Datapoint datapoint = datasite.getPoints().stream().filter(innerDatapoint -> innerDatapoint.getName().equals("prison_players")).findFirst().get();
-        datapoint.save(jsonObject, asynchronous);
+        datapoint.save(jsonObject, this.uuid.toString(), asynchronous);
     }
 
     /**

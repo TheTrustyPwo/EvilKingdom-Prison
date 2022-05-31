@@ -91,17 +91,7 @@ public final class PaperAdventure {
             }
         })
         .build();
-    public static final LegacyComponentSerializer LEGACY_SECTION_UXRC = LegacyComponentSerializer.builder().flattener(FLATTENER).hexColors().useUnusualXRepeatedCharacterHexFormat().build();
-    @Deprecated
-    public static final PlainComponentSerializer PLAIN_COMPONENT = PlainComponentSerializer.builder().flattener(FLATTENER).build();
-    public static final PlainTextComponentSerializer PLAIN = PlainTextComponentSerializer.builder().flattener(FLATTENER).build();
-    public static final GsonComponentSerializer GSON = GsonComponentSerializer.builder()
-        .legacyHoverEventSerializer(NBTLegacyHoverEventSerializer.INSTANCE)
-        .build();
-    public static final GsonComponentSerializer COLOR_DOWNSAMPLING_GSON = GsonComponentSerializer.builder()
-        .legacyHoverEventSerializer(NBTLegacyHoverEventSerializer.INSTANCE)
-        .downsampleColors()
-        .build();
+    @Deprecated public static final PlainComponentSerializer PLAIN = PlainComponentSerializer.builder().flattener(FLATTENER).build();
     private static final Codec<CompoundTag, String, IOException, IOException> NBT_CODEC = new Codec<CompoundTag, String, IOException, IOException>() {
         @Override
         public @NotNull CompoundTag decode(final @NotNull String encoded) throws IOException {
@@ -138,7 +128,7 @@ public final class PaperAdventure {
     // Component
 
     public static Component asAdventure(final net.minecraft.network.chat.Component component) {
-        return component == null ? Component.empty() : GSON.serializer().fromJson(net.minecraft.network.chat.Component.Serializer.toJsonTree(component), Component.class);
+        return component == null ? Component.empty() : GsonComponentSerializer.gson().serializer().fromJson(net.minecraft.network.chat.Component.Serializer.toJsonTree(component), Component.class);
     }
 
     public static ArrayList<Component> asAdventure(final List<net.minecraft.network.chat.Component> vanillas) {
@@ -168,7 +158,7 @@ public final class PaperAdventure {
     public static net.minecraft.network.chat.Component asVanilla(final Component component) {
         if (component == null) return null;
         if (true) return new AdventureComponent(component);
-        return net.minecraft.network.chat.Component.Serializer.fromJson(GSON.serializer().toJsonTree(component));
+        return net.minecraft.network.chat.Component.Serializer.fromJson(GsonComponentSerializer.gson().serializer().toJsonTree(component));
     }
 
     public static List<net.minecraft.network.chat.Component> asVanilla(final List<Component> adventures) {
@@ -180,7 +170,7 @@ public final class PaperAdventure {
     }
 
     public static String asJsonString(final Component component, final Locale locale) {
-        return GSON.serialize(translated(component, locale));
+        return GsonComponentSerializer.gson().serialize(translated(component, locale));
     }
 
     public static String asJsonString(final net.minecraft.network.chat.Component component, final Locale locale) {
@@ -191,7 +181,7 @@ public final class PaperAdventure {
     }
 
     public static String asPlain(final Component component, final Locale locale) {
-        return PLAIN.serialize(translated(component, locale));
+        return PlainTextComponentSerializer.plainText().serialize(translated(component, locale));
     }
 
     private static Component translated(final Component component, final Locale locale) {

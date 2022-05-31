@@ -7885,7 +7885,6 @@ c	net/minecraft/world/entity/Entity$MovementEmission	net/minecraft/world/entity/
 	f	Z	sounds	e
 c	net/minecraft/world/entity/Marker	net/minecraft/world/entity/Marker
 	m	(Lnet/minecraft/nbt/CompoundTag;)V	addAdditionalSaveData	b
-	m	(Lnet/minecraft/world/entity/Entity;)V	addPassenger	m
 	m	()V	defineSynchedData	a_
 	m	()Lnet/minecraft/network/protocol/Packet;	getAddEntityPacket	S
 	m	()Lnet/minecraft/world/level/material/PushReaction;	getPistonPushReaction	c_
@@ -40176,6 +40175,7 @@ c	net/minecraft/server/network/ServerConnectionListener	net/minecraft/server/net
 	f	Z	running	c
 	f	Lnet/minecraft/server/MinecraftServer;	server	e
 c	net/minecraft/server/network/ServerConnectionListener$1	net/minecraft/server/network/ServerConnection$1
+c	net/minecraft/server/network/ServerConnectionListener$1$1	net/minecraft/server/network/ServerConnection$1$1
 c	net/minecraft/server/network/ServerConnectionListener$2	net/minecraft/server/network/ServerConnection$2
 c	net/minecraft/server/network/ServerConnectionListener$LatencySimulator	net/minecraft/server/network/ServerConnection$LatencySimulator
 	m	(Lio/netty/channel/ChannelHandlerContext;Ljava/lang/Object;)V	delayDownstream	a

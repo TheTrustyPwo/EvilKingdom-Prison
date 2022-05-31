@@ -80,8 +80,9 @@ final class CraftTeam extends CraftScoreboardComponent implements Team {
         CraftScoreboard scoreboard = checkState();
         if (color == null) {
             this.team.setColor(net.minecraft.ChatFormatting.RESET);
+        } else {
+            this.team.setColor(io.papermc.paper.adventure.PaperAdventure.asVanilla(color));
         }
-        team.setColor(io.papermc.paper.adventure.PaperAdventure.asVanilla(color));
     }
     // Paper end
 

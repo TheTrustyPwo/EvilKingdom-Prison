@@ -16,7 +16,7 @@
  import net.minecraft.network.chat.TextComponent;
  import net.minecraft.network.protocol.PacketFlow;
  import net.minecraft.network.protocol.game.ClientboundDisconnectPacket;
-@@ -49,110 +49,176 @@
+@@ -49,110 +49,204 @@
  import org.slf4j.Logger;
  
  public class ServerConnectionListener {
@@ -92,6 +92,12 @@
 +            ServerConnectionListener.LOGGER.info("Paper: Using " + com.velocitypowered.natives.util.Natives.cipher.getLoadedVariant() + " cipher from Velocity.");
 +            // Paper end
 +
++            // Paper start - indicate Proxy Protocol usage
++            if (com.destroystokyo.paper.PaperConfig.useProxyProtocol) {
++                ServerConnectionListener.LOGGER.info("Paper: Using Proxy Protocol");
++            }
++            // Paper end
++
 +            this.channels.add(((ServerBootstrap) ((ServerBootstrap) (new ServerBootstrap()).channel(oclass)).childHandler(new ChannelInitializer<Channel>() {
                  protected void initChannel(Channel channel) {
                      try {
@@ -111,6 +117,28 @@
 +                    int j = ServerConnectionListener.this.server.getRateLimitPacketsPerSecond();
 +                    Object object = j > 0 ? new RateKickingConnection(j) : new Connection(PacketFlow.SERVERBOUND);
 +
++                    // Paper start - Add support for Proxy Protocol
++                    if (com.destroystokyo.paper.PaperConfig.useProxyProtocol) {
++                        channel.pipeline().addAfter("timeout", "haproxy-decoder", new io.netty.handler.codec.haproxy.HAProxyMessageDecoder());
++                        channel.pipeline().addAfter("haproxy-decoder", "haproxy-handler", new ChannelInboundHandlerAdapter() {
++                            @Override
++                            public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
++                                if (msg instanceof io.netty.handler.codec.haproxy.HAProxyMessage message) {
++                                    String realaddress = message.sourceAddress();
++                                    int realport = message.sourcePort();
++
++                                    SocketAddress socketaddr = new java.net.InetSocketAddress(realaddress, realport);
++
++                                    Connection connection = (Connection) channel.pipeline().get("packet_handler");
++                                    connection.address = socketaddr;
++                                } else {
++                                    super.channelRead(ctx, msg);
++                                }
++                            }
++                        });
++                    }
++                    // Paper end
++
 +                    // ServerConnectionListener.this.connections.add((Connection) object); // CraftBukkit - decompile error
 +                    pending.add((Connection) object); // Paper
 +                    channel.pipeline().addLast("packet_handler", (ChannelHandler) object);
@@ -119,19 +147,19 @@
                  }
 -            }).group(lazyLoadedValue.get()).localAddress(address, port).bind().syncUninterruptibly());
 +            }).group((EventLoopGroup) lazyinitvar.get()).localAddress(address)).option(ChannelOption.AUTO_READ, false).bind().syncUninterruptibly()); // CraftBukkit // Paper
-         }
-     }
- 
++        }
++    }
++
 +    // CraftBukkit start
 +    public void acceptConnections() {
 +        synchronized (this.channels) {
 +            for (ChannelFuture future : this.channels) {
 +                future.channel().config().setAutoRead(true);
 +            }
-+        }
-+    }
+         }
+     }
 +    // CraftBukkit end
-+
+ 
      public SocketAddress startMemoryChannel() {
 -        ChannelFuture channelFuture;
 -        synchronized(this.channels) {
@@ -242,7 +270,7 @@
                      }
                  }
              }
-@@ -168,7 +234,8 @@
+@@ -168,7 +262,8 @@
          return this.connections;
      }
  
@@ -252,7 +280,7 @@
          private static final Timer TIMER = new HashedWheelTimer();
          private final int delay;
          private final int jitter;
-@@ -179,22 +246,25 @@
+@@ -179,22 +274,25 @@
              this.jitter = extraDelay;
          }
  

@@ -1143,9 +1143,15 @@ public final class CraftServer implements Server {
         File folder = new File(this.getWorldContainer(), name);
         World world = this.getWorld(name);
 
-        if (world != null) {
-            return world;
+        // Paper start
+        World worldByKey = this.getWorld(creator.key());
+        if (world != null || worldByKey != null) {
+            if (world == worldByKey) {
+                return world;
+            }
+            throw new IllegalArgumentException("Cannot create a world with key " + creator.key() + " and name " + name + " one (or both) already match a world that exists");
         }
+        // Paper end
 
         if ((folder.exists()) && (!folder.isDirectory())) {
             throw new IllegalArgumentException("File exists with the name '" + name + "' and isn't a folder");
@@ -1571,7 +1577,7 @@ public final class CraftServer implements Server {
     @Override
     public net.kyori.adventure.text.Component shutdownMessage() {
         String msg = getShutdownMessage();
-        return msg != null ? io.papermc.paper.adventure.PaperAdventure.LEGACY_SECTION_UXRC.deserialize(msg) : null;
+        return msg != null ? net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer.legacySection().deserialize(msg) : null;
     }
     // Paper end
     @Override
@@ -1736,7 +1742,7 @@ public final class CraftServer implements Server {
     @Deprecated // Paper
     public int broadcast(String message, String permission) {
         // Paper start - Adventure
-        return this.broadcast(io.papermc.paper.adventure.PaperAdventure.LEGACY_SECTION_UXRC.deserialize(message), permission);
+        return this.broadcast(net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer.legacySection().deserialize(message), permission);
     }
 
     @Override

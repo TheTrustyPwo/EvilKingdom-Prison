@@ -233,7 +233,7 @@
 +            // Paper end
 +            // Spigot start
 +            double radius = level.spigotConfig.itemMerge;
-+            List<ItemEntity> list = this.level.getEntitiesOfClass(ItemEntity.class, this.getBoundingBox().inflate(radius, radius, radius), (entityitem) -> {
++            List<ItemEntity> list = this.level.getEntitiesOfClass(ItemEntity.class, this.getBoundingBox().inflate(radius, radius - 0.5D, radius), (entityitem) -> {
 +                // Spigot end
 +                return entityitem != this && entityitem.isMergable();
 +            });

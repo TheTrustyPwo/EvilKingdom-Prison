@@ -13,6 +13,7 @@ import net.kyori.adventure.audience.MessageType;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextReplacementConfig;
 import net.kyori.adventure.text.event.ClickEvent;
+import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 import org.bukkit.ChatColor;
@@ -77,14 +78,14 @@ public final class ChatProcessor {
                 this.processModern(
                     legacyRenderer(se.getFormat()),
                     this.viewersFromLegacy(se.getRecipients()),
-                    PaperAdventure.LEGACY_SECTION_UXRC.deserialize(se.getMessage()),
+                    LegacyComponentSerializer.legacySection().deserialize(se.getMessage()),
                     se.isCancelled()
                 );
             } else {
                 this.processModern(
                     legacyRenderer(ae.getFormat()),
                     this.viewersFromLegacy(ae.getRecipients()),
-                    PaperAdventure.LEGACY_SECTION_UXRC.deserialize(ae.getMessage()),
+                    LegacyComponentSerializer.legacySection().deserialize(ae.getMessage()),
                     ae.isCancelled()
                 );
             }
@@ -156,7 +157,7 @@ public final class ChatProcessor {
 
     private static String legacyDisplayName(final CraftPlayer player) {
         if (((CraftWorld) player.getWorld()).getHandle().paperConfig.useVanillaScoreboardColoring) {
-            return PaperAdventure.LEGACY_SECTION_UXRC.serialize(player.teamDisplayName()) + ChatColor.RESET;
+            return LegacyComponentSerializer.legacySection().serialize(player.teamDisplayName()) + ChatColor.RESET;
         }
         return player.getDisplayName();
     }
@@ -172,7 +173,7 @@ public final class ChatProcessor {
         if (DEFAULT_LEGACY_FORMAT.equals(format)) {
             return ChatRenderer.defaultRenderer();
         }
-        return ChatRenderer.viewerUnaware((player, displayName, message) -> PaperAdventure.LEGACY_SECTION_UXRC.deserialize(String.format(format, legacyDisplayName((CraftPlayer) player), PaperAdventure.LEGACY_SECTION_UXRC.serialize(message))).replaceText(URL_REPLACEMENT_CONFIG));
+        return ChatRenderer.viewerUnaware((player, displayName, message) -> LegacyComponentSerializer.legacySection().deserialize(String.format(format, legacyDisplayName((CraftPlayer) player), LegacyComponentSerializer.legacySection().serialize(message))).replaceText(URL_REPLACEMENT_CONFIG));
     }
 
     private void queueIfAsyncOrRunImmediately(final Waitable<Void> waitable) {

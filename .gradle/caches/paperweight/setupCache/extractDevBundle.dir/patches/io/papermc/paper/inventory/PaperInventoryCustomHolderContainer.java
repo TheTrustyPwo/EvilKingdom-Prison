@@ -2,6 +2,7 @@ package io.papermc.paper.inventory;
 
 import io.papermc.paper.adventure.PaperAdventure;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import net.minecraft.world.Container;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -38,7 +39,7 @@ public final class PaperInventoryCustomHolderContainer implements Container {
             adventure$title = type.defaultTitle();
         }
         this.adventure$title = adventure$title;
-        this.title = PaperAdventure.LEGACY_SECTION_UXRC.serialize(this.adventure$title);
+        this.title = LegacyComponentSerializer.legacySection().serialize(this.adventure$title);
     }
 
     public Component title() {
