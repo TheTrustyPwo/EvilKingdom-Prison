@@ -25,7 +25,6 @@ public final class CommandPermissions {
         DefaultPermissions.registerPermission(CommandPermissions.PREFIX + "list", "Allows the user to list all online players", PermissionDefault.OP, commands);
         DefaultPermissions.registerPermission(CommandPermissions.PREFIX + "gamemode", "Allows the user to change the gamemode of another player", PermissionDefault.OP, commands);
         DefaultPermissions.registerPermission(CommandPermissions.PREFIX + "xp", "Allows the user to give themselves or others arbitrary values of experience", PermissionDefault.OP, commands);
-        DefaultPermissions.registerPermission(CommandPermissions.PREFIX + "toggledownfall", "Allows the user to toggle rain on/off for a given world", PermissionDefault.OP, commands);
         DefaultPermissions.registerPermission(CommandPermissions.PREFIX + "defaultgamemode", "Allows the user to change the default gamemode of the server", PermissionDefault.OP, commands);
         DefaultPermissions.registerPermission(CommandPermissions.PREFIX + "seed", "Allows the user to view the seed of the world", PermissionDefault.OP, commands);
         DefaultPermissions.registerPermission(CommandPermissions.PREFIX + "effect", "Allows the user to add/remove effects on players", PermissionDefault.OP, commands);
@@ -34,9 +33,9 @@ public final class CommandPermissions {
         // Paper start
         DefaultPermissions.registerPermission(CommandPermissions.PREFIX + "attribute", "Allows the user to query, add, remove or set an entity attribute", PermissionDefault.OP, commands);
         DefaultPermissions.registerPermission(CommandPermissions.PREFIX + "advancement", "Allows the user to give, remove, or check player advancements", PermissionDefault.OP, commands);
-        DefaultPermissions.registerPermission(CommandPermissions.PREFIX + "ban", "Allows the user to add players to banlist", PermissionDefault.OP, commands);
-        DefaultPermissions.registerPermission(CommandPermissions.PREFIX + "ban-ip", "Allows the user to add ip address to banlist", PermissionDefault.OP, commands);
-        DefaultPermissions.registerPermission(CommandPermissions.PREFIX + "banlist", "Allows the user to display banlist", PermissionDefault.OP, commands);
+        DefaultPermissions.registerPermission(CommandPermissions.PREFIX + "ban", "Allows the user to add players to the ban list", PermissionDefault.OP, commands);
+        DefaultPermissions.registerPermission(CommandPermissions.PREFIX + "ban-ip", "Allows the user to add ip address to the ban list", PermissionDefault.OP, commands);
+        DefaultPermissions.registerPermission(CommandPermissions.PREFIX + "banlist", "Allows the user to display the ban list", PermissionDefault.OP, commands);
         DefaultPermissions.registerPermission(CommandPermissions.PREFIX + "bossbar", "Allows the user to create and modify bossbars", PermissionDefault.OP, commands);
         DefaultPermissions.registerPermission(CommandPermissions.PREFIX + "clear", "Allows the user to clear items from player inventory", PermissionDefault.OP, commands);
         DefaultPermissions.registerPermission(CommandPermissions.PREFIX + "clone", "Allows the user to copy blocks from one place to another", PermissionDefault.OP, commands);
@@ -51,12 +50,16 @@ public final class CommandPermissions {
         DefaultPermissions.registerPermission(CommandPermissions.PREFIX + "forceload", "Allows the user to force chunks to be constantly loaded or not", PermissionDefault.OP, commands);
         DefaultPermissions.registerPermission(CommandPermissions.PREFIX + "function", "Allows the user to run a function", PermissionDefault.OP, commands);
         DefaultPermissions.registerPermission(CommandPermissions.PREFIX + "gamerule", "Allows a user to set or query a game rule value", PermissionDefault.OP, commands);
+        DefaultPermissions.registerPermission(CommandPermissions.PREFIX + "jfr", "Allows a user to use the vanilla Java FlightRecorder profiling system", PermissionDefault.OP, commands);
         DefaultPermissions.registerPermission(CommandPermissions.PREFIX + "locate", "Allows the user to locate the closest structure", PermissionDefault.OP, commands);
         DefaultPermissions.registerPermission(CommandPermissions.PREFIX + "locatebiome", "Allows the user to locate the closest biome", PermissionDefault.OP, commands);
         DefaultPermissions.registerPermission(CommandPermissions.PREFIX + "loot", "Allows the user to drop items from an inventory slot onto the ground", PermissionDefault.OP, commands);
         DefaultPermissions.registerPermission(CommandPermissions.PREFIX + "op", "Allows the user to grant operator status to a player", PermissionDefault.OP, commands);
-        DefaultPermissions.registerPermission(CommandPermissions.PREFIX + "pardon", "Allows the user to remove entries from the banlist", PermissionDefault.OP, commands);
+        DefaultPermissions.registerPermission(CommandPermissions.PREFIX + "pardon", "Allows the user to remove entries from the player ban list", PermissionDefault.OP, commands);
+        DefaultPermissions.registerPermission(CommandPermissions.PREFIX + "pardon-ip", "Allows the user to remove entries from the ip address ban list", PermissionDefault.OP, commands);
         DefaultPermissions.registerPermission(CommandPermissions.PREFIX + "particle", "Allows the user to create particles", PermissionDefault.OP, commands);
+        DefaultPermissions.registerPermission(CommandPermissions.PREFIX + "perf", "Allows the user to start/stop the vanilla performance metrics capture", PermissionDefault.OP, commands);
+        DefaultPermissions.registerPermission(CommandPermissions.PREFIX + "placefeature", "Allows the user to place features with the command", PermissionDefault.OP, commands);
         DefaultPermissions.registerPermission(CommandPermissions.PREFIX + "playsound", "Allows the user to play a sound", PermissionDefault.OP, commands);
         DefaultPermissions.registerPermission(CommandPermissions.PREFIX + "recipe", "Allows the user to give or take recipes", PermissionDefault.OP, commands);
         DefaultPermissions.registerPermission(CommandPermissions.PREFIX + "reload", "Allows the user to reload loot tables, advancements, and functions from disk", PermissionDefault.OP, commands);

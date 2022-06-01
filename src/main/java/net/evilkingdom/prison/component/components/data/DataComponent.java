@@ -10,6 +10,7 @@ import com.mongodb.client.MongoClients;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.model.Sorts;
+import io.papermc.paper.text.PaperComponents;
 import net.evilkingdom.commons.cooldown.CooldownImplementor;
 import net.evilkingdom.commons.datapoint.DataImplementor;
 import net.evilkingdom.commons.datapoint.enums.DatasiteType;
@@ -28,6 +29,8 @@ import org.bukkit.Bukkit;
 
 import javax.xml.crypto.Data;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
@@ -118,13 +121,14 @@ public class DataComponent {
      */
     public void initializeData() {
         Bukkit.getConsoleSender().sendMessage(StringUtilities.colorize("&2[Prison » Component » Components » Data] &aInitializing data..."));
-        CompletableFuture.supplyAsync(() -> {
-            final DataImplementor dataImplementor = DataImplementor.get(this.plugin);
-            final Datasite datasite = dataImplementor.getSites().stream().filter(innerDatasite -> innerDatasite.getPlugin() == this.plugin).findFirst().get();
-            if (datasite.getMongoClient().getDatabase(datasite.getName()).getCollection("prison_players").countDocuments() == 0L)  {
-                return 1000L;
+        final DataImplementor dataImplementor = DataImplementor.get(this.plugin);
+        final Datasite datasite = dataImplementor.getSites().stream().filter(innerDatasite -> innerDatasite.getPlugin() == this.plugin).findFirst().get();
+        final Datapoint datapoint = datasite.getPoints().stream().filter(innerDatapoint -> innerDatapoint.getName().equals("prison_players")).findFirst().get();
+        datapoint.countAll().thenCompose(count -> {
+            if (count == 0L) {
+                return CompletableFuture.supplyAsync(() -> 1000L);
             } else {
-                return (datasite.getMongoClient().getDatabase(datasite.getName()).getCollection("prison_players").find().sort(Sorts.descending("rank")).first().getLong("rank") + 1000L);
+                return datapoint.getAll().thenApply(jsonObjects -> jsonObjects.stream().map(jsonObject -> jsonObject.get("rank").getAsLong()).sorted(Collections.reverseOrder()).findFirst().get() + 1000L);
             }
         }).whenComplete((generationAmount, generationAmountThrowable) -> SelfData.get().whenComplete((selfData, selfDataThrowable) -> {
             selfData.cache();

@@ -55,18 +55,18 @@ public class Commodore
 
     // Paper start - Plugin rewrites
     private static final Map<String, String> SEARCH_AND_REMOVE = initReplacementsMap();
+    private static final java.util.jar.Manifest manifest = io.papermc.paper.util.JarManifests.manifest(Commodore.class);
     private static Map<String, String> initReplacementsMap()
     {
         Map<String, String> getAndRemove = new HashMap<>();
         // Be wary of maven shade's relocations
         getAndRemove.put( "org/bukkit/".concat( "craftbukkit/libs/it/unimi/dsi/fastutil/" ), "org/bukkit/".concat( "craftbukkit/libs/" ) ); // Remap fastutil to our location
 
-        if ( Boolean.getBoolean( "debug.rewriteForIde" ) )
+        if ( Boolean.getBoolean( "debug.rewriteForIde" ) && manifest != null)
         {
             // unversion incoming calls for pre-relocate debug work
-            final String NMS_REVISION_PACKAGE = "v1_16_R3/";
+            final String NMS_REVISION_PACKAGE = "v" + manifest.getMainAttributes().getValue("CraftBukkit-Package-Version") + "/";
 
-            getAndRemove.put( "net/minecraft/".concat( "server/" + NMS_REVISION_PACKAGE ), NMS_REVISION_PACKAGE );
             getAndRemove.put( "org/bukkit/".concat( "craftbukkit/" + NMS_REVISION_PACKAGE ), NMS_REVISION_PACKAGE );
         }
 

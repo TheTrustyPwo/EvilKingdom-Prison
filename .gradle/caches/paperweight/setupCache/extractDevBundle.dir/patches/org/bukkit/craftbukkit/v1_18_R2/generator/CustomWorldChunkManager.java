@@ -45,8 +45,7 @@ public class CustomWorldChunkManager extends BiomeSource {
 
     @Override
     public BiomeSource withSeed(long seed) {
-        // TODO check method further
-        throw new UnsupportedOperationException("Cannot copy CustomWorldChunkManager");
+        return this; // Paper - Since this doesn't take a seed, no need to throw UOE
     }
 
     @Override
