@@ -7,7 +7,7 @@ package net.evilkingdom.prison.component.components.mine.objects;
 public class MineLocation {
 
     private final int x, z;
-    private final boolean used;
+    private boolean used;
 
     /**
      * Allows you to create a Mine Location.
@@ -47,6 +47,15 @@ public class MineLocation {
      */
     public Boolean isUsed() {
         return this.used;
+    }
+
+    /**
+     * Allows you to set the mine location's usage state.
+     *
+     * @param used ~ The mine location's usage state to set.
+     */
+    public void setUsed(final boolean used) {
+        this.used = used;
     }
 
 }

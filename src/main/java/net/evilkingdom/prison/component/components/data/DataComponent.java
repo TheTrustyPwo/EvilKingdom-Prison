@@ -138,7 +138,7 @@ public class DataComponent {
                     selfData.getMineLocations().addAll(generatedLocations);
                 });
             } else {
-                final MineLocation latestMineLocation = selfData.getMineLocations().get((selfData.getMineLocations().size() - 1));
+                final MineLocation latestMineLocation = selfData.getMineLocations().stream().sorted(Collections.reverseOrder()).findFirst().get();
                 this.plugin.getComponentManager().getMineComponent().generateLocations(latestMineLocation.getX(), latestMineLocation.getZ(), 1).whenComplete((generatedLocations, generatedLocationsThrowable) -> {
                     selfData.getMineLocations().addAll(generatedLocations);
                 });

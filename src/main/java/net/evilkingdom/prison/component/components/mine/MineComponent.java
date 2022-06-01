@@ -240,10 +240,8 @@ public class MineComponent {
         this.playersWaitingForCreation.add(player.getUniqueId());
         return SelfData.get().thenApply(selfData -> {
             final MineLocation mineLocation = selfData.getMineLocations().stream().filter(dataLocation -> !dataLocation.isUsed()).findFirst().get();
-            selfData.getMineLocations().remove(mineLocation);
-            final MineLocation replacementMineLocation = new MineLocation(mineLocation.getX(), mineLocation.getZ(), true);
-            selfData.getMineLocations().add(replacementMineLocation);
-            this.generateLocations(replacementMineLocation.getX(), replacementMineLocation.getZ(), 1).whenComplete((generatedLocations, generatedLocationsThrowable) -> {
+            mineLocation.setUsed(true);
+            this.generateLocations(mineLocation.getX(), mineLocation.getZ(), 1).whenComplete((generatedLocations, generatedLocationsThrowable) -> {
                 selfData.getMineLocations().addAll(generatedLocations);
             });
             return mineLocation;

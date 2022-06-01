@@ -30,7 +30,7 @@ public class SelfData {
     private final Prison plugin;
 
     private final ArrayList<Rank> ranks;
-    private final ArrayList<MineLocation> mineLocations;
+    private final HashSet<MineLocation> mineLocations;
 
     private static final HashSet<SelfData> cache = new HashSet<SelfData>();
 
@@ -41,7 +41,7 @@ public class SelfData {
         this.plugin = Prison.getPlugin();
 
         this.ranks = new ArrayList<Rank>();
-        this.mineLocations = new ArrayList<MineLocation>();
+        this.mineLocations = new HashSet<MineLocation>();
     }
 
     /**
@@ -117,7 +117,7 @@ public class SelfData {
      *
      * @return The data's mine locations.
      */
-    public ArrayList<MineLocation> getMineLocations() {
+    public HashSet<MineLocation> getMineLocations() {
         return this.mineLocations;
     }
 
