@@ -290,6 +290,7 @@ public class PlayerData {
      * Allows you to retrieve a PlayerData from the cache directly.
      * This should only be used if you know this will be cached.
      *
+     * @param uuid ~ The player's UUID.
      * @return The self class.
      */
     public static Optional<PlayerData> getViaCache(final UUID uuid) {

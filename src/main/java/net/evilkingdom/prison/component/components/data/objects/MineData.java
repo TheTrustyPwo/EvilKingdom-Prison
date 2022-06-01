@@ -421,6 +421,7 @@ public class MineData {
      * Allows you to retrieve a MineData from the cache directly.
      * This should only be used if you know this will be cached.
      *
+     * @param uuid ~ The mine's UUID.
      * @return The self class.
      */
     public static Optional<MineData> getViaCache(final UUID uuid) {
