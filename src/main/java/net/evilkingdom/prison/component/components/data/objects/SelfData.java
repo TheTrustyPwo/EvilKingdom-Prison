@@ -77,9 +77,6 @@ public class SelfData {
             if (jsonObject.has("mineLocations")) {
                 jsonObject.get("mineLocations").getAsJsonArray().forEach(jsonElement -> this.mineLocations.add(new MineLocation(jsonElement.getAsJsonObject().get("x").getAsInt(), jsonElement.getAsJsonObject().get("z").getAsInt(), jsonElement.getAsJsonObject().get("used").getAsBoolean())));
            }
-           if (jsonObject.has("ranks")) {
-               jsonObject.get("ranks").getAsJsonObject().entrySet().forEach(entry -> this.ranks.add(new Rank(Long.parseLong(entry.getKey()), entry.getValue().getAsJsonObject().get("price").getAsLong(), new HashMap<Material, Double>(entry.getValue().getAsJsonObject().get("blockPallet").getAsJsonObject().entrySet().stream().collect(Collectors.toMap(key -> Material.getMaterial(entry.getKey()), value -> entry.getValue().getAsDouble()))))));
-           }
            return true;
         });
     }
@@ -100,16 +97,6 @@ public class SelfData {
             mineLocationsJsonArray.add(mineLocationJsonObject);
         });
         jsonObject.add("mineLocations", mineLocationsJsonArray);
-        final JsonObject ranksJsonObject = new JsonObject();
-        this.ranks.forEach(rank -> {
-            final JsonObject rankJsonObject = new JsonObject();
-            rankJsonObject.addProperty("price", rank.getPrice());
-            final JsonObject blockPalletJsonObject = new JsonObject();
-            rank.getBlockPallet().forEach((material, chance) -> blockPalletJsonObject.addProperty(material.name(), chance));
-            rankJsonObject.add("blockPallet", blockPalletJsonObject);
-            ranksJsonObject.add(rank.getRank().toString(), rankJsonObject);
-        });
-        jsonObject.add("ranks", ranksJsonObject);
         final DataImplementor dataImplementor = DataImplementor.get(this.plugin);
         final Datasite datasite = dataImplementor.getSites().stream().filter(innerDatasite -> innerDatasite.getPlugin() == this.plugin).findFirst().get();
         final Datapoint datapoint = datasite.getPoints().stream().filter(innerDatapoint -> innerDatapoint.getName().equals("prison_self")).findFirst().get();

@@ -128,7 +128,6 @@ public class DataComponent {
             }
         }).whenComplete((generationAmount, generationAmountThrowable) -> SelfData.get().whenComplete((selfData, selfDataThrowable) -> {
             selfData.cache();
-            selfData.getRanks().clear();
             this.plugin.getComponentManager().getRankComponent().generate(0, generationAmount).whenComplete((generated, generatedThrowable) -> selfData.getRanks().addAll(generated));
             if (selfData.getMineLocations().isEmpty()) {
                 this.plugin.getComponentManager().getMineComponent().generateLocations(0, 0, 100).whenComplete((generatedLocations, generatedLocationsThrowable) -> {
